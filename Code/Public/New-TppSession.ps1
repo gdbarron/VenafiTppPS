@@ -1,4 +1,4 @@
-function New-VenafiSession {
+function New-TppSession {
     <#
 	.SYNOPSIS 
 	Create a new Venafi session
@@ -37,19 +37,18 @@ function New-VenafiSession {
         [string] $ServerUrl,
 
         [Parameter(Mandatory, ParameterSetName = 'Credential')]
-        [System.Management.Automation.PSCredential]
-        $Credential,
+        [System.Management.Automation.PSCredential] $Credential,
 
         [Parameter(Mandatory, ParameterSetName = 'UsernamePassword')]
         [ValidateNotNullOrEmpty()]
-        [string]$Username,
+        [string] $Username,
 
         [Parameter(Mandatory, ParameterSetName = 'UsernamePassword')]
         [ValidateNotNullOrEmpty()]
-        [Security.SecureString]$SecurePassword,
+        [Security.SecureString] $SecurePassword,
 
         [Parameter()]
-        [switch]$PassThrough
+        [switch] $PassThrough
     )
 
     Switch ($PsCmdlet.ParameterSetName)	{
@@ -84,7 +83,7 @@ function New-VenafiSession {
         }
     }
 
-    $newSession = Invoke-VenafiRestMethod @params
+    $newSession = Invoke-TppRestMethod @params
 
     $newSession | Add-Member @{
         ServerUrl  = $ServerUrl

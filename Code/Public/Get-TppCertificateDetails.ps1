@@ -14,7 +14,7 @@ Hashtable providing 1 or more key/value pairs with search criteria.
 Guid representing a unique certificate in Venafi.
 
 .PARAMETER VenafiSession
-Session object created from New-VenafiSession method.  The value defaults to the script session object $VenafiSession.
+Session object created from New-TppSession method.  The value defaults to the script session object $VenafiSession.
 
 .INPUTS
 Guid
@@ -44,27 +44,27 @@ Guid returns a PSCustomObject with the following properties:
     ValidationDetails
 
 .EXAMPLE
-Get-VenafiCertificateDetails -query @{'ValidToLess'='2018-04-30T00:00:00.0000000Z'}
+Get-TppCertificateDetails -query @{'ValidToLess'='2018-04-30T00:00:00.0000000Z'}
 Find all certificates expiring before a certain date
 
 .EXAMPLE
-Get-VenafiCertificateDetails -query @{'ParentDn'='\VED\Policy\My folder'}
+Get-TppCertificateDetails -query @{'ParentDn'='\VED\Policy\My folder'}
 Find all certificates in the specified folder
 
 .EXAMPLE
-Get-VenafiCertificateDetails -query @{'ParentDnRecursive'='\VED\Policy\My folder'}
+Get-TppCertificateDetails -query @{'ParentDnRecursive'='\VED\Policy\My folder'}
 Find all certificates in the specified folder and subfolders
 
 .EXAMPLE
-Get-VenafiCertificateDetails -query @{'ParentDnRecursive'='\VED\Policy\My folder'; 'Limit'='20'}
+Get-TppCertificateDetails -query @{'ParentDnRecursive'='\VED\Policy\My folder'; 'Limit'='20'}
 Find all certificates in the specified folder and subfolders, but limit the results to 20
 
 .EXAMPLE
-$certs | Get-VenafiCertificateDetails
+$certs | Get-TppCertificateDetails
 Get detailed certificate info after performing basic query
 
 #>
-function Get-VenafiCertificateDetails {
+function Get-TppCertificateDetails {
 
     [CmdletBinding()]
     param (
@@ -80,7 +80,7 @@ function Get-VenafiCertificateDetails {
     )
 
     begin {
-        $VenafiSession = $VenafiSession | Test-VenafiSession
+        $VenafiSession = $VenafiSession | Test-TppSession
     }
 
     process {
@@ -92,7 +92,8 @@ function Get-VenafiCertificateDetails {
                     UriLeaf       = 'certificates'
                     Body          = $query
                 }
-                $response = Invoke-VenafiRestMethod @params
+                $response = Invoke-TppRestMethod @params
+
                 if ( $response ) {
                     $response.Certificates
                 }
@@ -104,7 +105,7 @@ function Get-VenafiCertificateDetails {
                     Method        = 'Get'
                     UriLeaf       = [System.Web.HttpUtility]::HtmlEncode("certificates/$GUID")
                 }
-                Invoke-VenafiRestMethod @params
+                Invoke-TppRestMethod @params
             }
         }
 

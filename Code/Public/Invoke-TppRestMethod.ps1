@@ -1,4 +1,4 @@
-function Invoke-VenafiRestMethod {
+function Invoke-TppRestMethod {
     <#
 	.SYNOPSIS 
 	Generic REST call for Venafi
