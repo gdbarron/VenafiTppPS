@@ -1,16 +1,23 @@
 <#
 .SYNOPSIS 
-Get basic details about a certificate that exists in Venafi
+Get basic or full details about certificates
 
 .DESCRIPTION
-Get details about a certificate based on search criteria.  The number of search parameters is quite extensive.
-Be sure to provide '\VED\Policy' at the start of any path.  See the examples.
+Get details about a certificate based on search criteria.
+Be sure to provide '\VED\Policy' at the start of any path.  See the examples for a few of the available options.
+The SDK provides a full list.  Additional details can be had by passing the guid.
 
 .PARAMETER Query
 Hashtable providing 1 or more key/value pairs with search criteria.
 
+.PARAMETER Guid
+Guid representing a unique certificate in Venafi.
+
 .PARAMETER VenafiSession
 Session object created from New-VenafiSession method.  The value defaults to the script session object $VenafiSession.
+
+.INPUTS
+Guid
 
 .OUTPUTS
 Query returns a PSCustomObject with the following properties:
