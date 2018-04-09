@@ -24,55 +24,46 @@ function Invoke-VenafiRestMethod {
 	#>
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ParameterSetName = 'Session')]
         [ValidateNotNullOrEmpty()]
         [alias("sess")]
         $VenafiSession,
 
+        [Parameter(Mandatory, ParameterSetName = 'URL')]
+        [ValidateNotNullOrEmpty()]
+        [String] $ServerUrl,
+
         [Parameter(Mandatory)]
         [ValidateSet("Get", "Post", "Patch", "Put", "Delete")] 
-        [String]$Method,
+        [String] $Method,
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [String]$UriLeaf,
+        [String] $UriLeaf,
 
         [Parameter()]
-        [String]$Header,
+        [String] $Header,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [Hashtable]$Body
+        [Hashtable] $Body
     )
 
-    # always verify authorization first
-    $testAuth = Test-VenafiSession -VenafiSession $VenafiSession -PassThrough
-
-    if ($testAuth.Valid) {
-        if ( $null -ne $testAuth.NewSession ) {
-            Write-Verbose "Test-VenafiSession came back with a new session"
-
-            # ensure we set the new session to the local variable
-            $VenafiSession = $testAuth.NewSession
+    Switch ($PsCmdlet.ParameterSetName)	{
+        "Session" {
+            $ServerUrl = $VenafiSession.ServerUrl
+            $hdr = @{ "X-Venafi-Api-Key" = $VenafiSession.ApiKey }
         }
-    } else {
-        throw ($testAuth.Error)
     }
 
-    $ServerUrl = $VenafiSession.ServerUrl
-    $hdr = @{ "X-Venafi-Api-Key" = $VenafiSession.ApiKey }
+    $uri = Join-UriPath @($ServerUrl, "vedsdk", $UriLeaf)
 
-    if ( $FullUri ) {
-        $uri = $FullUri
-    } else {
-        $uri = Join-UriPath @($ServerUrl, "vedsdk", $UriLeaf)
-    }
     Write-Verbose ("URI: {0}" -f $uri)
 		
-    if ( -not $Header ) {
+    if ( $Header ) {
         $hdr += $Header
+        Write-Verbose ("Adding to header {0}" -f $Header | out-string)
     }
-    Write-Verbose ("Adding to header {0}" -f $Header | out-string)
 		
     if ( $Body ) {
         $restBody = $Body
@@ -89,6 +80,8 @@ function Invoke-VenafiRestMethod {
         Body        = $restBody
         ContentType = 'application/json'
     }
+
+    Write-Verbose ($params | out-string)
     Invoke-RestMethod @params
 }
 
