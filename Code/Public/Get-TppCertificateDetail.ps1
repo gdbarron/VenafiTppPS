@@ -3,8 +3,7 @@
 Get basic or full details about certificates
 
 .DESCRIPTION
-Get details about a certificate based on search criteria.
-Be sure to provide '\VED\Policy' at the start of any path.  See the examples for a few of the available options.
+Get details about a certificate based on search criteria.  See the examples for a few of the available options.
 The SDK provides a full list.  Additional details can be had by passing the guid.
 
 .PARAMETER Query
