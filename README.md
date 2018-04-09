@@ -1,6 +1,7 @@
 # VenafiTppPS - PowerShell module for Venafi Trust Protection Platform
 
-[![Build status](https://ci.appveyor.com/api/projects/status/vxyan36tsimle56b?svg=true)](https://ci.appveyor.com/project/GregBrownstein/venafitppps)
+[![Build status](https://ci.appveyor.com/api/projects/status/vxyan36tsimle56b/branch/master?svg=true&passingText=master%20-%20passing)](https://ci.appveyor.com/project/GregBrownstein/venafitppps)
+[![Build status](https://ci.appveyor.com/api/projects/status/vxyan36tsimle56b/branch/develop?svg=true&passingText=develop%20-%20passing)](https://ci.appveyor.com/project/GregBrownstein/venafitppps)
 
 After loading the module, create a new session with
 ```
