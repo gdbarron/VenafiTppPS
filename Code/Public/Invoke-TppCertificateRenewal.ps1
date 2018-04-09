@@ -1,4 +1,4 @@
-function Invoke-TppCertificateRenew {
+function Invoke-TppCertificateRenewal {
     <#
 	.SYNOPSIS 
 	Renew a certificate
@@ -14,6 +14,9 @@ function Invoke-TppCertificateRenew {
 
 	.PARAMETER VenafiSession
     Session object created from New-VenafiSession method.  The value defaults to the script session object $VenafiSession.
+
+    .INPUTS
+    Path (alias: DN)
 
     .OUTPUTS
     PSCustomObject with the following properties:
