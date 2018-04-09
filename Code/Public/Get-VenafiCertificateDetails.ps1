@@ -92,6 +92,10 @@ function Get-VenafiCertificateDetails {
                     UriLeaf       = 'certificates'
                     Body          = $query
                 }
+                $response = Invoke-VenafiRestMethod @params
+                if ( $response ) {
+                    $response.Certificates
+                }
             }
 
             'Full' {
@@ -100,9 +104,9 @@ function Get-VenafiCertificateDetails {
                     Method        = 'Get'
                     UriLeaf       = [System.Web.HttpUtility]::HtmlEncode("certificates/$GUID")
                 }
+                Invoke-VenafiRestMethod @params
             }
         }
 
-        Invoke-VenafiRestMethod @params
     }
 }
