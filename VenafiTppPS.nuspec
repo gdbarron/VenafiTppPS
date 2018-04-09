@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>VenafiTppPS</id>
+    <version>0.1.0</version>
+    <authors>Greg Brownstein</authors>
+    <owners>Greg Brownstein</owners>
+    <projectUrl>https://github.com/gdbarron/VenafiTppPS</projectUrl>
+    <iconUrl>https://www.venafi.com/themes/venafi/images/footer_logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>PowerShell module to take advantage of the Venafi TPP REST API</description>
+    <releaseNotes>
+    </releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>PowerShell Venafi</tags>
+  </metadata>
+  <files>
+    <file src="code\**\*.*" />
+</files>
+</package>
