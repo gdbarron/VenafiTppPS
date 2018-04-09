@@ -13,16 +13,22 @@ function New-VenafiSession {
 	URL for the Venafi server.
 
     .PARAMETER Credential
+    PSCredential object utilizing the same credentials as used for the web front-end
 
     .PARAMETER Username
+    Username to authenticate to ServerUrl with
 
     .PARAMETER SecurePassword
+    SecureString password to authenticate to ServerUrl with
 
     .PARAMETER PassThrough
+    Optionally, send the session object to the pipeline.
 
-	.OUTPUTS
+    .OUTPUTS
+    PSCustomObject
 
-	.EXAMPLE
+    .EXAMPLE
+    
 	
 	#>
     [CmdletBinding()]
@@ -68,13 +74,18 @@ function New-VenafiSession {
     #     $username = $username.split('\')[1]
     # }
 
-
-    $body = @{
-        Username = $Username
-        Password = $Password
+    $params = @{
+        Method    = 'Post'
+        ServerUrl = $ServerUrl
+        UriLeaf   = 'authorize'
+        Body      = @{
+            Username = $Username
+            Password = $Password
+        }
     }
 
-    $newSession = Invoke-VenafiRestMethod -Method Post -ServerUrl $ServerUrl -UriLeaf "authorize" -Body $body
+    $newSession = Invoke-VenafiRestMethod @params
+
     $newSession | Add-Member @{
         ServerUrl  = $ServerUrl
         # add the credential to the session so we can reauthorize in case of timeout
