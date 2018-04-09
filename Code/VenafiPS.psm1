@@ -1,21 +1,33 @@
 ﻿<#
 .SYNOPSIS
-    PowerShell module to access the features of Venafi Trust Protection Platform REST API
+PowerShell module to access the features of Venafi Trust Protection Platform REST API
 
 .DESCRIPTION
-    Author: Greg Brownstein
+Author: Greg Brownstein
 #>
 
 $Script:VenafiSession = $null
 $script:VenafiUrl = $null
 
-###############
+class VenafiSession {
+    
+    [ValidateNotNullOrEmpty()][string] $APIKey
+    [ValidateNotNullOrEmpty()][System.Management.Automation.PSCredential] $Credential
+    [ValidateNotNullOrEmpty()][string] $ServerUrl
+    [ValidateNotNullOrEmpty()][datetime] $ValidUntil
 
-$Public = @( Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -ErrorAction SilentlyContinue )
-$Private = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue )
+    VenafiSession($APIKey, $Credential, $ServerUrl, $ValidUntil) {
+        $this.APIKey = $APIKey
+        $this.Credential = $Credential
+        $this.ServerUrl = $ServerUrl
+        $this.ValidUntil = $ValidUntil
+    }
+}
 
-#Dot source the files
-Foreach ($import in @($Public + $Private)) {
+$public = @( Get-ChildItem -Path $PSScriptRoot\public\*.ps1 -ErrorAction SilentlyContinue )
+$private = @( Get-ChildItem -Path $PSScriptRoot\private\*.ps1 -ErrorAction SilentlyContinue )
+
+Foreach ($import in @($public + $private)) {
     Try {
         . $import.fullname
     } Catch {
@@ -25,4 +37,4 @@ Foreach ($import in @($Public + $Private)) {
 
 Export-ModuleMember -variable VenafiUrl
 Export-ModuleMember -variable VenafiSession
-Export-ModuleMember -Function $Public.Basename
+Export-ModuleMember -Function $public.Basename
