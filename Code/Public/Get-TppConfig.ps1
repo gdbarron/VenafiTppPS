@@ -1,10 +1,12 @@
 function Get-TppConfig {
     <#
 	.SYNOPSIS 
-	Get all attributes for a given object
+	Get attributes for a given object
 	
 	.DESCRIPTION
-	Returns all values of an object’s attribute, excluding values assigned by policy
+    Retrieves object’s attributes.  You can either retrieve all attributes or individual ones.
+    By default, the attributes returned are not the effective policy, but that can be requested with the
+    EffectivePolicy switch.
 
 	.PARAMETER Path
     Path to the object to retrieve configuration attributes.  Just providing Path will return all attributes.
@@ -94,5 +96,5 @@ function Get-TppConfig {
             }
         }
     }
-    
+
 }
