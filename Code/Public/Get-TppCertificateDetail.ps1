@@ -3,11 +3,15 @@
 Get basic or full details about certificates
 
 .DESCRIPTION
-Get details about a certificate based on search criteria.  See the examples for a few of the available options.
-The SDK provides a full list.  Additional details can be had by passing the guid.
+Get details about a certificate based on search criteria.  See the examples for a few of the available options; the SDK provides a full list.  See Certificates attribute filters, https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-Certificates-search-attribute.php, and Certificates status filters, https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-Certificates-search-status.php.
+Additional details can be had by passing the guid.
 
 .PARAMETER Query
 Hashtable providing 1 or more key/value pairs with search criteria.
+
+.PARAMETER Limit
+Limit how many items are returned.  Default is 0 for no limit.
+It is definitely recommended you provide a Query when searching with no limit.
 
 .PARAMETER Guid
 Guid representing a unique certificate in Venafi.
@@ -55,7 +59,7 @@ Get-TppCertificateDetail -query @{'ParentDnRecursive'='\VED\Policy\My folder'}
 Find all certificates in the specified folder and subfolders
 
 .EXAMPLE
-Get-TppCertificateDetail -query @{'ParentDnRecursive'='\VED\Policy\My folder'; 'Limit'='20'}
+Get-TppCertificateDetail -query @{'ParentDnRecursive'='\VED\Policy\My folder'} -limit 20
 Find all certificates in the specified folder and subfolders, but limit the results to 20
 
 .EXAMPLE
@@ -67,9 +71,12 @@ function Get-TppCertificateDetail {
 
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ParameterSetName = 'Basic')]
+        [Parameter(ParameterSetName = 'Basic')]
         [ValidateNotNullOrEmpty()]
         [hashtable] $Query,
+        
+        [Parameter(ParameterSetName = 'Basic')]
+        [int] $Limit = 0,
         
         [Parameter(Mandatory, ParameterSetName = 'Full', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
@@ -89,8 +96,11 @@ function Get-TppCertificateDetail {
                     VenafiSession = $VenafiSession
                     Method        = 'Get'
                     UriLeaf       = 'certificates'
-                    Body          = $query
+                    Body          = $query += @{
+                        'limit' = $Limit
+                    }
                 }
+
                 $response = Invoke-TppRestMethod @params
 
                 if ( $response ) {
