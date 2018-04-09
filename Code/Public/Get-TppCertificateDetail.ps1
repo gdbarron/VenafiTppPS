@@ -44,27 +44,27 @@ Guid returns a PSCustomObject with the following properties:
     ValidationDetails
 
 .EXAMPLE
-Get-TppCertificateDetails -query @{'ValidToLess'='2018-04-30T00:00:00.0000000Z'}
+Get-TppCertificateDetail -query @{'ValidToLess'='2018-04-30T00:00:00.0000000Z'}
 Find all certificates expiring before a certain date
 
 .EXAMPLE
-Get-TppCertificateDetails -query @{'ParentDn'='\VED\Policy\My folder'}
+Get-TppCertificateDetail -query @{'ParentDn'='\VED\Policy\My folder'}
 Find all certificates in the specified folder
 
 .EXAMPLE
-Get-TppCertificateDetails -query @{'ParentDnRecursive'='\VED\Policy\My folder'}
+Get-TppCertificateDetail -query @{'ParentDnRecursive'='\VED\Policy\My folder'}
 Find all certificates in the specified folder and subfolders
 
 .EXAMPLE
-Get-TppCertificateDetails -query @{'ParentDnRecursive'='\VED\Policy\My folder'; 'Limit'='20'}
+Get-TppCertificateDetail -query @{'ParentDnRecursive'='\VED\Policy\My folder'; 'Limit'='20'}
 Find all certificates in the specified folder and subfolders, but limit the results to 20
 
 .EXAMPLE
-$certs | Get-TppCertificateDetails
+$certs | Get-TppCertificateDetail
 Get detailed certificate info after performing basic query
 
 #>
-function Get-TppCertificateDetails {
+function Get-TppCertificateDetail {
 
     [CmdletBinding()]
     param (
