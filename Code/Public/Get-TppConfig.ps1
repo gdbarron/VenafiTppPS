@@ -45,7 +45,6 @@ function Get-TppConfig {
     )
 
     begin {
-
         $VenafiSession = $VenafiSession | Test-TppSession
 
         if ( $AttributeName ) {
@@ -82,11 +81,18 @@ function Get-TppConfig {
 
             if ( $response ) {
                 if ( $AttributeName ) {
-                    $response.Values
+                    [PSCustomObject] @{
+                        DN     = $thisPath
+                        Config = $response.Values
+                    }
                 } else {
-                    $response.NameValues
+                    [PSCustomObject] @{
+                        DN     = $thisPath
+                        Config = $response.NameValues
+                    }
                 }
             }
         }
     }
+    
 }

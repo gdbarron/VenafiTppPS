@@ -33,19 +33,16 @@ function Test-TppSession {
             # we need to re-authenticate
             Write-Verbose "Session timeout, re-authenticating"
             $newSession = New-TppSession -ServerUrl $VenafiSession.ServerUrl -Credential $VenafiSession.Credential -PassThrough
-            $VenafiSession = $newSession
         }
     }
 
     process {
 
-        # $params = @{
-        #     VenafiSession = $VenafiSession
-        #     Method        = 'Get'
-        #     UriLeaf       = 'authorize/checkvalid'
-        # }
-        # $null = Invoke-TppRestMethod @params
-
-        $VenafiSession
+        if ( $newSession ) {
+            $newSession
+        } else {
+            $VenafiSession
+        }
     }
+
 }
