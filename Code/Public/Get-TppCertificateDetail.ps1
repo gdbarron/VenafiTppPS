@@ -83,14 +83,18 @@ function Get-TppCertificateDetail {
         [String[]] $Guid,
 
         [Parameter()]
-        [TppSession] $TppSession = $Script:TppSession
+        $TppSession = $Script:TppSession
     )
 
     begin {
-        $TppSession = $TppSession | Test-TppSession
+        # $TppSession = $TppSession | Test-TppSession
+        $TppSession.Validate()
     }
 
     process {
+        
+        # $TppSession = $Script:TppSession
+
         Switch ($PsCmdlet.ParameterSetName)	{
             'Basic' {
                 $params = @{
