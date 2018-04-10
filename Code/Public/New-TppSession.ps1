@@ -1,36 +1,37 @@
+<#
+.SYNOPSIS 
+Create a new Venafi session
+
+.DESCRIPTION
+Authenticates a user via a username and password against a configured Trust
+Protection Platform identity provider (e.g. Active Directory, LDAP, or Local). After
+the user is authenticated, Trust Protection Platform returns an API key allowing
+access to all other REST calls.
+
+.PARAMETER ServerUrl
+URL for the Venafi server.
+
+.PARAMETER Credential
+PSCredential object utilizing the same credentials as used for the web front-end
+
+.PARAMETER Username
+Username to authenticate to ServerUrl with
+
+.PARAMETER SecurePassword
+SecureString password to authenticate to ServerUrl with
+
+.PARAMETER PassThrough
+Optionally, send the session object to the pipeline.
+
+.OUTPUTS
+PSCustomObject
+
+.EXAMPLE
+
+
+#>
 function New-TppSession {
-    <#
-	.SYNOPSIS 
-	Create a new Venafi session
-	
-	.DESCRIPTION
-	Authenticates a user via a username and password against a configured Trust
-	Protection Platform identity provider (e.g. Active Directory, LDAP, or Local). After
-	the user is authenticated, Trust Protection Platform returns an API key allowing
-	access to all other REST calls.
-
-	.PARAMETER ServerUrl
-	URL for the Venafi server.
-
-    .PARAMETER Credential
-    PSCredential object utilizing the same credentials as used for the web front-end
-
-    .PARAMETER Username
-    Username to authenticate to ServerUrl with
-
-    .PARAMETER SecurePassword
-    SecureString password to authenticate to ServerUrl with
-
-    .PARAMETER PassThrough
-    Optionally, send the session object to the pipeline.
-
-    .OUTPUTS
-    PSCustomObject
-
-    .EXAMPLE
-    
-	
-	#>
+    [OutputType('TppSession')]
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
@@ -91,7 +92,8 @@ function New-TppSession {
         Credential = $sessionCredential
     }
 
-    $script:VenafiSession = $newSession
+    $newSession = [TppSession] $newSession
+    $Script:TppSession = $newSession
 
     if ( $PassThrough ) {
         $newSession

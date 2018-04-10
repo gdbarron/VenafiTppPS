@@ -6,7 +6,7 @@ function Test-TppSession {
 	.DESCRIPTION
 	Verifies that an APIKey is still valid. If the session has expired due to a timeout, the session will be reestablished and a new key retrieved.  The new session will replace the old script scope session object.
 
-	.PARAMETER VenafiSession
+	.PARAMETER TppSession
 	Session object created from New-TppSession.  Defaults to current session object.
 
 	.OUTPUTS
@@ -20,19 +20,19 @@ function Test-TppSession {
     [CmdletBinding()]
     param (
         [Parameter(ValueFromPipeline)]
-        $VenafiSession = $script:VenafiSession
+        $TppSession = $Script:TppSession
     )
 
     begin {
 
-        if ( -not ($VenafiSession.PSobject.Properties.name -contains "APIKey") ) {
-            throw "Valid VenafiSession was not provided.  Please authenticate with New-TppSession."
+        if ( -not ($TppSession.PSobject.Properties.name -contains "APIKey") ) {
+            throw "Valid TppSession was not provided.  Please authenticate with New-TppSession."
         }
         
-        If ($VenafiSession.ValidUntil -lt (Get-Date).ToUniversalTime()) {
+        If ($TppSession.ValidUntil -lt (Get-Date).ToUniversalTime()) {
             # we need to re-authenticate
             Write-Verbose "Session timeout, re-authenticating"
-            $newSession = New-TppSession -ServerUrl $VenafiSession.ServerUrl -Credential $VenafiSession.Credential -PassThrough
+            $newSession = New-TppSession -ServerUrl $TppSession.ServerUrl -Credential $TppSession.Credential -PassThrough
         }
     }
 
@@ -41,7 +41,7 @@ function Test-TppSession {
         if ( $newSession ) {
             $newSession
         } else {
-            $VenafiSession
+            $TppSession
         }
     }
 

@@ -12,8 +12,8 @@ function Invoke-TppCertificateRenewal {
 	.PARAMETER Path
 	Full path to a certificate in TPP
 
-	.PARAMETER VenafiSession
-    Session object created from New-VenafiSession method.  The value defaults to the script session object $VenafiSession.
+	.PARAMETER TppSession
+    Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
     .INPUTS
     Path (alias: DN)
@@ -36,11 +36,12 @@ function Invoke-TppCertificateRenewal {
         [alias("DN")]
         [String[]] $Path,
 
-        $VenafiSession = $Script:VenafiSession
+        [Parameter()]
+        [TppSession] $TppSession = $Script:TppSession
     )
 
     begin {
-        $VenafiSession = $VenafiSession | Test-TppSession
+        $TppSession = $TppSession | Test-TppSession
     }
 
     process {
@@ -48,7 +49,7 @@ function Invoke-TppCertificateRenewal {
         write-verbose "Renewing $Path..."
 
         $params = @{
-            VenafiSession = $VenafiSession
+            TppSession = $TppSession
             Method        = 'Post'
             UriLeaf       = 'certificates/renew'
             Body          = @{

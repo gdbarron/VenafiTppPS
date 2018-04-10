@@ -6,35 +6,27 @@ PowerShell module to access the features of Venafi Trust Protection Platform RES
 Author: Greg Brownstein
 #>
 
-$Script:VenafiSession = $null
+$Script:TppSession = $null
 $script:VenafiUrl = $null
 
-class VenafiSession {
+$folders = @('Enums', 'Classes', 'Public', 'Private')
+
+$folders | % {
+
+    $files = Get-ChildItem -Path $PSScriptRoot\$_\*.ps1 -Recurse -ErrorAction SilentlyContinue
     
-    [ValidateNotNullOrEmpty()][string] $APIKey
-    [ValidateNotNullOrEmpty()][System.Management.Automation.PSCredential] $Credential
-    [ValidateNotNullOrEmpty()][string] $ServerUrl
-    [ValidateNotNullOrEmpty()][datetime] $ValidUntil
-
-    VenafiSession($APIKey, $Credential, $ServerUrl, $ValidUntil) {
-        $this.APIKey = $APIKey
-        $this.Credential = $Credential
-        $this.ServerUrl = $ServerUrl
-        $this.ValidUntil = $ValidUntil
+    Foreach ( $thisFile in $files ) {
+        Try {
+            . $thisFile.fullname
+        } Catch {
+            Write-Error ("Failed to import function {0}: {1}" -f $thisFile.fullname, $_)
+        }
     }
 }
 
-$public = @( Get-ChildItem -Path $PSScriptRoot\public\*.ps1 -ErrorAction SilentlyContinue )
-$private = @( Get-ChildItem -Path $PSScriptRoot\private\*.ps1 -ErrorAction SilentlyContinue )
-
-Foreach ($import in @($public + $private)) {
-    Try {
-        . $import.fullname
-    } Catch {
-        Write-Error -Message "Failed to import function $($import.fullname): $_"
-    }
-}
+$publicFiles = Get-ChildItem -Path $PSScriptRoot\public\*.ps1 -Recurse -ErrorAction SilentlyContinue
 
 Export-ModuleMember -variable VenafiUrl
-Export-ModuleMember -variable VenafiSession
-Export-ModuleMember -Function $public.Basename
+Export-ModuleMember -variable TppSession
+Export-ModuleMember -Function $publicFiles.Basename
+
