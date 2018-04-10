@@ -17,8 +17,8 @@ function Get-TppConfig {
 	.PARAMETER EffectivePolicy
     Get the effective policy of the attribute
 
-	.PARAMETER VenafiSession
-    Session object created from New-TppSession method.  The value defaults to the script session object $VenafiSession.
+	.PARAMETER TppSession
+    Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 	.INPUTS
 
@@ -43,11 +43,12 @@ function Get-TppConfig {
         [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy')]
         [Switch] $EffectivePolicy,
 
-        $VenafiSession = $Script:VenafiSession
+        [Parameter()]
+        [TppSession] $TppSession = $Script:TppSession
     )
 
     begin {
-        $VenafiSession = $VenafiSession | Test-TppSession
+        $TppSession = $TppSession | Test-TppSession
 
         if ( $AttributeName ) {
             if ( $EffectivePolicy ) {
@@ -65,7 +66,7 @@ function Get-TppConfig {
         foreach ( $thisPath in $Path ) {
 
             $params = @{
-                VenafiSession = $VenafiSession
+                TppSession = $TppSession
                 Method        = 'Post'
                 UriLeaf       = $uriLeaf
                 Body          = @{
