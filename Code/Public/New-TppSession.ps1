@@ -70,29 +70,33 @@ function New-TppSession {
 		
     }
 
-    # if ( $Username -like '*\*' ) {
-    #     $username = $username.split('\')[1]
-    # }
-
-    $params = @{
-        Method    = 'Post'
-        ServerUrl = $ServerUrl
-        UriLeaf   = 'authorize'
-        Body      = @{
-            Username = $Username
-            Password = $Password
-        }
-    }
-
-    $newSession = Invoke-TppRestMethod @params
-
-    $newSession | Add-Member @{
+    $newSession = [TppSession] @{
         ServerUrl  = $ServerUrl
-        # add the credential to the session so we can reauthorize in case of timeout
         Credential = $sessionCredential
     }
 
-    $newSession = [TppSession] $newSession
+    $newSession.Connect()
+    
+    # $params = @{
+    #     Method    = 'Post'
+    #     ServerUrl = $ServerUrl
+    #     UriLeaf   = 'authorize'
+    #     Body      = @{
+    #         Username = $Username
+    #         Password = $Password
+    #     }
+    # }
+
+    # $response = Invoke-TppRestMethod @params
+
+    # # add the credential to the session so we can reauthorize in case of timeout
+    # $newSession = [TppSession] @{
+    #     ApiKey     = $response.ApiKey
+    #     ValidUntil = $response.ValidUntil
+    #     ServerUrl  = $ServerUrl
+    #     Credential = $sessionCredential
+    # }
+
     $Script:TppSession = $newSession
 
     if ( $PassThrough ) {
