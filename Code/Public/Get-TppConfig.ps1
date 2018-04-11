@@ -44,11 +44,11 @@ function Get-TppConfig {
         [Switch] $EffectivePolicy,
 
         [Parameter()]
-        [TppSession] $TppSession = $Script:TppSession
+        $TppSession = $Script:TppSession
     )
 
     begin {
-        $TppSession = $TppSession | Test-TppSession
+        $TppSession.Validate()
 
         if ( $AttributeName ) {
             if ( $EffectivePolicy ) {
