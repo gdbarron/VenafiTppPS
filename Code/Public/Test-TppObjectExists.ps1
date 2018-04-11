@@ -42,7 +42,7 @@ ObjectDN                  Found
 Test for existence of a single object by Guid
 
 #>
-function Test-TppObjectExist {
+function Test-TppObjectExists {
 
     [CmdletBinding(DefaultParameterSetName = 'DN')]
     param (
@@ -70,21 +70,17 @@ function Test-TppObjectExist {
         Switch ($PsCmdlet.ParameterSetName)	{
 
             'DN' {
-                $params = $baseParams += @{
-                    Body = @{
-                        ObjectDN = ''
-                    }
-                }
                 $parameterName = 'ObjectDN'
             }
             
             'Guid' {
-                $params = $baseParams += @{
-                    Body = @{
-                        ObjectGUID = ''
-                    }
-                }
                 $parameterName = 'ObjectGUID'
+            }
+
+            $params = $baseParams += @{
+                Body = @{
+                    $parameterName = ''
+                }
             }
 
         }
