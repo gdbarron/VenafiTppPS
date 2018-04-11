@@ -6,9 +6,6 @@ PowerShell module to access the features of Venafi Trust Protection Platform RES
 Author: Greg Brownstein
 #>
 
-$Script:TppSession = $null
-$script:VenafiUrl = $null
-
 $folders = @('Enums', 'Classes', 'Public', 'Private')
 
 $folders | % {
@@ -25,8 +22,9 @@ $folders | % {
 }
 
 $publicFiles = Get-ChildItem -Path $PSScriptRoot\public\*.ps1 -Recurse -ErrorAction SilentlyContinue
-
-Export-ModuleMember -variable VenafiUrl
-Export-ModuleMember -variable TppSession
 Export-ModuleMember -Function $publicFiles.Basename
 
+$Script:TppSession = New-Object 'TppSession'
+$script:VenafiUrl = $null
+Export-ModuleMember -variable VenafiUrl
+Export-ModuleMember -variable TppSession

@@ -83,7 +83,7 @@ function Get-TppCertificateDetail {
         [String[]] $Guid,
 
         [Parameter()]
-        $TppSession = $Script:TppSession
+        [TppSession] $TppSession = $Script:TppSession
     )
 
     begin {

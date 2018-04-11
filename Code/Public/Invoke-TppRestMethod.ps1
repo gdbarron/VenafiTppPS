@@ -26,8 +26,7 @@ function Invoke-TppRestMethod {
     param (
         [Parameter(Mandatory, ParameterSetName = 'Session')]
         [ValidateNotNullOrEmpty()]
-        [alias("sess")]
-        $TppSession,
+        [TppSession] $TppSession,
 
         [Parameter(Mandatory, ParameterSetName = 'URL')]
         [ValidateNotNullOrEmpty()]

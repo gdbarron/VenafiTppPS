@@ -44,7 +44,7 @@ function Get-TppConfig {
         [Switch] $EffectivePolicy,
 
         [Parameter()]
-        $TppSession = $Script:TppSession
+        [TppSession] $TppSession = $Script:TppSession
     )
 
     begin {

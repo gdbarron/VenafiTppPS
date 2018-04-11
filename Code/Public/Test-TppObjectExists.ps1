@@ -55,7 +55,7 @@ function Test-TppObjectExists {
         [String[]] $Guid,
 
         [Parameter()]
-        $TppSession = $Script:TppSession
+        [TppSession] $TppSession = $Script:TppSession
     )
 
     begin {
@@ -77,12 +77,12 @@ function Test-TppObjectExists {
                 $parameterName = 'ObjectGUID'
             }
 
-            $params = $baseParams += @{
-                Body = @{
-                    $parameterName = ''
-                }
-            }
+        }
 
+        $params = $baseParams += @{
+            Body = @{
+                $parameterName = ''
+            }
         }
 
         $isPipeline = $PSCmdlet.MyInvocation.ExpectingInput

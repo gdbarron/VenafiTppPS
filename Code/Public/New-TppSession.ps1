@@ -76,26 +76,6 @@ function New-TppSession {
     }
 
     $newSession.Connect()
-    
-    # $params = @{
-    #     Method    = 'Post'
-    #     ServerUrl = $ServerUrl
-    #     UriLeaf   = 'authorize'
-    #     Body      = @{
-    #         Username = $Username
-    #         Password = $Password
-    #     }
-    # }
-
-    # $response = Invoke-TppRestMethod @params
-
-    # # add the credential to the session so we can reauthorize in case of timeout
-    # $newSession = [TppSession] @{
-    #     ApiKey     = $response.ApiKey
-    #     ValidUntil = $response.ValidUntil
-    #     ServerUrl  = $ServerUrl
-    #     Credential = $sessionCredential
-    # }
 
     $Script:TppSession = $newSession
 
