@@ -6,23 +6,16 @@ class TppSession {
     [datetime] $ValidUntil
 
     TppSession () {
-        throw [System.NotImplementedException]::New()
+        # throw [System.NotImplementedException]::New()
     }
 
     TppSession ([Hashtable] $initHash) {
         $this._init($initHash)
     }
 
-    # TppSession ($APIKey, $Credential, $ServerUrl, $ValidUntil) {
-    #     $this.APIKey = $APIKey
-    #     $this.Credential = $Credential
-    #     $this.ServerUrl = $ServerUrl
-    #     $this.ValidUntil = $ValidUntil
-    # }
-
     [void] Validate() {
         if ( $null -eq $this.ApiKey ) {
-            throw "You must Connect to the TPP server"
+            throw "You must first connect to the TPP server with New-TppSession"
         }
 
         try {
