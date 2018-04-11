@@ -1,21 +1,30 @@
 <#
 .SYNOPSIS 
-Find objects which match the pattern.  Optionally, you can limit matching the pattern to certain attributes.
+Find objects by class or pattern
 
 .DESCRIPTION
 
+.PARAMETER Class
+
+.PARAMETER Classes
+
 .PARAMETER Pattern
 
-.PARAMETER AttributeNames
+.PARAMETER AttributeName
 
-.PARAMETER VenafiSession
-Session object created from New-VenafiSession method.  The value defaults to the script session object $VenafiSession.
+.PARAMETER DN
+
+.PARAMETER Recursive
+
+.PARAMETER TppSession
+Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
+
+.INPUTS
+none
 
 .OUTPUTS
 
 .EXAMPLE
-Find all certificates with a specific common name
-Get-VenafiObjectsByPattern -VenafiSession $sess -Pattern 'mysite.com' -AttributeNames 'X509 Subject'
 
 #>
 function Get-TppObject {
@@ -37,7 +46,7 @@ function Get-TppObject {
 
         [Parameter(ParameterSetName = 'Find')]
         [ValidateNotNullOrEmpty()]
-        [String[]] $AttributeNames,
+        [String[]] $AttributeName,
 
         [Parameter(ParameterSetName = 'FindByClass')]
         [ValidateNotNullOrEmpty()]
@@ -63,9 +72,9 @@ function Get-TppObject {
                 }
             }
 
-            if ( $AttributeNames ) {
+            if ( $AttributeName ) {
                 $params.body += @{
-                    AttributeNames = $AttributeNames
+                    AttributeNames = $AttributeName
                 }
             }
 
