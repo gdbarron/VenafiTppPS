@@ -37,11 +37,11 @@ function Invoke-TppCertificateRenewal {
         [String[]] $Path,
 
         [Parameter()]
-        [TppSession] $TppSession = $Script:TppSession
+        $TppSession = $Script:TppSession
     )
 
     begin {
-        $TppSession = $TppSession | Test-TppSession
+        $TppSession.Validate()
     }
 
     process {

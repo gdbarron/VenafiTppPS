@@ -1,7 +1,7 @@
 function Test-TppSession {
     <#
 	.SYNOPSIS 
-	Validate session object
+	DEPRECATED - Validate session object
 	
 	.DESCRIPTION
 	Verifies that an APIKey is still valid. If the session has expired due to a timeout, the session will be reestablished and a new key retrieved.  The new session will replace the old script scope session object.
