@@ -16,8 +16,8 @@ It is definitely recommended you provide a Query when searching with no limit.
 .PARAMETER Guid
 Guid representing a unique certificate in Venafi.
 
-.PARAMETER VenafiSession
-Session object created from New-TppSession method.  The value defaults to the script session object $VenafiSession.
+.PARAMETER TppSession
+Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
 Guid
@@ -82,18 +82,20 @@ function Get-TppCertificateDetail {
         [ValidateNotNullOrEmpty()]
         [String[]] $Guid,
 
-        $VenafiSession = $Script:VenafiSession
+        [Parameter()]
+        [TppSession] $TppSession = $Script:TppSession
     )
 
     begin {
-        $VenafiSession = $VenafiSession | Test-TppSession
+        $TppSession.Validate()
     }
 
     process {
+        
         Switch ($PsCmdlet.ParameterSetName)	{
             'Basic' {
                 $params = @{
-                    VenafiSession = $VenafiSession
+                    TppSession = $TppSession
                     Method        = 'Get'
                     UriLeaf       = 'certificates'
                     Body          = $query += @{
@@ -110,7 +112,7 @@ function Get-TppCertificateDetail {
 
             'Full' {
                 $params = @{
-                    VenafiSession = $VenafiSession
+                    TppSession = $TppSession
                     Method        = 'Get'
                     UriLeaf       = [System.Web.HttpUtility]::HtmlEncode("certificates/$GUID")
                 }

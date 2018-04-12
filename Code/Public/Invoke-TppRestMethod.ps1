@@ -5,7 +5,7 @@ function Invoke-TppRestMethod {
 	
 	.DESCRIPTION
 	
-	.PARAMETER VenafiSession
+	.PARAMETER TppSession
 
 	.PARAMETER Method
 
@@ -26,8 +26,7 @@ function Invoke-TppRestMethod {
     param (
         [Parameter(Mandatory, ParameterSetName = 'Session')]
         [ValidateNotNullOrEmpty()]
-        [alias("sess")]
-        $VenafiSession,
+        [TppSession] $TppSession,
 
         [Parameter(Mandatory, ParameterSetName = 'URL')]
         [ValidateNotNullOrEmpty()]
@@ -51,8 +50,10 @@ function Invoke-TppRestMethod {
 
     Switch ($PsCmdlet.ParameterSetName)	{
         "Session" {
-            $ServerUrl = $VenafiSession.ServerUrl
-            $hdr = @{ "X-Venafi-Api-Key" = $VenafiSession.ApiKey }
+            $ServerUrl = $TppSession.ServerUrl
+            $hdr = @{
+                "X-Venafi-Api-Key" = $TppSession.ApiKey
+            }
         }
     }
 

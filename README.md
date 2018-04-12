@@ -25,3 +25,6 @@ For one off calls to TPP for which no functions have been created yet :)
 
 ### [New-TppSession]
 Authenticates a user against a configured Trust	Protection Platform identity provider (e.g. Active Directory, LDAP, or Local). After the user is authenticated, Trust Protection Platform returns an API key allowing access to all other REST calls.
+
+### [Test-TppObjectExists]
+Validate either a DN or GUID exists.
