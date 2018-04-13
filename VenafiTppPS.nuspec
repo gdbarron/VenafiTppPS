@@ -15,6 +15,6 @@
     <tags>PowerShell Venafi</tags>
   </metadata>
   <files>
-    <file src="code\**\*.*" />
+    <file src="VenafiTppPS\**\*.*" />
 </files>
 </package>
