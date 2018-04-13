@@ -1,6 +1,3 @@
-# version format
-version: 0.1.{build}
-
 environment:
   NuGetApiKey:
     secure: HsBLvfyw/ptgSVZZ1ghzfuMEfGKhTwVNqaK2KeuwQyj6ksgYpkgzF89EJTtu339V
