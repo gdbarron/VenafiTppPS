@@ -2,5 +2,5 @@ environment:
   NuGetApiKey:
     secure: HsBLvfyw/ptgSVZZ1ghzfuMEfGKhTwVNqaK2KeuwQyj6ksgYpkgzF89EJTtu339V
 
-test_script:
+build_script:
   - ps: . .\build.ps1
