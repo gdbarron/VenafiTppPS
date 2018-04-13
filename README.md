@@ -1,6 +1,7 @@
 # VenafiTppPS - PowerShell module for Venafi Trust Protection Platform
 
-[![Build status](https://ci.appveyor.com/api/projects/status/vxyan36tsimle56b?svg=true)](https://ci.appveyor.com/project/GregBrownstein/venafitppps)
+[![Build status](https://ci.appveyor.com/api/projects/status/vxyan36tsimle56b/branch/master?svg=true&passingText=master%20-%20passing)](https://ci.appveyor.com/project/GregBrownstein/venafitppps)
+[![Build status](https://ci.appveyor.com/api/projects/status/vxyan36tsimle56b/branch/develop?svg=true&passingText=develop%20-%20passing)](https://ci.appveyor.com/project/GregBrownstein/venafitppps)
 
 After loading the module, create a new session with
 ```
@@ -24,3 +25,6 @@ For one off calls to TPP for which no functions have been created yet :)
 
 ### [New-TppSession]
 Authenticates a user against a configured Trust	Protection Platform identity provider (e.g. Active Directory, LDAP, or Local). After the user is authenticated, Trust Protection Platform returns an API key allowing access to all other REST calls.
+
+### [Test-TppObjectExists]
+Validate either a DN or GUID exists.
