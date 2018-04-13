@@ -5,6 +5,7 @@ Find objects by class or pattern
 .DESCRIPTION
 
 .PARAMETER Class
+Single class to search
 
 .PARAMETER Classes
 
