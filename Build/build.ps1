@@ -3,7 +3,7 @@ param(
 )
 
 # dependencies
-Get-PackageProvider -Name NuGet -ForceBootstrap | Out-Null
+Get-PackageProvider -Name NuGet -ForceBootstrap -verbose | Out-Null
 if (-not (Get-Module -ListAvailable PSDepend)) {
     & (Resolve-Path "$PSScriptRoot\helpers\Install-PSDepend.ps1")
 }
