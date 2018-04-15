@@ -20,6 +20,7 @@ Get the effective policy of the attribute
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
+DN
 
 .OUTPUTS
 
