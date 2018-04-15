@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS 
-Create a new Venafi session
+Create a new Venafi TPP session
 
 .DESCRIPTION
 Authenticates a user via a username and password against a configured Trust
@@ -20,7 +20,7 @@ Username to authenticate to ServerUrl with
 .PARAMETER SecurePassword
 SecureString password to authenticate to ServerUrl with
 
-.PARAMETER PassThrough
+.PARAMETER PassThru
 Optionally, send the session object to the pipeline.
 
 .OUTPUTS
@@ -49,7 +49,7 @@ function New-TppSession {
         [Security.SecureString] $SecurePassword,
 
         [Parameter()]
-        [switch] $PassThrough
+        [switch] $PassThru
     )
 
     Switch ($PsCmdlet.ParameterSetName)	{
@@ -79,7 +79,7 @@ function New-TppSession {
 
     $Script:TppSession = $newSession
 
-    if ( $PassThrough ) {
+    if ( $PassThru ) {
         $newSession
     }
 }
