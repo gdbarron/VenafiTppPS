@@ -5,4 +5,4 @@ environment:
 build: false
 
 test_script:
-  - ps: . .\build.ps1
+  - ps: . .\build\build.ps1 -Task Deploy

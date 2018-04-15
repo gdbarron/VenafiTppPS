@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>VenafiTppPS</id>
-    <version>0.1.0</version>
+    <version>0.1.2</version>
     <authors>Greg Brownstein</authors>
     <owners>Greg Brownstein</owners>
     <projectUrl>https://github.com/gdbarron/VenafiTppPS</projectUrl>

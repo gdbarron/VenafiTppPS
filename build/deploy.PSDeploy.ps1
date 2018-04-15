@@ -1,27 +1,32 @@
 # Generic module deployment.
-# This stuff should be moved to psake for a cleaner deployment view
-
+#
 # ASSUMPTIONS:
-
-# folder structure of:
-# - RepoFolder
-#   - This PSDeploy file
-#   - ModuleName
-#     - ModuleName.psd1
-
-# Nuget key in $ENV:NugetApiKey
-
-# Set-BuildEnvironment from BuildHelpers module has populated ENV:BHProjectName
+#
+# * folder structure either like:
+#
+#   - RepoFolder
+#     - This PSDeploy file
+#     - ModuleName
+#       - ModuleName.psd1
+#
+#   OR the less preferable:
+#   - RepoFolder
+#     - RepoFolder.psd1
+#
+# * Nuget key in $ENV:NugetApiKey
+#
+# * Set-BuildEnvironment from BuildHelpers module has populated ENV:BHModulePath and related variables
 
 # Publish to gallery with a few restrictions
 if (
-    $env:BHPSModulePath -and
+    $env:BHModulePath -and
     $env:BHBuildSystem -ne 'Unknown' -and
-    $env:BHBranchName -eq "master" #-and $env:BHCommitMessage -match '!deploy'
+    $env:BHBranchName -eq "master" -and
+    $env:BHCommitMessage -match '!deploy'
 ) {
     Deploy Module {
         By PSGalleryModule {
-            FromSource $ENV:BHPSModulePath
+            FromSource $ENV:BHModulePath
             To PSGallery
             WithOptions @{
                 ApiKey = $ENV:NugetApiKey
@@ -38,12 +43,12 @@ if (
 
 # Publish to AppVeyor if we're in AppVeyor
 if (
-    $env:BHPSModulePath -and
+    $env:BHModulePath -and
     $env:BHBuildSystem -eq 'AppVeyor'
 ) {
     Deploy DeveloperBuild {
         By AppVeyorModule {
-            FromSource $ENV:BHPSModulePath
+            FromSource $ENV:BHModulePath
             To AppVeyor
             WithOptions @{
                 Version = $env:APPVEYOR_BUILD_VERSION
