@@ -66,6 +66,9 @@ Find all certificates in the specified folder and subfolders, but limit the resu
 $certs | Get-TppCertificateDetail
 Get detailed certificate info after performing basic query
 
+.LINK
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppCertificateDetail.ps1
+
 #>
 function Get-TppCertificateDetail {
 
