@@ -6,3 +6,5 @@ build: false
 
 test_script:
   - ps: . .\build\build.ps1 -Task Deploy
+
+clone_folder: c:\projects\VenafiTppPS
