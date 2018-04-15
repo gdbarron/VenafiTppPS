@@ -1,27 +1,27 @@
+<#
+.SYNOPSIS 
+Generic REST call for Venafi
+
+.DESCRIPTION
+
+.PARAMETER TppSession
+
+.PARAMETER Method
+
+.PARAMETER UriLeaf
+
+.PARAMETER Header
+
+.PARAMETER Body
+
+.INPUTS
+
+.OUTPUTS
+
+.EXAMPLE
+
+#>
 function Invoke-TppRestMethod {
-    <#
-	.SYNOPSIS 
-	Generic REST call for Venafi
-	
-	.DESCRIPTION
-	
-	.PARAMETER TppSession
-
-	.PARAMETER Method
-
-	.PARAMETER UriLeaf
-
-	.PARAMETER Header
-
-	.PARAMETER Body
-
-	.INPUTS
-
-	.OUTPUTS
-
-	.EXAMPLE
-
-	#>
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ParameterSetName = 'Session')]
