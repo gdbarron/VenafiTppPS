@@ -18,24 +18,30 @@ class TppSession {
             throw "You must first connect to the TPP server with New-TppSession"
         }
 
-        try {
-            $params = @{
-                Method      = 'Get'
-                Uri         = ("{0}/vedsdk/authorize/checkvalid" -f $this.ServerUrl)
-                Headers     = @{
-                    "X-Venafi-Api-Key" = $this.ApiKey
+        # if we know the session is still valid, don't bother checking with the server
+        # add a couple of seconds so we don't get caught making the call as it expires
+        Write-Verbose ("ValidUntil: {0}, Current (+2s): {1}" -f $this.ValidUntil, (Get-Date).ToUniversalTime().AddSeconds(2))
+        if ( $this.ValidUntil -lt (Get-Date).ToUniversalTime().AddSeconds(2) ) {
+
+            try {
+                $params = @{
+                    Method      = 'Get'
+                    Uri         = ("{0}/vedsdk/authorize/checkvalid" -f $this.ServerUrl)
+                    Headers     = @{
+                        "X-Venafi-Api-Key" = $this.ApiKey
+                    }
+                    ContentType = 'application/json'
                 }
-                ContentType = 'application/json'
-            }
-            Invoke-RestMethod @params
-        } catch {
-            # tpp sessions timeout after 3 mins of inactivity
-            # reestablish connection
-            if ( $_.Exception.Response.StatusCode.value__ -eq '401' ) {
-                Write-Verbose "Unauthorized, re-authenticating"
-                $this.Connect()
-            } else {
-                throw $_
+                Invoke-RestMethod @params
+            } catch {
+                # tpp sessions timeout after 3 mins of inactivity
+                # reestablish connection
+                if ( $_.Exception.Response.StatusCode.value__ -eq '401' ) {
+                    Write-Verbose "Unauthorized, re-authenticating"
+                    $this.Connect()
+                } else {
+                    throw $_
+                }
             }
         }
     }
