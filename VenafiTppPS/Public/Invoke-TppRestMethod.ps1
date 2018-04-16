@@ -59,11 +59,8 @@ function Invoke-TppRestMethod {
 
     $uri = Join-UriPath @($ServerUrl, "vedsdk", $UriLeaf)
 
-    Write-Verbose ("URI: {0}" -f $uri)
-		
     if ( $Header ) {
         $hdr += $Header
-        Write-Verbose ("Adding to header {0}" -f $Header | out-string)
     }
 		
     if ( $Body ) {
@@ -72,7 +69,6 @@ function Invoke-TppRestMethod {
             $restBody = ConvertTo-Json $Body -depth 5 
         }
     }
-    Write-Verbose ("Body: {0}" -f $restBody | Out-String)
 
     $params = @{
         Method      = $Method
@@ -82,7 +78,7 @@ function Invoke-TppRestMethod {
         ContentType = 'application/json'
     }
 
-    Write-Verbose ($params | out-string)
+    Write-Verbose ($params | ConvertTo-Json | out-string)
     Invoke-RestMethod @params
 }
 
