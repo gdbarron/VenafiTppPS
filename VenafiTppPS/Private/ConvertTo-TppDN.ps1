@@ -1,28 +1,21 @@
 <#
 .SYNOPSIS 
-Find objects by class or pattern
+Convert GUID to DN
 
 .DESCRIPTION
+Convert GUID to DN
 
-.PARAMETER Class
-
-.PARAMETER Classes
-
-.PARAMETER Pattern
-
-.PARAMETER AttributeName
-
-.PARAMETER DN
-
-.PARAMETER Recursive
+.PARAMETER Guid
+Standard guid including { and }
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-none
+Guid
 
 .OUTPUTS
+System.String
 
 .EXAMPLE
 
@@ -32,7 +25,14 @@ function ConvertTo-TppDN {
     param (
         [Parameter(Mandatory, ParameterSetName = 'Guid', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [String] $Guid,
+        [ValidateScript( {
+                if ( $_ -match "^{[A-Z0-9]{8}-([A-Z0-9]{4}-){3}[A-Z0-9]{12}}$" ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid GUID"
+                }
+            })]
+        [String[]] $Guid,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession

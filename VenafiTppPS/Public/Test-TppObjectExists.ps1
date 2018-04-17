@@ -6,40 +6,28 @@ Test if an object exists
 Provided with either a DN path or GUID, find out if an object exists.
 
 .PARAMETER DN
-DN path to object
+DN path to object.  Provide either this or Guid.  This is the default if both are provided.
 
 .PARAMETER Guid
-Guid which represents a unqiue object
+Guid which represents a unqiue object  Provide either this or DN.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-DN or Guid
+DN or Guid.  The default is DN, but both are of type string.
 
 .OUTPUTS
-If providing a DN or Guid via the pipeline, a PSCustomObject will be returned with properties Object and Found.  Object will be either the DN or Guid provided and Found is a boolean if the Object was found.  Otherwise, this function simply returns a boolean.
-
-.EXAMPLE
-Test-TppObjectExist -DN '\VED\Policy\My Folder'
-False
-
-Test for existence of a single object by DN
-
-.EXAMPLE
-Test-TppObjectExist -Guid '{1234-5555555-777777-xxssss}
-True
-
-Test for existence of a single object by Guid
+PSCustomObject will be returned with properties 'Object', a System.String, and 'Exists', a System.Boolean.
 
 .EXAMPLE
 $multDNs | Test-TppObjectExist
-ObjectDN                  Found
+Object                    Exists
 --------                  -----
 \VED\Policy\My folder1    True
 \VED\Policy\My folder2    False
 
-Test for existence of a single object by Guid
+Test for existence by DN
 
 #>
 function Test-TppObjectExists {
@@ -48,11 +36,26 @@ function Test-TppObjectExists {
     param (
         [Parameter(Mandatory, ParameterSetName = 'DN', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
+        [ValidateScript( {
+                # this regex could be better
+                if ( $_ -match "^\\VED\\Policy\\.*" ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid DN"
+                }
+            })]
         [string[]] $DN,
         
         [Parameter(Mandatory, ParameterSetName = 'Guid', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [String[]] $Guid,
+        [ValidateScript( {
+                if ( $_ -match "^{[A-Z0-9]{8}-([A-Z0-9]{4}-){3}[A-Z0-9]{12}}$" ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid GUID"
+                }
+            })]
+        [string[]] $Guid,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -70,51 +73,35 @@ function Test-TppObjectExists {
         Switch ($PsCmdlet.ParameterSetName)	{
 
             'DN' {
-                $parameterName = 'ObjectDN'
+                $restParameterName = 'ObjectDN'
+                $boundParameter = 'DN'
             }
             
             'Guid' {
-                $parameterName = 'ObjectGUID'
+                $restParameterName = 'ObjectGUID'
+                $boundParameter = 'Guid'
             }
 
         }
 
         $params = $baseParams += @{
             Body = @{
-                $parameterName = ''
+                $restParameterName = ''
             }
         }
-
-        $isPipeline = $PSCmdlet.MyInvocation.ExpectingInput
-
     }
 
     process {
 
-        Switch ($PsCmdlet.ParameterSetName)	{
+        foreach ( $thisValue in $PsBoundParameters[$boundParameter] ) {
 
-            'DN' {
-                $iterateValue = $DN
-            }
-
-            'Guid' {
-                $iterateValue = $Guid
-            }
-        }
-
-        foreach ( $thisValue in $iterateValue ) {
-
-            $params.body[$parameterName] = $thisValue
+            $params.body[$restParameterName] = $thisValue
 
             $response = Invoke-TppRestMethod @params
 
-            if ( $isPipeline ) {
-                [PSCustomObject] @{
-                    'Object' = $thisValue
-                    Found    = ($response.Result -eq [ConfigResult]::Success)
-                }
-            } else {
-                $response.Result -eq [ConfigResult]::Success
+            [PSCustomObject] @{
+                Object = $thisValue
+                Exists = ($response.Result -eq [ConfigResult]::Success)
             }
         }
     }
