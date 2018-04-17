@@ -33,8 +33,15 @@ function Invoke-TppCertificateRenewal {
     param (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [alias("DN")]
-        [String[]] $Path,
+        [ValidateScript( {
+                # this regex could be better
+                if ( $_ -match "^\\VED\\Policy\\.*" ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid DN"
+                }
+            })]
+        [String] $DN,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -46,19 +53,21 @@ function Invoke-TppCertificateRenewal {
 
     process {
 
-        write-verbose "Renewing $Path..."
+        write-verbose "Renewing $DN..."
 
         $params = @{
             TppSession = $TppSession
-            Method        = 'Post'
-            UriLeaf       = 'certificates/renew'
-            Body          = @{
-                CertificateDN = $Path
+            Method     = 'Post'
+            UriLeaf    = 'certificates/renew'
+            Body       = @{
+                CertificateDN = $DN
             }
         }
+
         $response = Invoke-TppRestMethod @params
-        $response | Add-Member @{'DN' = $Path}
+        $response | Add-Member @{
+            'DN' = $DN
+        }
         $response
     }
-	
 }
