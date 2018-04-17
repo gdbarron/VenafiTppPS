@@ -3,19 +3,30 @@
 Find objects by class or pattern
 
 .DESCRIPTION
+Find objects by class or pattern
 
 .PARAMETER Class
-Single class to search
+Single class name to search
 
 .PARAMETER Classes
+List of class names to search on
 
 .PARAMETER Pattern
+A pattern to match against object attribute values:
+
+- To list DNs that include an asterisk (*) or question mark (?), prepend two backslashes (\\). For example, \\*.MyCompany.net treats the asterisk as a literal character and returns only certificates with DNs that match *.MyCompany.net.
+- To list DNs with a wildcard character, append a question mark (?). For example, "test_?.mycompany.net" counts test_1.MyCompany.net and test_2.MyCompany.net but not test12.MyCompany.net.
+- To list DNs with similar names, prepend an asterisk. For example, *est.MyCompany.net, counts Test.MyCompany.net and West.MyCompany.net.
+You can also use both literals and wildcards in a pattern.
 
 .PARAMETER AttributeName
+A list of attribute names to limit the search against
 
 .PARAMETER DN
+The starting DN of the object to search for subordinates under. ObjectDN and Recursive is only supported if Class is provided
 
 .PARAMETER Recursive
+Searches the subordinates of the object specified in DN
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -24,8 +35,23 @@ Session object created from New-TppSession method.  The value defaults to the sc
 none
 
 .OUTPUTS
+PSCustomObject with the following properties:
+    AbsoluteGUID: The left-to-right concatenation of all of the GUIDs for all of the objects in the DN.
+    DN: The Distinguished Name (DN) of the object.
+    GUID: The GUID that identifies the object.
+    ID: The object identifier.
+    Name: The Common Name (CN) of the object.
+    Parent: The parent DN of the object.
+    Revision: The revision of the object.
+    TypeName: the class name of the object.
 
 .EXAMPLE
+Get-TppObject -class 'iis6'
+Get all objects of the type iis6
+
+.EXAMPLE
+Get-TppObject -classes 'iis6', 'capi'
+Get all objects of the type iis6 or capi
 
 #>
 function Get-TppObject {
@@ -51,6 +77,14 @@ function Get-TppObject {
 
         [Parameter(ParameterSetName = 'FindByClass')]
         [ValidateNotNullOrEmpty()]
+        [ValidateScript( {
+                # this regex could be better
+                if ( $_ -match "^\\VED\\Policy\\.*" ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid DN"
+                }
+            })]
         [String] $DN,
         
         [Parameter(ParameterSetName = 'FindByClass')]
