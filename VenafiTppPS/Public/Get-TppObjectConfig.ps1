@@ -7,8 +7,8 @@ Retrieves object’s attributes.  You can either retrieve all attributes or indi
 By default, the attributes returned are not the effective policy, but that can be requested with the
 EffectivePolicy switch.
 
-.PARAMETER Path
-Path to the object to retrieve configuration attributes.  Just providing Path will return all attributes.
+.PARAMETER DN
+Path to the object to retrieve configuration attributes.  Just providing DN will return all attributes.
 
 .PARAMETER AttributeName
 Only retrieve the value/values for this attribute
@@ -33,6 +33,14 @@ function Get-TppObjectConfig {
         [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy', ValueFromPipelineByPropertyName)]
         [Parameter(Mandatory, ParameterSetName = 'NonEffectivePolicy', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
+        [ValidateScript( {
+                # this regex could be better
+                if ( $_ -match "^\\VED\\Policy\\.*" ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid DN"
+                }
+            })]
         [String[]] $DN,
         
         [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy')]
