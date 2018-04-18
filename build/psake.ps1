@@ -245,9 +245,9 @@ Task Deploy -Depends BuildDocs {
     #     "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
     #     "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)"
     # }
-# }
+}
 
-# Task PostDeploy -depends Deploy {
+Task PostDeploy -depends Deploy {
     $lines
     if ($ENV:APPVEYOR_REPO_PROVIDER -notlike 'github') {
         "Repo provider '$ENV:APPVEYOR_REPO_PROVIDER'. Skipping PostDeploy"
