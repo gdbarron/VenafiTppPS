@@ -3,6 +3,8 @@ repo_url: https://github.com/gdbarron/VenafiTppPS
 site_author: Greg Brownstein
 edit_uri: edit/master/docs/
 theme: readthedocs
+copyright: ""
+pages:
   - Functions:
     - Get-TppCertificateDetail: functions/Get-TppCertificateDetail.md
     - Get-TppObject: functions/Get-TppObject.md
