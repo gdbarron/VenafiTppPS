@@ -1,6 +1,8 @@
 environment:
   NuGetApiKey:
     secure: HsBLvfyw/ptgSVZZ1ghzfuMEfGKhTwVNqaK2KeuwQyj6ksgYpkgzF89EJTtu339V
+  access_token:
+    secure: pO4M6LAK9BAwbx2LImCHExuRtrpFdRNVpy7q+AckC8P9lXuAjO6d1mRKPwprLcOW
 
 build: false
 
