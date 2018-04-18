@@ -51,6 +51,7 @@ function New-TppObject {
         [TppSession] $TppSession = $Script:TppSession
     )
 
+    # validation should take place in the calling function
     # $TppSession.Validate()
 
     # ensure the object doesn't already exist
@@ -58,10 +59,10 @@ function New-TppObject {
         throw ("{0} already exists" -f $DN)
     }
     
-    # TODO: ensure the parent folder exists
-    # if ( (Test-TppObjectExists -DN $DN).Exists ) {
-    #     throw ("{0} already exists" -f $DN)
-    # }
+    # ensure the parent folder exists
+    if ( (Test-TppObjectExists -DN (Split-Path $DN -Parent)).Exists ) {
+        throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path $DN -Parent))
+    }
     
     $params = @{
         TppSession = $TppSession
