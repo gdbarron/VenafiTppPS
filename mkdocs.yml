@@ -1,0 +1,14 @@
+site_name: VenafiTppPS
+repo_url: https://github.com/gdbarron/VenafiTppPS
+site_author: Greg Brownstein
+edit_uri: edit/master/docs/
+theme: readthedocs
+  - Functions:
+    - Get-TppCertificateDetail: functions/Get-TppCertificateDetail.md
+    - Get-TppObject: functions/Get-TppObject.md
+    - Get-TppObjectConfig: functions/Get-TppObjectConfig.md
+    - Invoke-TppCertificateRenewal: functions/Invoke-TppCertificateRenewal.md
+    - New-TppCapiApplication: functions/New-TppCapiApplication.md
+    - New-TppSession: functions/New-TppSession.md
+    - Test-TppObjectExists: functions/Test-TppObjectExists.md
+
