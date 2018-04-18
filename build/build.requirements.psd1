@@ -9,6 +9,9 @@
     'psake'         = @{
         DependencyType = 'PSGalleryNuget'
     }
+    'PlatyPS'         = @{
+        DependencyType = 'PSGalleryNuget'
+    }
     'PSDeploy'      = @{
         DependencyType = 'PSGalleryNuget'
         Version        = '0.2.2'
