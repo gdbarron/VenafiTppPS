@@ -1,16 +1,13 @@
-param(
-    $Task = 'Default'
-)
+param ($Task = 'Default')
 
-# dependencies
-Get-PackageProvider -Name NuGet -ForceBootstrap -verbose | Out-Null
-if (-not (Get-Module -ListAvailable PSDepend)) {
-    & (Resolve-Path "$PSScriptRoot\helpers\Install-PSDepend.ps1")
-}
-Import-Module PSDepend
-$null = Invoke-PSDepend -Path "$PSScriptRoot\build.requirements.psd1" -Install -Import -Force
+# Grab nuget bits, install modules, set build variables, start build.
+Get-PackageProvider -Name NuGet -ForceBootstrap | Out-Null
 
-Set-BuildEnvironment -Force -Path $PSScriptRoot\..
+Install-Module Psake, PSDeploy, BuildHelpers, platyPS, PSScriptAnalyzer -force
+Install-Module Pester -Force -SkipPublisherCheck
+Import-Module Psake, BuildHelpers, platyPS, PSScriptAnalyzer
 
-Invoke-psake $PSScriptRoot\psake.ps1 -taskList $Task -nologo
-exit ( [int]( -not $psake.build_success ) )
+Set-BuildEnvironment
+
+Invoke-psake -buildFile .\psake.ps1 -taskList $Task -nologo
+exit ([int](-not $psake.build_success))

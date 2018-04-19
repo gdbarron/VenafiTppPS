@@ -21,7 +21,8 @@ Properties {
     If ($GalleryVersion -gt $StepVersion) {
         $BuildVersion = $GalleryVersion
     }
-    $BuildVersion = [version]::New($BuildVersion.Major, $BuildVersion.Minor, $BuildVersion.Build, $env:BHBuildNumber)
+    $BuildVersion = [version]::New($BuildVersion.Major, $BuildVersion.Minor, $BuildVersion.Build)
+    # $BuildVersion = [version]::New($BuildVersion.Major, $BuildVersion.Minor, $BuildVersion.Build, $env:BHBuildNumber)
     $BuildDate = Get-Date -uFormat '%Y-%m-%d'
     $ReleaseNotes = "$ProjectRoot\RELEASE.md"
     $ChangeLog = "$ProjectRoot\docs\ChangeLog.md"
@@ -228,23 +229,23 @@ Task Deploy -Depends BuildDocs {
     $lines
     
     # Gate deployment
-    # if (
-    #     $ENV:BHBuildSystem -ne 'Unknown' -and
-    #     $ENV:BHBranchName -eq "master" -and
-    #     $ENV:BHCommitMessage -match '!deploy'
-    # ) {
+    if (
+        $ENV:BHBuildSystem -ne 'Unknown' -and
+        $ENV:BHBranchName -eq "master" -and
+        $ENV:BHCommitMessage -match '!deploy'
+    ) {
         $Params = @{
             Path  = $ProjectRoot
             Force = $true
         }
         
         Invoke-PSDeploy @Verbose @Params
-    # } else {
-    #     "Skipping deployment: To deploy, ensure that...`n" +
-    #     "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" +
-    #     "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
-    #     "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)"
-    # }
+    } else {
+        "Skipping deployment: To deploy, ensure that...`n" +
+        "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" +
+        "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
+        "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)"
+    }
 }
 
 Task PostDeploy -depends Deploy {
