@@ -3,7 +3,7 @@
 Get attributes for a given object
 
 .DESCRIPTION
-Retrieves object’s attributes.  You can either retrieve all attributes or individual ones.
+Retrieves object attributes.  You can either retrieve all attributes or individual ones.
 By default, the attributes returned are not the effective policy, but that can be requested with the
 EffectivePolicy switch.
 
