@@ -26,6 +26,21 @@ DN
 
 .EXAMPLE
 
+.LINK
+http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObjectConfig/
+
+.LINK
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppObjectConfig.ps1
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-read.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____26
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-readall.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____27
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-readeffectivepolicy.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____30
+
 #>
 function Get-TppObjectConfig {
     [CmdletBinding()]

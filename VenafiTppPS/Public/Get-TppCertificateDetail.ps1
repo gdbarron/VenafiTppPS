@@ -67,7 +67,19 @@ $certs | Get-TppCertificateDetail
 Get detailed certificate info after performing basic query
 
 .LINK
+http://venafitppps.readthedocs.io/en/latest/functions/Get-TppCertificateDetail/
+
+.LINK
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppCertificateDetail.ps1
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Certificates.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____3
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Certificates-guid.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____5
+
+.LINK
+https://msdn.microsoft.com/en-us/library/system.web.httputility(v=vs.110).aspx
 
 #>
 function Get-TppCertificateDetail {

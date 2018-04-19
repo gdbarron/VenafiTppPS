@@ -27,6 +27,15 @@ Error - Indicates any errors that occurred. Not returned when successful
 .EXAMPLE
 Invoke-TppCertificateRenew -Path '\VED\Policy\My folder\app.mycompany.com'
 
+.LINK
+http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificateRenewal/
+
+.LINK
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Invoke-TppCertificateRenewal.ps1
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-renew.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____9
+
 #>
 function Invoke-TppCertificateRenewal {
     [CmdletBinding()]

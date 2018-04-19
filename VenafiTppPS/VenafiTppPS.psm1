@@ -10,7 +10,8 @@ $folders = @('Enums', 'Classes', 'Public', 'Private')
 
 $folders | % {
 
-    $files = Get-ChildItem -Path $PSScriptRoot\$_\*.ps1 -Recurse -ErrorAction SilentlyContinue
+    $files = Get-ChildItem -Path $PSScriptRoot\$_\*.ps1 -Recurse
+    # $files = Get-ChildItem -Path $PSScriptRoot\$_\*.ps1 -Recurse -ErrorAction SilentlyContinue
     
     Foreach ( $thisFile in $files ) {
         Try {
