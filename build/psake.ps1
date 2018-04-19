@@ -240,84 +240,90 @@ Task Deploy -Depends BuildDocs {
         }
         
         Invoke-PSDeploy @Verbose @Params
+        # } else {
+        #     Write-Error "Skipping deployment: To deploy, ensure that...`n" +
+        #     "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" +
+        #     "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
+        #     "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)"
+        # }
+        # }
+
+        # Task PostDeploy -depends Deploy {
+        $lines
+        if ($ENV:APPVEYOR_REPO_PROVIDER -notlike 'github') {
+            "Repo provider '$ENV:APPVEYOR_REPO_PROVIDER'. Skipping PostDeploy"
+            return
+        }
+        If ($ENV:BHBuildSystem -eq 'AppVeyor') {
+            "git config --global credential.helper store"
+            cmd /c "git config --global credential.helper store 2>&1"
+        
+            Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
+        
+            "git config --global user.email"
+            cmd /c "git config --global user.email ""$($ENV:BHProjectName)-$($ENV:BHBranchName)-$($ENV:BHBuildSystem)@markekraus.com"" 2>&1"
+        
+            "git config --global user.name"
+            cmd /c "git config --global user.name ""AppVeyor"" 2>&1"
+        
+            "git config --global core.autocrlf true"
+            cmd /c "git config --global core.autocrlf true 2>&1"
+        }
+    
+        "git checkout $ENV:BHBranchName"
+        cmd /c "git checkout $ENV:BHBranchName 2>&1"
+    
+        "git add -A"
+        cmd /c "git add -A 2>&1"
+    
+        "git commit -m"
+        cmd /c "git commit -m ""AppVeyor post-build commit[ci skip]"" 2>&1"
+    
+        "git status"
+        cmd /c "git status 2>&1"
+    
+        "git push origin $ENV:BHBranchName"
+        cmd /c "git push origin $ENV:BHBranchName 2>&1"
+        # if this is a !deploy on master, create GitHub release
+        if (
+            $ENV:BHBuildSystem -ne 'Unknown' -and
+            $ENV:BHBranchName -eq "master" -and
+            $ENV:BHCommitMessage -match '!deploy'
+        ) {
+            "Publishing Release 'v$BuildVersion' to Github"
+            $parameters = @{
+                Path        = $ReleaseNotes
+                ErrorAction = 'SilentlyContinue'
+            }
+            $ReleaseText = (Get-Content @parameters) -join "`r`n"
+            if (-not $ReleaseText) {
+                $ReleaseText = "Release version $BuildVersion ($BuildDate)"
+            }
+            $Body = @{
+                "tag_name"         = "v$BuildVersion"
+                "target_commitish" = "master"
+                "name"             = "v$BuildVersion"
+                "body"             = $ReleaseText
+                "draft"            = $false
+                "prerelease"       = $false
+            } | ConvertTo-Json
+            $releaseParams = @{
+                Uri         = "https://api.github.com/repos/{0}/releases" -f $ENV:APPVEYOR_REPO_NAME
+                Method      = 'POST'
+                Headers     = @{
+                    Authorization = 'Basic ' + [Convert]::ToBase64String(
+                        [Text.Encoding]::ASCII.GetBytes($env:access_token + ":x-oauth-basic"));
+                }
+                ContentType = 'application/json'
+                Body        = $Body
+            }
+            $Response = Invoke-RestMethod @releaseParams
+            $Response | Format-List *
+        }
     } else {
-        "Skipping deployment: To deploy, ensure that...`n" +
+        Write-Error "Skipping deployment: To deploy, ensure that...`n" +
         "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" +
         "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
         "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)"
-    }
-}
-
-Task PostDeploy -depends Deploy {
-    $lines
-    if ($ENV:APPVEYOR_REPO_PROVIDER -notlike 'github') {
-        "Repo provider '$ENV:APPVEYOR_REPO_PROVIDER'. Skipping PostDeploy"
-        return
-    }
-    If ($ENV:BHBuildSystem -eq 'AppVeyor') {
-        "git config --global credential.helper store"
-        cmd /c "git config --global credential.helper store 2>&1"
-        
-        Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
-        
-        "git config --global user.email"
-        cmd /c "git config --global user.email ""$($ENV:BHProjectName)-$($ENV:BHBranchName)-$($ENV:BHBuildSystem)@markekraus.com"" 2>&1"
-        
-        "git config --global user.name"
-        cmd /c "git config --global user.name ""AppVeyor"" 2>&1"
-        
-        "git config --global core.autocrlf true"
-        cmd /c "git config --global core.autocrlf true 2>&1"
-    }
-    
-    "git checkout $ENV:BHBranchName"
-    cmd /c "git checkout $ENV:BHBranchName 2>&1"
-    
-    "git add -A"
-    cmd /c "git add -A 2>&1"
-    
-    "git commit -m"
-    cmd /c "git commit -m ""AppVeyor post-build commit[ci skip]"" 2>&1"
-    
-    "git status"
-    cmd /c "git status 2>&1"
-    
-    "git push origin $ENV:BHBranchName"
-    cmd /c "git push origin $ENV:BHBranchName 2>&1"
-    # if this is a !deploy on master, create GitHub release
-    if (
-        $ENV:BHBuildSystem -ne 'Unknown' -and
-        $ENV:BHBranchName -eq "master" -and
-        $ENV:BHCommitMessage -match '!deploy'
-    ) {
-        "Publishing Release 'v$BuildVersion' to Github"
-        $parameters = @{
-            Path        = $ReleaseNotes
-            ErrorAction = 'SilentlyContinue'
-        }
-        $ReleaseText = (Get-Content @parameters) -join "`r`n"
-        if (-not $ReleaseText) {
-            $ReleaseText = "Release version $BuildVersion ($BuildDate)"
-        }
-        $Body = @{
-            "tag_name"         = "v$BuildVersion"
-            "target_commitish" = "master"
-            "name"             = "v$BuildVersion"
-            "body"             = $ReleaseText
-            "draft"            = $false
-            "prerelease"       = $false
-        } | ConvertTo-Json
-        $releaseParams = @{
-            Uri         = "https://api.github.com/repos/{0}/releases" -f $ENV:APPVEYOR_REPO_NAME
-            Method      = 'POST'
-            Headers     = @{
-                Authorization = 'Basic ' + [Convert]::ToBase64String(
-                    [Text.Encoding]::ASCII.GetBytes($env:access_token + ":x-oauth-basic"));
-            }
-            ContentType = 'application/json'
-            Body        = $Body
-        }
-        $Response = Invoke-RestMethod @releaseParams
-        $Response | Format-List *
     }
 }
