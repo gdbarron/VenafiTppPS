@@ -1,14 +1,24 @@
 # Get-TppObject
 
 ## SYNOPSIS
-Find objects by class or pattern
+Find objects by DN, class, or pattern
 
 ## SYNTAX
 
+### None (Default)
+```
+Get-TppObject [-TppSession <TppSession>] [<CommonParameters>]
+```
+
 ### FindByClass
 ```
-Get-TppObject -Class <String> [-Pattern <String>] [-DN <String>] [-Recursive] [-TppSession <TppSession>]
+Get-TppObject [-DN <String>] -Class <String> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>]
  [<CommonParameters>]
+```
+
+### FindByDN
+```
+Get-TppObject -DN <String> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### FindByClasses
@@ -16,13 +26,13 @@ Get-TppObject -Class <String> [-Pattern <String>] [-DN <String>] [-Recursive] [-
 Get-TppObject -Classes <String[]> [-Pattern <String>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
-### Find
+### FindByPattern
 ```
 Get-TppObject -Pattern <String> [-AttributeName <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Find objects by class or pattern
+Find objects by DN, class, or pattern.
 
 ## EXAMPLES
 
@@ -40,7 +50,49 @@ Get-TppObject -classes 'iis6', 'capi'
 
 Get all objects of the type iis6 or capi
 
+### EXAMPLE 3
+```
+Get-TppObject -DN '\VED\Policy\My Policy Folder' -Recursive
+```
+
+Get all objects in 'My Policy Folder' and subfolders
+
+### EXAMPLE 4
+```
+Get-TppObject -DN '\VED\Policy\My Policy Folder' -Pattern 'MyDevice'
+```
+
+Get all objects in 'My Policy Folder' that match the name MyDevice
+
 ## PARAMETERS
+
+### -DN
+The starting DN of the object to search for subordinates under.
+ObjectDN and Recursive is only supported if Class is provided
+
+```yaml
+Type: String
+Parameter Sets: FindByClass
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+```yaml
+Type: String
+Parameter Sets: FindByDN
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -Class
 Single class name to search
@@ -85,7 +137,7 @@ You can also use both literals and wildcards in a pattern.
 
 ```yaml
 Type: String
-Parameter Sets: FindByClass, FindByClasses
+Parameter Sets: FindByClass, FindByDN, FindByClasses
 Aliases:
 
 Required: False
@@ -97,7 +149,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String
-Parameter Sets: Find
+Parameter Sets: FindByPattern
 Aliases:
 
 Required: True
@@ -108,27 +160,12 @@ Accept wildcard characters: False
 ```
 
 ### -AttributeName
-A list of attribute names to limit the search against
+A list of attribute names to limit the search against. 
+Only valid when searching by pattern.
 
 ```yaml
 Type: String[]
-Parameter Sets: Find
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DN
-The starting DN of the object to search for subordinates under.
-ObjectDN and Recursive is only supported if Class is provided
-
-```yaml
-Type: String
-Parameter Sets: FindByClass
+Parameter Sets: FindByPattern
 Aliases:
 
 Required: False
@@ -143,7 +180,7 @@ Searches the subordinates of the object specified in DN
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: FindByClass
+Parameter Sets: FindByClass, FindByDN
 Aliases:
 
 Required: False
@@ -175,8 +212,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### none
-
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
@@ -192,3 +227,14 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## NOTES
 
 ## RELATED LINKS
+
+[http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/)
+
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppObject.ps1)
+
+[https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-find.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____17](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-find.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____17)
+
+[https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-findobjectsofclass.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____19](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-findobjectsofclass.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____19)
+
+[https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-enumerate.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____13](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-enumerate.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____13)
+
