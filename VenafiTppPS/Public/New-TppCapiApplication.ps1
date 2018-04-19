@@ -136,19 +136,15 @@ function New-TppCapiApplication {
     }
 
     # ensure the credential is actually of type credential
-    $credValidationParams = @{
-        TppSession = $TppSession
-        Method     = 'Post'
-        UriLeaf    = 'credentials/enumerate'
-        Body       = @{
-            CredentialPath = (Split-Path $CredentialDN -Parent)
-            Pattern        = (Split-Path $CredentialDN -Leaf)
-        }
+    $credentialName = (Split-Path $CredentialDN -Leaf)
+    $credentialObject = Get-TppObject -DN (Split-Path $CredentialDN -Parent) -Pattern $credentialName
+    
+    if ( -not $credentialObject ) {
+        throw "Credential object not found"
     }
 
-    $credValidationResponse = Invoke-TppRestMethod @credValidationParams
-    if ( -not ($credValidationResponse.CredentialInfos) ) {
-        throw ("The path provided for CredentialDN, {0}, is not an actual credential" -f $CredentialDN)
+    if ( -not ($credentialObject | where {$_.Name -eq $credentialName -and $_.TypeName -like '*credential*'}) ) {
+        throw "CredentialDN is not a credential object"
     }
     # end of validation
 
