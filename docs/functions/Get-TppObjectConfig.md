@@ -17,7 +17,7 @@ Get-TppObjectConfig -DN <String[]> -AttributeName <String[]> [-EffectivePolicy] 
 ```
 
 ## DESCRIPTION
-Retrieves objectâ€™s attributes. 
+Retrieves object attributes. 
 You can either retrieve all attributes or individual ones.
 By default, the attributes returned are not the effective policy, but that can be requested with the
 EffectivePolicy switch.
