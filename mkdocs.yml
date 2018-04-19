@@ -5,6 +5,7 @@ edit_uri: edit/master/docs/
 theme: readthedocs
 copyright: ""
 pages:
+  - Home: index.md
   - Functions:
     - Get-TppCertificateDetail: functions/Get-TppCertificateDetail.md
     - Get-TppObject: functions/Get-TppObject.md
