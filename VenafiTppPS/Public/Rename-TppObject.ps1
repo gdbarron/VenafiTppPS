@@ -24,7 +24,16 @@ Rename-TppObject -DN '\VED\Policy\My Devices\OldDeviceName' -NewName 'NewDeviceN
 Rename device
 
 .LINK
+http://venafitppps.readthedocs.io/en/latest/functions/Rename-TppObject/
 
+.LINK
+http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectExists/
+
+.LINK
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Rename-TppObject.ps1
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-renameobject.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____36
 
 #>
 function Rename-TppObject {

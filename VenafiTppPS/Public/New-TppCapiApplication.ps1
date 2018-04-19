@@ -28,6 +28,21 @@ none
 
 .OUTPUTS
 
+.LINK
+http://venafitppps.readthedocs.io/en/latest/functions/New-TppCapiApplication/
+
+.LINK
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/New-TppCapiApplication.ps1
+
+.LINK
+http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/
+
+.LINK
+http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-create.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____9
+
 #>
 function New-TppCapiApplication {
 
@@ -70,14 +85,6 @@ function New-TppCapiApplication {
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\Shared Credentials\\.*" ) {
-                    $true
-                } else {
-                    throw "'$_' is not a valid DN"
-                }    
-            })]    
         [String] $CredentialDN,    
 
         [Parameter()]
@@ -124,10 +131,20 @@ function New-TppCapiApplication {
         throw ("The certificate {0} does not exist" -f $CertificateDN)
     }
 
-    if ( -not (Test-TppObjectExists -DN $CredentialDN).Exists ) {
-        throw ("The credential {0} does not exist" -f $CredentialDN)
+    # ensure the credential exists and is actually of type credential
+    $credentialName = (Split-Path $CredentialDN -Leaf)
+    $credentialObject = Get-TppObject -DN (Split-Path $CredentialDN -Parent) -Pattern $credentialName
+
+    if ( -not $credentialObject ) {
+        throw "Credential object not found"
     }
 
+    if ( -not ($credentialObject | where {$_.Name -eq $credentialName -and $_.TypeName -like '*credential*'}) ) {
+        throw "CredentialDN is not a credential object"
+    }
+    # end of validation
+
+    # start the new capi app work here
     $params = @{
         DN        = $DN
         Class     = 'CAPI'
