@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS 
-Find objects by class or pattern
+Find objects by DN, class, or pattern
 
 .DESCRIPTION
-Find objects by class or pattern
+Find objects by DN, class, or pattern.
 
 .PARAMETER Class
 Single class name to search
@@ -20,7 +20,7 @@ A pattern to match against object attribute values:
 You can also use both literals and wildcards in a pattern.
 
 .PARAMETER AttributeName
-A list of attribute names to limit the search against
+A list of attribute names to limit the search against.  Only valid when searching by pattern.
 
 .PARAMETER DN
 The starting DN of the object to search for subordinates under. ObjectDN and Recursive is only supported if Class is provided
@@ -32,7 +32,6 @@ Searches the subordinates of the object specified in DN
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-none
 
 .OUTPUTS
 PSCustomObject with the following properties:
@@ -53,10 +52,47 @@ Get all objects of the type iis6
 Get-TppObject -classes 'iis6', 'capi'
 Get all objects of the type iis6 or capi
 
+.EXAMPLE
+Get-TppObject -DN '\VED\Policy\My Policy Folder' -Recursive
+Get all objects in 'My Policy Folder' and subfolders
+
+.EXAMPLE
+Get-TppObject -DN '\VED\Policy\My Policy Folder' -Pattern 'MyDevice'
+Get all objects in 'My Policy Folder' that match the name MyDevice
+
+.LINK
+http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/
+
+.LINK
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppObject.ps1
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-find.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____17
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-findobjectsofclass.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____19
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-enumerate.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____13
+
 #>
 function Get-TppObject {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'None')]
     param (
+
+        [Parameter(Mandatory, ParameterSetName = 'FindByDN')]
+        [Parameter(ParameterSetName = 'FindByClass')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {
+                # this regex could be better
+                if ( $_ -match "^\\VED.*" ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid DN"
+                }
+            })]
+        [String] $DN,
+        
         [Parameter(Mandatory, ParameterSetName = 'FindByClass')]
         [ValidateNotNullOrEmpty()]
         [String] $Class,
@@ -65,28 +101,18 @@ function Get-TppObject {
         [ValidateNotNullOrEmpty()]
         [String[]] $Classes,
 
-        [Parameter(Mandatory, ParameterSetName = 'Find')]
+        [Parameter(Mandatory, ParameterSetName = 'FindByPattern')]
+        [Parameter(ParameterSetName = 'FindByDN')]
         [Parameter(ParameterSetName = 'FindByClass')]
         [Parameter(ParameterSetName = 'FindByClasses')]
         [ValidateNotNullOrEmpty()]
         [String] $Pattern,
 
-        [Parameter(ParameterSetName = 'Find')]
+        [Parameter(ParameterSetName = 'FindByPattern')]
         [ValidateNotNullOrEmpty()]
         [String[]] $AttributeName,
 
-        [Parameter(ParameterSetName = 'FindByClass')]
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\Policy\\.*" ) {
-                    $true
-                } else {
-                    throw "'$_' is not a valid DN"
-                }
-            })]
-        [String] $DN,
-        
+        [Parameter(ParameterSetName = 'FindByDN')]
         [Parameter(ParameterSetName = 'FindByClass')]
         [Switch] $Recursive,
         
@@ -96,8 +122,10 @@ function Get-TppObject {
 
     $TppSession.Validate()
 
+    Write-Verbose $PsCmdlet.ParameterSetName
+
     Switch ($PsCmdlet.ParameterSetName)	{
-        'Find' {
+        'FindByPattern' {
             $params = @{
                 TppSession = $TppSession
                 Method     = 'Post'
@@ -113,6 +141,29 @@ function Get-TppObject {
                 }
             }
 
+        }
+
+        'FindByDN' {
+            $params = @{
+                TppSession = $TppSession
+                Method     = 'Post'
+                UriLeaf    = 'config/enumerate'
+                Body       = @{
+                    ObjectDN = $DN
+                }
+            }
+
+            if ( $Pattern ) {
+                $params.body += @{
+                    Pattern = $Pattern
+                }
+            }
+
+            if ( $Recursive ) {
+                $params.body += @{
+                    Recursive = 'true'
+                }
+            }
         }
 
         {$_ -in 'FindByClass', 'FindByClasses'} {
@@ -146,7 +197,7 @@ function Get-TppObject {
 
             if ( $Recursive ) {
                 $params.body += @{
-                    AttributeNames = $AttributeNames
+                    Recursive = 'true'
                 }
             }
 

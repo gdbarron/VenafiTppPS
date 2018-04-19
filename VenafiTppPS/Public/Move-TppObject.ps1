@@ -24,7 +24,16 @@ Move-TppObject -SourceDN '\VED\Policy\My Folder\mycert.company.com' -TargetDN '\
 Moves mycert.company.com to a new Policy folder
 
 .LINK
+http://venafitppps.readthedocs.io/en/latest/functions/Move-TppObject/
 
+.LINK
+http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectExists/
+
+.LINK
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Move-TppObject.ps1
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-renameobject.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____36
 
 #>
 function Move-TppObject {

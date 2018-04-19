@@ -28,6 +28,21 @@ none
 
 .OUTPUTS
 
+.LINK
+http://venafitppps.readthedocs.io/en/latest/functions/New-TppCapiApplication/
+
+.LINK
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/New-TppCapiApplication.ps1
+
+.LINK
+http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/
+
+.LINK
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Test-TppObjectsExists.ps1
+
+.LINK
+https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-create.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____9
+
 #>
 function New-TppCapiApplication {
 
@@ -70,14 +85,6 @@ function New-TppCapiApplication {
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\Shared Credentials\\.*" ) {
-                    $true
-                } else {
-                    throw "'$_' is not a valid DN"
-                }    
-            })]    
         [String] $CredentialDN,    
 
         [Parameter()]
@@ -128,6 +135,24 @@ function New-TppCapiApplication {
         throw ("The credential {0} does not exist" -f $CredentialDN)
     }
 
+    # ensure the credential is actually of type credential
+    $credValidationParams = @{
+        TppSession = $TppSession
+        Method     = 'Post'
+        UriLeaf    = 'credentials/enumerate'
+        Body       = @{
+            CredentialPath = (Split-Path $CredentialDN -Parent)
+            Pattern        = (Split-Path $CredentialDN -Leaf)
+        }
+    }
+
+    $credValidationResponse = Invoke-TppRestMethod @credValidationParams
+    if ( -not ($credValidationResponse.CredentialInfos) ) {
+        throw ("The path provided for CredentialDN, {0}, is not an actual credential" -f $CredentialDN)
+    }
+    # end of validation
+
+    # start the new capi app work here
     $params = @{
         DN        = $DN
         Class     = 'CAPI'
