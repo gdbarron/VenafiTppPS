@@ -1,15 +1,15 @@
 <#
 .SYNOPSIS 
-Move an object of any type
+Rename an object of any type
 
 .DESCRIPTION
-Move an object of any type
+Rename an object of any type
 
-.PARAMETER SourceDN
+.PARAMETER DN
 Full path to an object in TPP
 
-.PARAMETER TargetDN
-New path
+.PARAMETER NewName
+New name for the object
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -20,14 +20,14 @@ none
 .OUTPUTS
 
 .EXAMPLE
-Move-TppObject -SourceDN '\VED\Policy\My Folder\mycert.company.com' -TargetDN '\VED\Policy\New Folder\mycert.company.com'
-Moves mycert.company.com to a new Policy folder
+Rename-TppObject -DN '\VED\Policy\My Devices\OldDeviceName' -NewName 'NewDeviceName'
+Rename device
 
 .LINK
 
 
 #>
-function Move-TppObject {
+function Rename-TppObject {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
@@ -44,15 +44,7 @@ function Move-TppObject {
         
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\Policy\\.*" ) {
-                    $true
-                } else {
-                    throw "'$_' is not a valid DN"
-                }
-            })]
-        [String] $TargetDN,
+        [String] $NewName,
         
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -62,12 +54,13 @@ function Move-TppObject {
 
     # ensure the object to rename already exists
     if ( -not (Test-TppObjectExists -DN $DN).Exists ) {
-        throw ("Source DN '{0}' does not exist" -f $DN)
+        throw ("{0} does not exist" -f $DN)
     }
 
     # ensure the new object doesn't already exist
-    if ( (Test-TppObjectExists -DN $TargetDN).Exists ) {
-        throw ("Target DN '{0}' already exists" -f $TargetDN)
+    $newDN = "{0}\{1}" -f (Split-Path $DN -Parent), $NewName
+    if ( (Test-TppObjectExists -DN $newDN).Exists ) {
+        throw ("{0} already exists" -f $newDN)
     }
 
     $params = @{
@@ -75,8 +68,8 @@ function Move-TppObject {
         Method     = 'Post'
         UriLeaf    = 'config/RenameObject'
         Body       = @{
-            ObjectDN    = $SourceDN
-            NewObjectDN = $TargetDN
+            ObjectDN    = $DN
+            NewObjectDN = $newDN
         }
     }
 
