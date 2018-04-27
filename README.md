@@ -2,7 +2,7 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/vxyan36tsimle56b?svg=true)](https://ci.appveyor.com/project/GregBrownstein/venafitppps)
 
-### Documentation can be found at [http://venafitppps.readthedocs.io/en/latest/](http://venafitppps.readthedocs.io/en/latest/)
+### Documentation can be found at [http://venafitppps.readthedocs.io](http://venafitppps.readthedocs.io)
 
 ### If there are any specific items you would like added, please update the [features issue](https://github.com/gdbarron/VenafiTppPS/issues/1)
 
