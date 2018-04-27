@@ -15,5 +15,6 @@ pages:
     - New-TppCapiApplication: functions/New-TppCapiApplication.md
     - New-TppSession: functions/New-TppSession.md
     - Rename-TppObject: functions/Rename-TppObject.md
+    - Set-TppAttribute: functions/Set-TppAttribute.md
     - Test-TppObjectExists: functions/Test-TppObjectExists.md
 
