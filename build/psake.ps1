@@ -337,4 +337,20 @@ Task Deploy -Depends BuildDocs {
         "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
         "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)"
     }
+
+    # Publish to AppVeyor if we're in AppVeyor
+    if (
+        $env:BHModulePath -and
+        $env:BHBuildSystem -eq 'AppVeyor'
+    ) {
+        Deploy DeveloperBuild {
+            By AppVeyorModule {
+                FromSource $ENV:BHModulePath
+                To AppVeyor
+                WithOptions @{
+                    Version = $env:APPVEYOR_BUILD_VERSION
+                }
+            }
+        }
+    }
 }
