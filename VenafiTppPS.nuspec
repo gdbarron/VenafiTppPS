@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>VenafiTppPS</id>
     <version>0.1.2</version>
@@ -7,7 +7,8 @@
     <owners>Greg Brownstein</owners>
     <projectUrl>https://github.com/gdbarron/VenafiTppPS</projectUrl>
     <iconUrl>https://www.venafi.com/themes/venafi/images/footer_logo.png</iconUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://www.github.com/gdbarron/VenafiTppPS/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>PowerShell module to take advantage of the Venafi TPP REST API</description>
     <releaseNotes>
     </releaseNotes>

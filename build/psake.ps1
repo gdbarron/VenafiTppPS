@@ -16,7 +16,8 @@ Properties {
     }
     $CurrentVersion = [version](Get-Metadata -Path $env:BHPSModuleManifest)
     $StepVersion = [version] (Step-Version $CurrentVersion)
-    $GalleryVersion = Get-NextPSGalleryVersion -Name $env:BHProjectName
+    # $GalleryVersion = Get-NextPSGalleryVersion -Name $env:BHProjectName
+    $GalleryVersion = Get-NextNugetPackageVersion -Name $env:BHProjectName
     $BuildVersion = $StepVersion
     If ($GalleryVersion -gt $StepVersion) {
         $BuildVersion = $GalleryVersion
@@ -242,6 +243,11 @@ Task Deploy -Depends BuildDocs {
             }
         
             Invoke-PSDeploy @Verbose @Params
+
+            # remove .zip and .nupkg from project folder after it's been pushed to PS gallery
+            # otherwise they will get pushed to git
+            Remove-Item "$ProjectRoot\*.nupkg"
+            Remove-Item "$ProjectRoot\VenafiTppPs.zip"
         }
         # } else {
         #     Write-Error "Skipping deployment: To deploy, ensure that...`n" +
