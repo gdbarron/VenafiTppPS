@@ -39,6 +39,7 @@ Task Init {
     "`n"
     "Current Version: $CurrentVersion`n"
     "Build Version: $BuildVersion`n"    
+    Get-Module
 }
 
 Task UnitTests -Depends Init {
