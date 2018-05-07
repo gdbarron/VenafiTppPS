@@ -340,15 +340,15 @@ Task Deploy -Depends BuildDocs {
 
     # Publish to AppVeyor if we're in AppVeyor
     if (
-        $env:BHModulePath -and
+        $env:BHProjectName -and $ENV:BHProjectName.Count -eq 1 -and
         $env:BHBuildSystem -eq 'AppVeyor'
     ) {
         Deploy DeveloperBuild {
             By AppVeyorModule {
-                FromSource $ProjectRoot
+                FromSource $ENV:BHProjectName
                 To AppVeyor
                 WithOptions @{
-                    Version = $BuildVersion
+                    Version = $env:APPVEYOR_BUILD_VERSION
                 }
             }
         }
