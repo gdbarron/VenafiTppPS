@@ -345,10 +345,10 @@ Task Deploy -Depends BuildDocs {
     ) {
         Deploy DeveloperBuild {
             By AppVeyorModule {
-                FromSource $ENV:BHModulePath
+                FromSource $ProjectRoot
                 To AppVeyor
                 WithOptions @{
-                    Version = $env:APPVEYOR_BUILD_VERSION
+                    Version = $BuildVersion
                 }
             }
         }
