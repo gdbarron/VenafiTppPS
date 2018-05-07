@@ -5,7 +5,7 @@ Get-PackageProvider -Name NuGet -ForceBootstrap | Out-Null
 
 Install-Module Psake, PSDeploy, BuildHelpers, platyPS, PSScriptAnalyzer -force
 Install-Module Pester -Force -SkipPublisherCheck
-Import-Module Psake, BuildHelpers, platyPS, PSScriptAnalyzer
+Import-Module Psake, BuildHelpers, platyPS, PSScriptAnalyzer, PSDeploy -force
 
 Set-BuildEnvironment
 
