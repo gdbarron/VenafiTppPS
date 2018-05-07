@@ -14,11 +14,11 @@
     }
     'PSDeploy'      = @{
         DependencyType = 'PSGalleryNuget'
-        Version        = '0.2.2'
+        Version        = '0.2.4'
     }
     'BuildHelpers'  = @{
         DependencyType = 'PSGalleryNuget'
-        Version        = '0.0.53'
+        Version        = '1.1.1'
     }
     'Pester'        = @{
         DependencyType = 'PSGalleryNuget'

@@ -16,7 +16,8 @@ Properties {
     }
     $CurrentVersion = [version](Get-Metadata -Path $env:BHPSModuleManifest)
     $StepVersion = [version] (Step-Version $CurrentVersion)
-    $GalleryVersion = Get-NextPSGalleryVersion -Name $env:BHProjectName
+    # $GalleryVersion = Get-NextPSGalleryVersion -Name $env:BHProjectName
+    $GalleryVersion = Get-NextNugetPackageVersion -Name $env:BHProjectName
     $BuildVersion = $StepVersion
     If ($GalleryVersion -gt $StepVersion) {
         $BuildVersion = $GalleryVersion
@@ -38,6 +39,7 @@ Task Init {
     "`n"
     "Current Version: $CurrentVersion`n"
     "Build Version: $BuildVersion`n"    
+    Get-Module
 }
 
 Task UnitTests -Depends Init {
@@ -242,6 +244,11 @@ Task Deploy -Depends BuildDocs {
             }
         
             Invoke-PSDeploy @Verbose @Params
+
+            # remove .zip and .nupkg from project folder after it's been pushed to PS gallery
+            # otherwise they will get pushed to git
+            Remove-Item "$ProjectRoot\*.nupkg"
+            Remove-Item "$ProjectRoot\VenafiTppPs.zip"
         }
         # } else {
         #     Write-Error "Skipping deployment: To deploy, ensure that...`n" +
@@ -331,4 +338,20 @@ Task Deploy -Depends BuildDocs {
         "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
         "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)"
     }
+
+    # Publish to AppVeyor if we're in AppVeyor
+    # if (
+    #     $env:BHProjectName -and $ENV:BHProjectName.Count -eq 1 -and
+    #     $env:BHBuildSystem -eq 'AppVeyor'
+    # ) {
+    #     Deploy DeveloperBuild {
+    #         By AppVeyorModule {
+    #             FromSource $ENV:BHProjectName
+    #             To AppVeyor
+    #             WithOptions @{
+    #                 Version = $env:APPVEYOR_BUILD_VERSION
+    #             }
+    #         }
+    #     }
+    # }
 }
