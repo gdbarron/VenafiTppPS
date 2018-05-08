@@ -83,11 +83,6 @@ function Set-TppAttribute {
 
         foreach ($thisDn in $DN) {
 
-            # cleanup existing values to ensure we don't have multiples
-            if ($Overwrite) {
-                Remove-TppAttribute -ObjectDN $thisDn -AttributeName $AttributeName
-            }
-
             $params = @{
                 TppSession = $TppSession
                 Method     = 'Post'
@@ -97,6 +92,11 @@ function Set-TppAttribute {
                     AttributeName = $AttributeName
                     Value         = $Value
                 }
+            }
+
+            # cleanup existing values to ensure we don't have multiples
+            if ($Overwrite) {
+                $params.UriLeaf = 'config/Write'
             }
 		
             $response = Invoke-TppRestMethod @params

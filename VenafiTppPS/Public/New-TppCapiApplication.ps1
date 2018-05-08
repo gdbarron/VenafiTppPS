@@ -35,6 +35,9 @@ http://venafitppps.readthedocs.io/en/latest/functions/New-TppCapiApplication/
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/New-TppCapiApplication.ps1
 
 .LINK
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Set-TppAttribute.ps1
+
+.LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/
 
 .LINK
@@ -46,7 +49,7 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function New-TppCapiApplication {
 
-    [CmdletBinding(DefaultParameterSetName = 'None')]
+    [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -85,6 +88,14 @@ function New-TppCapiApplication {
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
+        [ValidateScript( {
+                # this regex could be better
+                if ( $_ -match "^\\VED\\.*" ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid DN"
+                }    
+            })]    
         [String] $CredentialDN,    
 
         [Parameter()]
@@ -214,8 +225,30 @@ function New-TppCapiApplication {
                 Value = $CreateBinding
             }
         }
-
     }
-    New-TppObject @params
+
+    $response = New-TppObject @params
+
+    if ( $response.Result -eq [ConfigResult]::Success ) {
+        $capiObject = $response.Object
+
+        # update Consumers attribute on cert with DN of this new app
+        # required to make the "cross connection" between objects
+        $certUpdateParams = @{
+            DN            = $CertificateDN
+            AttributeName = 'Consumers'
+            Value         = $capiObject.DN
+        }
+        $certUpdateResponse = Set-TppAttribute @certUpdateParams
+
+        if ( $certUpdateResponse.Success ) {
+            $capiObject
+        } else {
+            throw $certUpdateResponse.Error
+        }
+
+    } else {
+        throw $response.Error
+    }
 
 }
