@@ -6,7 +6,7 @@ Find objects by DN, class, or pattern
 Find objects by DN, class, or pattern.
 
 .PARAMETER Class
-Single class name to search
+Single class name to search.  To provide a list, use Classes.
 
 .PARAMETER Classes
 List of class names to search on
@@ -23,10 +23,10 @@ You can also use both literals and wildcards in a pattern.
 A list of attribute names to limit the search against.  Only valid when searching by pattern.
 
 .PARAMETER DN
-The starting DN of the object to search for subordinates under. ObjectDN and Recursive is only supported if Class is provided
+The path to start our search
 
 .PARAMETER Recursive
-Searches the subordinates of the object specified in DN
+Searches the subordinates of the object specified in DN.  Not supported when searching Classes or by Pattern.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -77,7 +77,7 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function Get-TppObject {
-    [CmdletBinding(DefaultParameterSetName = 'None')]
+    [CmdletBinding(DefaultParameterSetName = 'FindByDN')]
     param (
 
         [Parameter(Mandatory, ParameterSetName = 'FindByDN')]

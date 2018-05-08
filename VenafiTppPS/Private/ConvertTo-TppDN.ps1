@@ -21,9 +21,9 @@ System.String
 
 #>
 function ConvertTo-TppDN {
-    [CmdletBinding(DefaultParameterSetName = 'Guid')]
+    [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ParameterSetName = 'Guid', ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ -match "^{[A-Z0-9]{8}-([A-Z0-9]{4}-){3}[A-Z0-9]{12}}$" ) {

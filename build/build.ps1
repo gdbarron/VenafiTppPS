@@ -9,5 +9,5 @@ Import-Module Psake, BuildHelpers, platyPS, PSScriptAnalyzer, PSDeploy -force
 
 Set-BuildEnvironment
 
-Invoke-psake -buildFile .\build\psake.ps1 -taskList $Task -nologo -verbose
+Invoke-psake -buildFile .\build\psake.ps1 -taskList $Task -nologo
 exit ([int](-not $psake.build_success))
