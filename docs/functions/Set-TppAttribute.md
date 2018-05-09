@@ -6,7 +6,7 @@ Adds a value to an attribute
 ## SYNTAX
 
 ```
-Set-TppAttribute [-DN] <String[]> [-AttributeName] <String> [-Value] <String> [-Overwrite]
+Set-TppAttribute [-DN] <String[]> [-AttributeName] <String> [-Value] <String[]> [-Overwrite]
  [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
@@ -14,7 +14,7 @@ Set-TppAttribute [-DN] <String[]> [-AttributeName] <String> [-Value] <String> [-
 Write a value to the object's configuration. 
 This function will append by default. 
 Attributes can have multiple values which may not be the intended use. 
-To ensure you only have one value for an attribute, use the Overwrite switch or call Remove-TppAttribute prior to calling Set-TppAttribute.
+To ensure you only have one value for an attribute, use the Overwrite switch.
 
 ## EXAMPLES
 
@@ -24,6 +24,13 @@ Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName '{xyz
 ```
 
 Set value on custom field
+
+### EXAMPLE 2
+```
+Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName 'Consumers' -Value '\VED\Policy\myappobject.company.com' -Overwrite
+```
+
+Set value on a certificate by overwriting any existing values
 
 ## PARAMETERS
 
@@ -43,7 +50,7 @@ Accept wildcard characters: False
 ```
 
 ### -AttributeName
-Name of the attribute
+Name of the attribute to modify
 
 ```yaml
 Type: String
@@ -58,10 +65,10 @@ Accept wildcard characters: False
 ```
 
 ### -Value
-Value to write to the attribute
+Value or list of values to write to the attribute.
 
 ```yaml
-Type: String
+Type: String[]
 Parameter Sets: (All)
 Aliases:
 
@@ -73,7 +80,7 @@ Accept wildcard characters: False
 ```
 
 ### -Overwrite
-Provide this switch to replace an existing value as opposed to appending
+Replace existing values as opposed to appending
 
 ```yaml
 Type: SwitchParameter
@@ -114,9 +121,9 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
-DN = path to object
-Success = boolean indicating success or failure
-Error = Error message in case of failure
+    DN = path to object
+    Success = boolean indicating success or failure
+    Error = Error message in case of failure
 
 ## NOTES
 
