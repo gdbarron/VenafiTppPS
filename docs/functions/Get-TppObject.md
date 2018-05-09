@@ -5,20 +5,15 @@ Find objects by DN, class, or pattern
 
 ## SYNTAX
 
-### None (Default)
+### FindByDN (Default)
 ```
-Get-TppObject [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppObject [-DN <String>] [-Pattern <String>] [-Recursive] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### FindByClass
 ```
 Get-TppObject [-DN <String>] -Class <String> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>]
  [<CommonParameters>]
-```
-
-### FindByDN
-```
-Get-TppObject -DN <String> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### FindByClasses
@@ -62,40 +57,38 @@ Get all objects in 'My Policy Folder' and subfolders
 Get-TppObject -DN '\VED\Policy\My Policy Folder' -Pattern 'MyDevice'
 ```
 
-Get all objects in 'My Policy Folder' that match the name MyDevice
+Get all objects in 'My Policy Folder' that match the name MyDevice. 
+Only search the folder "My Policy Folder", not subfolders.
+
+### EXAMPLE 5
+```
+Get-TppObject -Pattern 'MyDevice' -Recursive
+```
+
+Get all objects that match the name MyDevice. 
+As starting DN isn't provided, this will search all.
 
 ## PARAMETERS
 
 ### -DN
-The starting DN of the object to search for subordinates under.
-ObjectDN and Recursive is only supported if Class is provided
+The path to start our search. 
+If not provided, the root, \VED, is used.
 
 ```yaml
 Type: String
-Parameter Sets: FindByClass
+Parameter Sets: FindByDN, FindByClass
 Aliases:
 
 Required: False
 Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-```yaml
-Type: String
-Parameter Sets: FindByDN
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
+Default value: \VED
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Class
-Single class name to search
+Single class name to search. 
+To provide a list, use Classes.
 
 ```yaml
 Type: String
@@ -137,7 +130,7 @@ You can also use both literals and wildcards in a pattern.
 
 ```yaml
 Type: String
-Parameter Sets: FindByClass, FindByDN, FindByClasses
+Parameter Sets: FindByDN, FindByClass, FindByClasses
 Aliases:
 
 Required: False
@@ -176,11 +169,12 @@ Accept wildcard characters: False
 ```
 
 ### -Recursive
-Searches the subordinates of the object specified in DN
+Searches the subordinates of the object specified in DN. 
+Not supported when searching Classes or by Pattern.
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: FindByClass, FindByDN
+Parameter Sets: FindByDN, FindByClass
 Aliases:
 
 Required: False
