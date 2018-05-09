@@ -58,7 +58,11 @@ Get all objects in 'My Policy Folder' and subfolders
 
 .EXAMPLE
 Get-TppObject -DN '\VED\Policy\My Policy Folder' -Pattern 'MyDevice'
-Get all objects in 'My Policy Folder' that match the name MyDevice
+Get all objects in 'My Policy Folder' that match the name MyDevice.  Only search the folder "My Policy Folder", not subfolders.
+
+.EXAMPLE
+Get-TppObject -Pattern 'MyDevice' -Recursive
+Get all objects that match the name MyDevice.  As starting DN isn't provided, this will search all.
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/
