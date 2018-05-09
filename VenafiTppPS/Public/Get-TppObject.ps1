@@ -23,7 +23,7 @@ You can also use both literals and wildcards in a pattern.
 A list of attribute names to limit the search against.  Only valid when searching by pattern.
 
 .PARAMETER DN
-The path to start our search
+The path to start our search.  If not provided, the root, \VED, is used.
 
 .PARAMETER Recursive
 Searches the subordinates of the object specified in DN.  Not supported when searching Classes or by Pattern.
@@ -80,7 +80,7 @@ function Get-TppObject {
     [CmdletBinding(DefaultParameterSetName = 'FindByDN')]
     param (
 
-        [Parameter(Mandatory, ParameterSetName = 'FindByDN')]
+        [Parameter(ParameterSetName = 'FindByDN')]
         [Parameter(ParameterSetName = 'FindByClass')]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
@@ -91,7 +91,7 @@ function Get-TppObject {
                     throw "'$_' is not a valid DN"
                 }
             })]
-        [String] $DN,
+        [String] $DN = '\VED',
         
         [Parameter(Mandatory, ParameterSetName = 'FindByClass')]
         [ValidateNotNullOrEmpty()]
