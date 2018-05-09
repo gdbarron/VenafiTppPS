@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS 
-Adds a value to an attribute
+TO BE IMPLEMENTED - Removes a value from an attribute
 
 .DESCRIPTION
 Write a value to the object's configuration.  This function will append by default.  Attributes can have multiple values which may not be the intended use.  To ensure you only have one value for an attribute, use the Overwrite switch.
@@ -11,11 +11,8 @@ Path to the object to modify
 .PARAMETER AttributeName
 Name of the attribute to modify
 
-.PARAMETER Value
-Value or list of values to write to the attribute.
+.PARAMETER RemoveAll
 
-.PARAMETER Overwrite
-Replace existing values as opposed to appending
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -68,18 +65,18 @@ function Set-TppAttribute {
         [ValidateNotNullOrEmpty()]
         [String] $AttributeName,
 
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String[]] $Value,
-
         [Parameter()]
-        [Switch] $Overwrite,
+        [Switch] $RemoveAll,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
 
     begin {
+
+        Write-Warning "Not implemented yet"
+        exit
+
         $TppSession.Validate()
 
         $params = @{
