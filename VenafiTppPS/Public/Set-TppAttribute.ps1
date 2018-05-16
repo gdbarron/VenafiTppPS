@@ -45,9 +45,6 @@ Set value on a certificate by overwriting any existing values
 http://venafitppps.readthedocs.io/en/latest/functions/Set-TppAttribute/
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Remove-TppAttribute/
-
-.LINK
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Set-TppAttribute.ps1
 
 .LINK
