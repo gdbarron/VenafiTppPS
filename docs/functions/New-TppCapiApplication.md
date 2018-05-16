@@ -5,14 +5,6 @@ Create a new CAPI application object
 
 ## SYNTAX
 
-### None (Default)
-```
-New-TppCapiApplication -DN <String> -FriendlyName <String> [-Disable] -CertificateDN <String>
- [-Description <String>] -CredentialDN <String> [-WinRmPort <Int32>] [-TppSession <TppSession>]
- [<CommonParameters>]
-```
-
-### UpdateIis
 ```
 New-TppCapiApplication -DN <String> -FriendlyName <String> [-Disable] -CertificateDN <String>
  [-Description <String>] -CredentialDN <String> [-WinRmPort <Int32>] [-UpdateIis] -WebSiteName <String>
@@ -145,7 +137,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: UpdateIis
+Parameter Sets: (All)
 Aliases:
 
 Required: True
@@ -160,7 +152,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String
-Parameter Sets: UpdateIis
+Parameter Sets: (All)
 Aliases:
 
 Required: True
@@ -175,7 +167,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String
-Parameter Sets: UpdateIis
+Parameter Sets: (All)
 Aliases:
 
 Required: False
@@ -190,7 +182,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: Int32
-Parameter Sets: UpdateIis
+Parameter Sets: (All)
 Aliases:
 
 Required: False
@@ -205,7 +197,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String
-Parameter Sets: UpdateIis
+Parameter Sets: (All)
 Aliases:
 
 Required: False
@@ -220,7 +212,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: Boolean
-Parameter Sets: UpdateIis
+Parameter Sets: (All)
 Aliases:
 
 Required: False
@@ -263,6 +255,8 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 [http://venafitppps.readthedocs.io/en/latest/functions/New-TppCapiApplication/](http://venafitppps.readthedocs.io/en/latest/functions/New-TppCapiApplication/)
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/New-TppCapiApplication.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/New-TppCapiApplication.ps1)
+
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Set-TppAttribute.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Set-TppAttribute.ps1)
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/](http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/)
 

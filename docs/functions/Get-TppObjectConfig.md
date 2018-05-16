@@ -26,8 +26,24 @@ EffectivePolicy switch.
 
 ### EXAMPLE 1
 ```
-
+Get-TppObjectConfig -DN '\VED\Policy\My Folder\myapp.company.com'
 ```
+
+Retrieve all configurations for a certificate
+
+### EXAMPLE 2
+```
+Get-TppObjectConfig -DN '\VED\Policy\My Folder\myapp.company.com' -EffectivePolicy
+```
+
+Retrieve all effective configurations for a certificate
+
+### EXAMPLE 3
+```
+Get-TppObjectConfig -DN '\VED\Policy\My Folder\myapp.company.com' -AttributeName 'driver name'
+```
+
+Retrieve all effective configurations for a certificate
 
 ## PARAMETERS
 
@@ -111,9 +127,11 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### DN
+### DN by property name
 
 ## OUTPUTS
+
+### PSCustomObject with properties DN and Config.  DN is the path provided and Config contains key/value pairs for the requested items.
 
 ## NOTES
 

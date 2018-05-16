@@ -20,11 +20,22 @@ Get the effective policy of the attribute
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-DN
+DN by property name
 
 .OUTPUTS
+PSCustomObject with properties DN and Config.  DN is the path provided and Config contains key/value pairs for the requested items.
 
 .EXAMPLE
+Get-TppObjectConfig -DN '\VED\Policy\My Folder\myapp.company.com'
+Retrieve all configurations for a certificate
+
+.EXAMPLE
+Get-TppObjectConfig -DN '\VED\Policy\My Folder\myapp.company.com' -EffectivePolicy
+Retrieve all effective configurations for a certificate
+
+.EXAMPLE
+Get-TppObjectConfig -DN '\VED\Policy\My Folder\myapp.company.com' -AttributeName 'driver name'
+Retrieve all effective configurations for a certificate
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObjectConfig/
@@ -99,11 +110,16 @@ function Get-TppObjectConfig {
 
             $baseParams.Body['ObjectDN'] = $thisDN
 
+            # if specifying attribute name(s), it's a different rest api
             if ( $AttributeName ) {
 
                 $configValues = @()
+
+                # TODO: convert to ArrayList
                 # $configValues = [System.Collections.ArrayList] @()
     
+                # get the attribute values one by one as there is no
+                # api which allows passing a list
                 foreach ( $thisAttribute in $AttributeName ) {
     
                     $params = $baseParams.Clone()

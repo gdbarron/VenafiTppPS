@@ -75,12 +75,6 @@ function New-TppObject {
         }
     }
 
-    $response = Invoke-TppRestMethod @params
-
-    if ( $response.Result -eq [ConfigResult]::Success ) {
-        $response.Object
-    } else {
-        throw $response.Error
-    }
+    Invoke-TppRestMethod @params
 
 }

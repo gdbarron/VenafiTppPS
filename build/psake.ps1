@@ -27,6 +27,7 @@ Properties {
     $BuildDate = Get-Date -uFormat '%Y-%m-%d'
     $ReleaseNotes = "$ProjectRoot\RELEASE.md"
     $ChangeLog = "$ProjectRoot\docs\ChangeLog.md"
+    $moduleName = $ENV:BHProjectName
 }
 
 Task Default -Depends PostDeploy
@@ -248,7 +249,8 @@ Task Deploy -Depends BuildDocs {
             # remove .zip and .nupkg from project folder after it's been pushed to PS gallery
             # otherwise they will get pushed to git
             Remove-Item "$ProjectRoot\*.nupkg"
-            Remove-Item "$ProjectRoot\VenafiTppPs.zip"
+            Remove-Item "$ProjectRoot\$moduleName.zip"
+            Remove-Item "$ProjectRoot\$moduleName\$moduleName.nuspec"
         }
         # } else {
         #     Write-Error "Skipping deployment: To deploy, ensure that...`n" +
