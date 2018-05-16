@@ -50,7 +50,7 @@ function Get-TppObjectConfig {
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 # this regex could be better
-                if ( $_ -match "^\\VED\\Policy\\.*" ) {
+                if ( $_ -match "^\\VED\\.*" ) {
                     $true
                 } else {
                     throw "'$_' is not a valid DN"

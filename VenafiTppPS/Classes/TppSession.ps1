@@ -4,6 +4,7 @@ class TppSession {
     [System.Management.Automation.PSCredential] $Credential
     [string] $ServerUrl
     [datetime] $ValidUntil
+    [PSCustomObject] $CustomField
 
     TppSession () {
         # throw [System.NotImplementedException]::New()
@@ -12,6 +13,20 @@ class TppSession {
     TppSession ([Hashtable] $initHash) {
         $this._init($initHash)
     }
+
+    # [PSCustomObject] CustomField() {
+    #         # get {
+    #             # $this.Validate()
+    #             if ( $null -eq $this._CustomField ) {
+    #                 # get custom fields one time
+    #                 $allFields = (Get-TppCustomField -Class 'X509 Certificate').Items
+    #                 $deviceFields = (Get-TppCustomField -Class 'Device').Items
+    #                 $allFields += $deviceFields | where {$_ -notin $allFields}
+    #                 $this._CustomField = $allFields
+    #             }
+    #             return $this._CustomField
+    #         # }
+    #     }
 
     [void] Validate() {
         if ( $null -eq $this.ApiKey ) {
@@ -64,6 +79,13 @@ class TppSession {
         $response = Invoke-TppRestMethod @params
         $this.APIKey = $response.ApiKey
         $this.ValidUntil = $response.ValidUntil
+
+        # get custom fields
+        $allFields = (Get-TppCustomField -TppSession $this -Class 'X509 Certificate').Items
+        $deviceFields = (Get-TppCustomField -TppSession $this -Class 'Device').Items
+        $allFields += $deviceFields | where {$_.Guid -notin $allFields.Guid}
+        $this.CustomField = $allFields
+
     }
 
     hidden [void] _init ([Hashtable] $initHash) {

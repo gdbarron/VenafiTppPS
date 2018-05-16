@@ -69,6 +69,9 @@ function Set-TppAttribute {
         [String] $Value,
 
         [Parameter()]
+        [Switch] $IsCustomField,
+        
+        [Parameter()]
         [Switch] $Overwrite,
 
         [Parameter()]
@@ -88,19 +91,29 @@ function Set-TppAttribute {
                 Remove-TppAttribute -ObjectDN $thisDn -AttributeName $AttributeName
             }
 
+            $realAttributeName = $AttributeName
+            if ( $IsCustomField ) {
+                $field = $TppSession.CustomField | where {$_.Label -eq $AttributeName}
+                if ( $field ) {
+                    $realAttributeName = $field.Guid
+                } else {
+                    throw ("Attribute name {0} was not found as a custom field" -f $AttributeName)
+                }
+            }
+
             $params = @{
                 TppSession = $TppSession
                 Method     = 'Post'
                 UriLeaf    = 'config/AddValue'
                 Body       = @{
                     ObjectDN      = $thisDn
-                    AttributeName = $AttributeName
+                    AttributeName = $realAttributeName
                     Value         = $Value
                 }
             }
 		
             $response = Invoke-TppRestMethod @params
-            [PSCustomObject] {
+            [PSCustomObject] @{
                 DN = $thisDn
                 Success = $response.Result -eq [ConfigResult]::Success
                 Error = $response.Error
