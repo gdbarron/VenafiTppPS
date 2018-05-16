@@ -14,20 +14,6 @@ class TppSession {
         $this._init($initHash)
     }
 
-    # [PSCustomObject] CustomField() {
-    #         # get {
-    #             # $this.Validate()
-    #             if ( $null -eq $this._CustomField ) {
-    #                 # get custom fields one time
-    #                 $allFields = (Get-TppCustomField -Class 'X509 Certificate').Items
-    #                 $deviceFields = (Get-TppCustomField -Class 'Device').Items
-    #                 $allFields += $deviceFields | where {$_ -notin $allFields}
-    #                 $this._CustomField = $allFields
-    #             }
-    #             return $this._CustomField
-    #         # }
-    #     }
-
     [void] Validate() {
         if ( $null -eq $this.ApiKey ) {
             throw "You must first connect to the TPP server with New-TppSession"
