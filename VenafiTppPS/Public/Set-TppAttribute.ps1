@@ -14,6 +14,10 @@ Name of the attribute to modify
 .PARAMETER Value
 Value or list of values to write to the attribute.
 
+.PARAMETER IsCustomField
+Attribute name provided matches a "Label" for a custom field.
+The Guid associated with this custom field will be used as the attribute name when updating.
+
 .PARAMETER Overwrite
 Replace existing values as opposed to appending
 
@@ -30,8 +34,8 @@ PSCustomObject with the following properties:
     Error = Error message in case of failure
 
 .EXAMPLE
-Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName '{xyz12345-1234-abcd-efgh-dfghjklmnbvf}' -Value 'new custom value'
-Set value on custom field
+Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName 'My custom field' -Value 'new custom value' -IsCustomField
+Set value on custom field.  This will add to any existing value.
 
 .EXAMPLE
 Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName 'Consumers' -Value '\VED\Policy\myappobject.company.com' -Overwrite
