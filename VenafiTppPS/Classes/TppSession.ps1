@@ -67,10 +67,12 @@ class TppSession {
         $this.ValidUntil = $response.ValidUntil
 
         # get custom fields
-        $allFields = (Get-TppCustomField -TppSession $this -Class 'X509 Certificate').Items
-        $deviceFields = (Get-TppCustomField -TppSession $this -Class 'Device').Items
-        $allFields += $deviceFields | where {$_.Guid -notin $allFields.Guid}
-        $this.CustomField = $allFields
+        if ( -not $this.CustomField ) {
+            $allFields = (Get-TppCustomField -TppSession $this -Class 'X509 Certificate').Items
+            $deviceFields = (Get-TppCustomField -TppSession $this -Class 'Device').Items
+            $allFields += $deviceFields | where {$_.Guid -notin $allFields.Guid}
+            $this.CustomField = $allFields
+        }
 
     }
 
@@ -82,6 +84,7 @@ class TppSession {
 
         $this.ServerUrl = $initHash.ServerUrl
         $this.Credential = $initHash.Credential
+        $this.CustomField = $null
     }
 }
 
