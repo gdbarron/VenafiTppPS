@@ -63,11 +63,10 @@
     FormatsToProcess  = @()
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-    NestedModules = @('Public\Get-TppCertificateDetail.ps1','Public\Get-TppObject.ps1','Public\Get-TppObjectConfig.ps1','Public\Invoke-TppCertificateRenewal.ps1','Public\Move-TppObject.ps1','Public\New-TppCapiApplication.ps1','Public\New-TppSession.ps1','Public\Remove-TppAttribute.ps1','Public\Rename-TppObject.ps1','Public\Set-TppAttribute.ps1','Public\Test-TppObjectExists.ps1','Private\ConvertTo-TppDN.ps1','Private\Invoke-TppRestMethod.ps1','Private\Join-UriPath.ps1','Private\New-TppObject.ps1','Private\Test-TppSession.ps1')
+    NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @('Get-TppCertificateDetail','Get-TppObject','Get-TppObjectConfig','Invoke-TppCertificateRenewal','Move-TppObject','New-TppCapiApplication','New-TppSession','Set-TppAttribute','Rename-TppObject','Set-TppAttribute','Test-TppObjectExists')
-
+    FunctionsToExport = @()
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport   = @()

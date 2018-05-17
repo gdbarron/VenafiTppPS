@@ -26,7 +26,9 @@ A list of attribute names to limit the search against.  Only valid when searchin
 The path to start our search.  If not provided, the root, \VED, is used.
 
 .PARAMETER Recursive
-Searches the subordinates of the object specified in DN.  Not supported when searching Classes or by Pattern.
+Searches the subordinates of the object specified in DN.
+Not supported when searching Classes or by Pattern.
+Default value is true.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -118,7 +120,7 @@ function Get-TppObject {
 
         [Parameter(ParameterSetName = 'FindByDN')]
         [Parameter(ParameterSetName = 'FindByClass')]
-        [Switch] $Recursive,
+        [Bool] $Recursive = $true,
         
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession

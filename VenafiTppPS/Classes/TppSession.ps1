@@ -4,6 +4,7 @@ class TppSession {
     [System.Management.Automation.PSCredential] $Credential
     [string] $ServerUrl
     [datetime] $ValidUntil
+    [PSCustomObject] $CustomField
 
     TppSession () {
         # throw [System.NotImplementedException]::New()
@@ -64,6 +65,15 @@ class TppSession {
         $response = Invoke-TppRestMethod @params
         $this.APIKey = $response.ApiKey
         $this.ValidUntil = $response.ValidUntil
+
+        # get custom fields
+        if ( -not $this.CustomField ) {
+            $allFields = (Get-TppCustomField -TppSession $this -Class 'X509 Certificate').Items
+            $deviceFields = (Get-TppCustomField -TppSession $this -Class 'Device').Items
+            $allFields += $deviceFields | where {$_.Guid -notin $allFields.Guid}
+            $this.CustomField = $allFields
+        }
+
     }
 
     hidden [void] _init ([Hashtable] $initHash) {
@@ -74,6 +84,7 @@ class TppSession {
 
         $this.ServerUrl = $initHash.ServerUrl
         $this.Credential = $initHash.Credential
+        $this.CustomField = $null
     }
 }
 
