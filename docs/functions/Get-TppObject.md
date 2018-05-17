@@ -7,13 +7,14 @@ Find objects by DN, class, or pattern
 
 ### FindByDN (Default)
 ```
-Get-TppObject [-DN <String>] [-Pattern <String>] [-Recursive] [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppObject [-DN <String>] [-Pattern <String>] [-Recursive <Boolean>] [-TppSession <TppSession>]
+ [<CommonParameters>]
 ```
 
 ### FindByClass
 ```
-Get-TppObject [-DN <String>] -Class <String> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>]
- [<CommonParameters>]
+Get-TppObject [-DN <String>] -Class <String> [-Pattern <String>] [-Recursive <Boolean>]
+ [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### FindByClasses
@@ -169,17 +170,18 @@ Accept wildcard characters: False
 ```
 
 ### -Recursive
-Searches the subordinates of the object specified in DN. 
+Searches the subordinates of the object specified in DN.
 Not supported when searching Classes or by Pattern.
+Default value is true.
 
 ```yaml
-Type: SwitchParameter
+Type: Boolean
 Parameter Sets: FindByDN, FindByClass
 Aliases:
 
 Required: False
 Position: Named
-Default value: False
+Default value: True
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

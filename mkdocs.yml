@@ -7,9 +7,10 @@ copyright: ""
 pages:
   - Home: index.md
   - Functions:
+    - Get-TppAttribute: functions/Get-TppAttribute.md
     - Get-TppCertificateDetail: functions/Get-TppCertificateDetail.md
+    - Get-TppCustomField: functions/Get-TppCustomField.md
     - Get-TppObject: functions/Get-TppObject.md
-    - Get-TppObjectConfig: functions/Get-TppObjectConfig.md
     - Invoke-TppCertificateRenewal: functions/Invoke-TppCertificateRenewal.md
     - Move-TppObject: functions/Move-TppObject.md
     - New-TppCapiApplication: functions/New-TppCapiApplication.md

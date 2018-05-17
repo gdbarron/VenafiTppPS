@@ -20,10 +20,11 @@ To ensure you only have one value for an attribute, use the Overwrite switch.
 
 ### EXAMPLE 1
 ```
-Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName '{xyz12345-1234-abcd-efgh-dfghjklmnbvf}' -Value 'new custom value'
+Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName 'My custom field Label' -Value 'new custom value'
 ```
 
-Set value on custom field
+Set value on custom field. 
+This will add to any existing value.
 
 ### EXAMPLE 2
 ```
@@ -50,7 +51,8 @@ Accept wildcard characters: False
 ```
 
 ### -AttributeName
-Name of the attribute to modify
+Name of the attribute to modify. 
+If modifying a custom field, use the Label.
 
 ```yaml
 Type: String
@@ -130,8 +132,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## RELATED LINKS
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Set-TppAttribute/](http://venafitppps.readthedocs.io/en/latest/functions/Set-TppAttribute/)
-
-[http://venafitppps.readthedocs.io/en/latest/functions/Remove-TppAttribute/](http://venafitppps.readthedocs.io/en/latest/functions/Remove-TppAttribute/)
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Set-TppAttribute.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Set-TppAttribute.ps1)
 
