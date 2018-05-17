@@ -6,7 +6,7 @@ Adds a value to an attribute
 ## SYNTAX
 
 ```
-Set-TppAttribute [-DN] <String[]> [-AttributeName] <String> [-Value] <String[]> [-Overwrite]
+Set-TppAttribute [-DN] <String[]> [-AttributeName] <String> [-Value] <String[]> [-NoClobber]
  [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
@@ -81,8 +81,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Overwrite
-Replace existing values as opposed to appending
+### -NoClobber
+Append existing values as opposed to replacing which is the default
 
 ```yaml
 Type: SwitchParameter

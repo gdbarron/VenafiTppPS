@@ -11,6 +11,7 @@ pages:
     - Get-TppCertificateDetail: functions/Get-TppCertificateDetail.md
     - Get-TppCustomField: functions/Get-TppCustomField.md
     - Get-TppObject: functions/Get-TppObject.md
+    - Get-TppWorkflowDetail: functions/Get-TppWorkflowDetail.md
     - Invoke-TppCertificateRenewal: functions/Invoke-TppCertificateRenewal.md
     - Move-TppObject: functions/Move-TppObject.md
     - New-TppCapiApplication: functions/New-TppCapiApplication.md
