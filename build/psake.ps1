@@ -71,46 +71,46 @@ Task UnitTests -Depends Init {
 Task Build -Depends UnitTests {
     $lines
     
-    "Populating AliasesToExport and FunctionsToExport"
-    # Load the module, read the exported functions and aliases, update the psd1
-    $FunctionFiles = Get-ChildItem "$ModuleFolder\Public\*.ps1" |
-        Where-Object { $_.name -notmatch 'Tests' }
-    $ExportFunctions = @()
-    $ExportAliases = @()
-    foreach ($FunctionFile in $FunctionFiles) {
-        $AST = [System.Management.Automation.Language.Parser]::ParseFile($FunctionFile.FullName, [ref]$null, [ref]$null)        
-        $Functions = $AST.FindAll( {
-                $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst]
-            }, $true)
-        if ($Functions.Name) {
-            $ExportFunctions += $Functions.Name
-        }
-        $Aliases = $AST.FindAll( {
-                $args[0] -is [System.Management.Automation.Language.AttributeAst] -and
-                $args[0].parent -is [System.Management.Automation.Language.ParamBlockAst] -and
-                $args[0].TypeName.FullName -eq 'alias'
-            }, $true)
-        if ($Aliases.PositionalArguments.value) {
-            $ExportAliases += $Aliases.PositionalArguments.value
-        }        
-    }
-    Set-ModuleFunctions -Name $env:BHPSModuleManifest -FunctionsToExport $ExportFunctions
-    Update-Metadata -Path $env:BHPSModuleManifest -PropertyName AliasesToExport -Value $ExportAliases
+    # "Populating AliasesToExport and FunctionsToExport"
+    # # Load the module, read the exported functions and aliases, update the psd1
+    # $FunctionFiles = Get-ChildItem "$ModuleFolder\Public\*.ps1" |
+    #     Where-Object { $_.name -notmatch 'Tests' }
+    # $ExportFunctions = @()
+    # $ExportAliases = @()
+    # foreach ($FunctionFile in $FunctionFiles) {
+    #     $AST = [System.Management.Automation.Language.Parser]::ParseFile($FunctionFile.FullName, [ref]$null, [ref]$null)        
+    #     $Functions = $AST.FindAll( {
+    #             $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst]
+    #         }, $true)
+    #     if ($Functions.Name) {
+    #         $ExportFunctions += $Functions.Name
+    #     }
+    #     $Aliases = $AST.FindAll( {
+    #             $args[0] -is [System.Management.Automation.Language.AttributeAst] -and
+    #             $args[0].parent -is [System.Management.Automation.Language.ParamBlockAst] -and
+    #             $args[0].TypeName.FullName -eq 'alias'
+    #         }, $true)
+    #     if ($Aliases.PositionalArguments.value) {
+    #         $ExportAliases += $Aliases.PositionalArguments.value
+    #     }        
+    # }
+    # Set-ModuleFunctions -Name $env:BHPSModuleManifest -FunctionsToExport $ExportFunctions
+    # Update-Metadata -Path $env:BHPSModuleManifest -PropertyName AliasesToExport -Value $ExportAliases
     
-    "Populating NestedModules"
-    # Scan the Public and Private folders and add all Files to NestedModules
-    # I prefer to populate this instead of dot sourcing from the .psm1
-    $Parameters = @{
-        Path        = @(
-            "$ModuleFolder\Public\*.ps1"
-            "$ModuleFolder\Private\*.ps1"
-        )
-        ErrorAction = 'SilentlyContinue'
-    }
-    $ExportModules = Get-ChildItem @Parameters |
-        Where-Object { $_.Name -notmatch '\.tests{0,1}\.ps1' } |
-        ForEach-Object { $_.fullname.replace("$ModuleFolder\", "") }
-    Update-Metadata -Path $env:BHPSModuleManifest -PropertyName NestedModules -Value $ExportModules
+    # "Populating NestedModules"
+    # # Scan the Public and Private folders and add all Files to NestedModules
+    # # I prefer to populate this instead of dot sourcing from the .psm1
+    # $Parameters = @{
+    #     Path        = @(
+    #         "$ModuleFolder\Public\*.ps1"
+    #         "$ModuleFolder\Private\*.ps1"
+    #     )
+    #     ErrorAction = 'SilentlyContinue'
+    # }
+    # $ExportModules = Get-ChildItem @Parameters |
+    #     Where-Object { $_.Name -notmatch '\.tests{0,1}\.ps1' } |
+    #     ForEach-Object { $_.fullname.replace("$ModuleFolder\", "") }
+    # Update-Metadata -Path $env:BHPSModuleManifest -PropertyName NestedModules -Value $ExportModules
     
     # Bump the module version
     Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $BuildVersion

@@ -54,7 +54,7 @@
     # RequiredAssemblies = @()
 
     # Script files (.ps1) that are run in the caller's environment prior to importing this module.
-    ScriptsToProcess = @('classes\*.ps1')
+    ScriptsToProcess  = @('classes\*.ps1')
 
     # Type files (.ps1xml) to be loaded when importing this module
     # TypesToProcess = @()
@@ -63,13 +63,13 @@
     FormatsToProcess  = @()
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-    NestedModules = @('Public\Get-TppAttribute.ps1','Public\Get-TppCertificateDetail.ps1','Public\Get-TppCustomField.ps1','Public\Get-TppObject.ps1','Public\Invoke-TppCertificateRenewal.ps1','Public\Move-TppObject.ps1','Public\New-TppCapiApplication.ps1','Public\New-TppSession.ps1','Public\Rename-TppObject.ps1','Public\Set-TppAttribute.ps1','Public\Test-TppObjectExists.ps1','Private\ConvertTo-TppDN.ps1','Private\Invoke-TppRestMethod.ps1','Private\Join-UriPath.ps1','Private\New-TppObject.ps1','Private\Test-TppSession.ps1')
+    NestedModules     = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @('Get-TppAttribute','Get-TppCertificateDetail','Get-TppCustomField','Get-TppObject','Invoke-TppCertificateRenewal','Move-TppObject','New-TppCapiApplication','New-TppSession','Rename-TppObject','Set-TppAttribute','Test-TppObjectExists')
+    FunctionsToExport = '*'
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-    CmdletsToExport   = @()
+    CmdletsToExport   = '*'
 
     # Variables to export from this module
     VariablesToExport = @('*')
@@ -92,10 +92,10 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags = @('Venafi', 'TPP', 'TrustProtectionPlatform', 'API')
+            Tags       = @('Venafi', 'TPP', 'TrustProtectionPlatform', 'API')
 
             # A URL to the license for this module.
-            # LicenseUri = ''
+            LicenseUri = 'https://github.com/gdbarron/VenafiTppPS/blob/master/LICENSE'
 
             # A URL to the main website for this project.
             ProjectUri = 'https://github.com/gdbarron/VenafiTppPS'
@@ -111,7 +111,7 @@
     } # End of PrivateData hashtable
 
     # HelpInfo URI of this module
-    # HelpInfoURI = ''
+    HelpInfoURI       = 'http://venafitppps.readthedocs.io/'
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
