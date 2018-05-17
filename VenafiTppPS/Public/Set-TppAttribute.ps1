@@ -9,7 +9,7 @@ Write a value to the object's configuration.  This function will append by defau
 Path to the object to modify
 
 .PARAMETER AttributeName
-Name of the attribute to modify
+Name of the attribute to modify.  If modifying a custom field, use the Label.
 
 .PARAMETER Value
 Value or list of values to write to the attribute.
@@ -30,8 +30,8 @@ PSCustomObject with the following properties:
     Error = Error message in case of failure
 
 .EXAMPLE
-Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName '{xyz12345-1234-abcd-efgh-dfghjklmnbvf}' -Value 'new custom value'
-Set value on custom field
+Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName 'My custom field Label' -Value 'new custom value'
+Set value on custom field.  This will add to any existing value.
 
 .EXAMPLE
 Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName 'Consumers' -Value '\VED\Policy\myappobject.company.com' -Overwrite
@@ -39,9 +39,6 @@ Set value on a certificate by overwriting any existing values
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Set-TppAttribute/
-
-.LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Remove-TppAttribute/
 
 .LINK
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Set-TppAttribute.ps1
@@ -85,9 +82,6 @@ function Set-TppAttribute {
         $params = @{
             TppSession = $TppSession
             Method     = 'Post'
-            Body       = @{
-                AttributeName = $AttributeName
-            }
         }
 
         if ($Overwrite) {
@@ -105,8 +99,16 @@ function Set-TppAttribute {
 
         foreach ($thisDn in $DN) {
 
-            $params.Body += @{
-                ObjectDN = $thisDn
+            $realAttributeName = $AttributeName
+            $field = $TppSession.CustomField | where {$_.Label -eq $AttributeName}
+            if ( $field ) {
+                $realAttributeName = $field.Guid
+                Write-Verbose ("Updating custom field.  Name: {0}, Guid: {1}" -f $AttributeName, $field.Guid)
+            }
+            
+            $params.Body = @{
+                ObjectDN      = $thisDn
+                AttributeName = $realAttributeName
             }
 
             # overwrite can accept multiple values at once so pass in the entire list

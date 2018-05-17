@@ -23,25 +23,30 @@ Session object created from New-TppSession method.  The value defaults to the sc
 DN by property name
 
 .OUTPUTS
-PSCustomObject with properties DN and Config.  DN is the path provided and Config contains key/value pairs for the requested items.
+PSCustomObject with properties DN and Config.
+    DN, path provided to the function
+    Attribute, PSCustomObject with the following properties:
+        Name
+        Values
+        IsCustomField
 
 .EXAMPLE
-Get-TppObjectConfig -DN '\VED\Policy\My Folder\myapp.company.com'
+Get-TppAttribute -DN '\VED\Policy\My Folder\myapp.company.com'
 Retrieve all configurations for a certificate
 
 .EXAMPLE
-Get-TppObjectConfig -DN '\VED\Policy\My Folder\myapp.company.com' -EffectivePolicy
+Get-TppAttribute -DN '\VED\Policy\My Folder\myapp.company.com' -EffectivePolicy
 Retrieve all effective configurations for a certificate
 
 .EXAMPLE
-Get-TppObjectConfig -DN '\VED\Policy\My Folder\myapp.company.com' -AttributeName 'driver name'
+Get-TppAttribute -DN '\VED\Policy\My Folder\myapp.company.com' -AttributeName 'driver name'
 Retrieve all effective configurations for a certificate
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObjectConfig/
+http://venafitppps.readthedocs.io/en/latest/functions/Get-TppAttribute/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppObjectConfig.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppAttribute.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-read.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____26
@@ -53,7 +58,7 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-readeffectivepolicy.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____30
 
 #>
-function Get-TppObjectConfig {
+function Get-TppAttribute {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy', ValueFromPipelineByPropertyName)]
@@ -61,7 +66,7 @@ function Get-TppObjectConfig {
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 # this regex could be better
-                if ( $_ -match "^\\VED\\Policy\\.*" ) {
+                if ( $_ -match "^\\VED\\.*" ) {
                     $true
                 } else {
                     throw "'$_' is not a valid DN"
@@ -151,9 +156,27 @@ function Get-TppObjectConfig {
             } # DN
 
             if ( $configValues ) {
+
+                # convert custom field guids to names
+                $updatedConfigValues = $configValues | % {
+
+                    $thisConfigValue = $_
+                    $thisConfigValue | Add-Member @{
+                        IsCustomField = $false
+                    }
+
+                    $customField = $TppSession.CustomField | where {$_.Guid -eq $thisConfigValue.Name}
+                    if ( $customField ) {
+                        $thisConfigValue.Name = $customField.Label
+                        $thisConfigValue.IsCustomField = $true
+                    }
+
+                    $thisConfigValue
+                }
+
                 [PSCustomObject] @{
                     DN     = $thisDN
-                    Config = $configValues
+                    Config = $updatedConfigValues
                 }
             }
         }
