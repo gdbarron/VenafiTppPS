@@ -14,8 +14,8 @@ Name of the attribute to modify.  If modifying a custom field, use the Label.
 .PARAMETER Value
 Value or list of values to write to the attribute.
 
-.PARAMETER Overwrite
-Replace existing values as opposed to appending
+.PARAMETER NoClobber
+Append existing values as opposed to replacing which is the default
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -70,7 +70,7 @@ function Set-TppAttribute {
         [String[]] $Value,
 
         [Parameter()]
-        [Switch] $Overwrite,
+        [Switch] $NoClobber,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -113,18 +113,7 @@ function Set-TppAttribute {
 
             # overwrite can accept multiple values at once so pass in the entire list
             # adding values can not so we must loop
-            if ($Overwrite) {
-                $params.Body += @{
-                    Values = $Value
-                }
-                $response = Invoke-TppRestMethod @params
-
-                [PSCustomObject] @{
-                    DN      = $thisDn
-                    Success = $response.Result -eq [ConfigResult]::Success
-                    Error   = $response.Error
-                }
-            } else {
+            if ($NoClobber) {
                 foreach ($thisValue in $Value) {
                     
                     $params.Body += @{
@@ -137,6 +126,17 @@ function Set-TppAttribute {
                         Success = $response.Result -eq [ConfigResult]::Success
                         Error   = $response.Error
                     }
+                }
+            } else {
+                $params.Body += @{
+                    Values = $Value
+                }
+                $response = Invoke-TppRestMethod @params
+
+                [PSCustomObject] @{
+                    DN      = $thisDn
+                    Success = $response.Result -eq [ConfigResult]::Success
+                    Error   = $response.Error
                 }
             }
 
