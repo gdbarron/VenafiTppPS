@@ -9,14 +9,10 @@ Write a value to the object's configuration.  This function will append by defau
 Path to the object to modify
 
 .PARAMETER AttributeName
-Name of the attribute to modify
+Name of the attribute to modify.  If modifying a custom field, use the Label.
 
 .PARAMETER Value
 Value or list of values to write to the attribute.
-
-.PARAMETER IsCustomField
-Attribute name provided matches a "Label" for a custom field.
-The Guid associated with this custom field will be used as the attribute name when updating.
 
 .PARAMETER Overwrite
 Replace existing values as opposed to appending
@@ -34,7 +30,7 @@ PSCustomObject with the following properties:
     Error = Error message in case of failure
 
 .EXAMPLE
-Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName 'My custom field' -Value 'new custom value' -IsCustomField
+Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName 'My custom field Label' -Value 'new custom value'
 Set value on custom field.  This will add to any existing value.
 
 .EXAMPLE
@@ -74,9 +70,6 @@ function Set-TppAttribute {
         [String[]] $Value,
 
         [Parameter()]
-        [Switch] $IsCustomField,
-        
-        [Parameter()]
         [Switch] $Overwrite,
 
         [Parameter()]
@@ -107,13 +100,10 @@ function Set-TppAttribute {
         foreach ($thisDn in $DN) {
 
             $realAttributeName = $AttributeName
-            if ( $IsCustomField ) {
-                $field = $TppSession.CustomField | where {$_.Label -eq $AttributeName}
-                if ( $field ) {
-                    $realAttributeName = $field.Guid
-                } else {
-                    throw ("Attribute name {0} was not found as a custom field" -f $AttributeName)
-                }
+            $field = $TppSession.CustomField | where {$_.Label -eq $AttributeName}
+            if ( $field ) {
+                $realAttributeName = $field.Guid
+                Write-Verbose ("Updating custom field.  Name: {0}, Guid: {1}" -f $AttributeName, $field.Guid)
             }
             
             $params.Body = @{

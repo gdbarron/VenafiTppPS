@@ -23,7 +23,12 @@ Session object created from New-TppSession method.  The value defaults to the sc
 DN by property name
 
 .OUTPUTS
-PSCustomObject with properties DN and Config.  DN is the path provided and Config contains key/value pairs for the requested items.
+PSCustomObject with properties DN and Config.
+    DN, path provided to the function
+    Attribute, PSCustomObject with the following properties:
+        Name
+        Values
+        IsCustomField
 
 .EXAMPLE
 Get-TppAttribute -DN '\VED\Policy\My Folder\myapp.company.com'
@@ -151,9 +156,27 @@ function Get-TppAttribute {
             } # DN
 
             if ( $configValues ) {
+
+                # convert custom field guids to names
+                $updatedConfigValues = $configValues | % {
+
+                    $thisConfigValue = $_
+                    $thisConfigValue | Add-Member @{
+                        IsCustomField = $false
+                    }
+
+                    $customField = $TppSession.CustomField | where {$_.Guid -eq $thisConfigValue.Name}
+                    if ( $customField ) {
+                        $thisConfigValue.Name = $customField.Label
+                        $thisConfigValue.IsCustomField = $true
+                    }
+
+                    $thisConfigValue
+                }
+
                 [PSCustomObject] @{
                     DN     = $thisDN
-                    Config = $configValues
+                    Config = $updatedConfigValues
                 }
             }
         }
