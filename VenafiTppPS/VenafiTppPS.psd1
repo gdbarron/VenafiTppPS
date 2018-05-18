@@ -12,7 +12,7 @@
     RootModule        = 'VenafiTppPS.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.3.2'
+    ModuleVersion     = '0.3.3'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -104,7 +104,8 @@
             # IconUri = ''
 
             # ReleaseNotes of this module
-            ReleaseNotes = ''
+            ReleaseNotes = '# Version 0.3.3 (2018-05-18)
+- With Set-TppAttribute set to Overwrite by default, update New-TppCapiApplication to ensure our Consumers attribute update does not overwrite'
 
         } # End of PSData hashtable
 
