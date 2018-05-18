@@ -6,6 +6,8 @@ theme: readthedocs
 copyright: ""
 pages:
   - Home: index.md
+  - Realse Notes: RELEASE.md
+  - Change Log: ChangeLog.md
   - Functions:
     - Get-TppAttribute: functions/Get-TppAttribute.md
     - Get-TppCertificateDetail: functions/Get-TppCertificateDetail.md
