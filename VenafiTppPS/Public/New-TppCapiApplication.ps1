@@ -239,7 +239,7 @@ function New-TppCapiApplication {
             AttributeName = 'Consumers'
             Value         = $capiObject.DN
         }
-        $certUpdateResponse = Set-TppAttribute @certUpdateParams
+        $certUpdateResponse = Set-TppAttribute @certUpdateParams -NoClobber
 
         if ( $certUpdateResponse.Success ) {
             $capiObject
