@@ -298,7 +298,9 @@ Task Deploy -Depends BuildDocs {
             "git push origin $ENV:BHBranchName"
             cmd /c "git push origin $ENV:BHBranchName 2>&1"
             # if this is a !deploy on master, create GitHub release
+            # 20180518, stop use of this for now
             if (
+                0 -and
                 $ENV:BHBuildSystem -ne 'Unknown' -and
                 $ENV:BHBranchName -eq "master" -and
                 $ENV:BHCommitMessage -match '!deploy'
