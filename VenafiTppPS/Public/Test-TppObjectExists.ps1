@@ -11,6 +11,9 @@ DN path to object.  Provide either this or Guid.  This is the default if both ar
 .PARAMETER Guid
 Guid which represents a unqiue object  Provide either this or DN.
 
+.PARAMETER ExistOnly
+Only return true/false instead of Object DN/Guid and existence true/false.  Helpful when just validating 1 object.
+
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
@@ -43,28 +46,23 @@ function Test-TppObjectExists {
 
     [CmdletBinding(DefaultParameterSetName = 'DN')]
     param (
-        [Parameter(Mandatory, ParameterSetName = 'DN', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'DN', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\Policy\\.*" ) {
+                if ( $_ | Test-TppDnPath ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid DN"
+                    throw "'$_' is not a valid DN path"
                 }
             })]
         [string[]] $DN,
         
-        [Parameter(Mandatory, ParameterSetName = 'Guid', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'GUID', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( {
-                if ( $_ -match "^{[A-Z0-9]{8}-([A-Z0-9]{4}-){3}[A-Z0-9]{12}}$" ) {
-                    $true
-                } else {
-                    throw "'$_' is not a valid GUID"
-                }
-            })]
-        [string[]] $Guid,
+        [Guid[]] $Guid,
+
+        [Parameter()]
+        [Switch] $ExistOnly,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -73,44 +71,35 @@ function Test-TppObjectExists {
     begin {
         $TppSession.Validate()
 
-        $baseParams = @{
+        $params = @{
             TppSession = $TppSession
-            Method     = 'Post'
-            UriLeaf    = 'config/IsValid'
-        }
-
-        Switch ($PsCmdlet.ParameterSetName)	{
-
-            'DN' {
-                $restParameterName = 'ObjectDN'
-                $boundParameter = 'DN'
-            }
-            
-            'Guid' {
-                $restParameterName = 'ObjectGUID'
-                $boundParameter = 'Guid'
-            }
-
-        }
-
-        $params = $baseParams += @{
-            Body = @{
-                $restParameterName = ''
-            }
+            Method = 'Post'
+            UriLeaf = 'config/IsValid'
+            Body = @{}
         }
     }
 
     process {
 
-        foreach ( $thisValue in $PsBoundParameters[$boundParameter] ) {
+        foreach ( $thisValue in $PsBoundParameters[$PsCmdlet.ParameterSetName] ) {
 
-            $params.body[$restParameterName] = $thisValue
+            if ( $PsCmdlet.ParameterSetName -eq 'GUID') {
+                $thisValue = "{$thisValue}"
+            }
+
+            $params.Body = @{
+                ("Object{0}" -f $PsCmdlet.ParameterSetName) = $thisValue
+            }
 
             $response = Invoke-TppRestMethod @params
 
-            [PSCustomObject] @{
-                Object = $thisValue
-                Exists = ($response.Result -eq [ConfigResult]::Success)
+            if ( $ExistOnly ) {
+                $response.Result -eq [ConfigResult]::Success
+            } else {
+                [PSCustomObject] @{
+                    Object = $thisValue
+                    Exists = ($response.Result -eq [ConfigResult]::Success)
+                }
             }
         }
     }
