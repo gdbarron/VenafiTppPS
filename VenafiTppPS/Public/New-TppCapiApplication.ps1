@@ -54,11 +54,10 @@ function New-TppCapiApplication {
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\Policy\\.*" ) {
+                if ( $_ | Test-TppDnPath ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid DN"
+                    throw "'$_' is not a valid DN path"
                 }
             })]
         [string] $DN,
@@ -73,13 +72,12 @@ function New-TppCapiApplication {
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\Policy\\.*" ) {
+                if ( $_ | Test-TppDnPath ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid DN"
-                }    
-            })]    
+                    throw "'$_' is not a valid DN path"
+                }
+            })]
         [String] $CertificateDN,    
 
         [Parameter()]
@@ -89,13 +87,12 @@ function New-TppCapiApplication {
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\.*" ) {
+                if ( $_ | Test-TppDnPath ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid DN"
-                }    
-            })]    
+                    throw "'$_' is not a valid DN path"
+                }
+            })]
         [String] $CredentialDN,    
 
         [Parameter()]
@@ -138,7 +135,7 @@ function New-TppCapiApplication {
 
     $TppSession.Validate()
 
-    if ( -not (Test-TppObjectExists -DN $CertificateDN).Exists ) {
+    if ( -not (Test-TppObjectExists -DN $CertificateDN -ExistOnly) ) {
         throw ("The certificate {0} does not exist" -f $CertificateDN)
     }
 

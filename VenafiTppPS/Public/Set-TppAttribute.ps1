@@ -53,10 +53,10 @@ function Set-TppAttribute {
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                if ( $_ -match "^\\VED\\.*" ) {
+                if ( $_ | Test-TppDnPath ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid DN"
+                    throw "'$_' is not a valid DN path"
                 }
             })]
         [String[]] $DN,

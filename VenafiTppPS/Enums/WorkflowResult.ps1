@@ -7,5 +7,4 @@ enum WorkflowResult {
     ObjectDoesNotExist = 6
     RemoteError = 7
     WorkflowObjectDoesNotExist = 8
-
 }
