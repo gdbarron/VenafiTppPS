@@ -19,6 +19,7 @@ DN
 
 .OUTPUTS
 PSCustomObject with the following properties:
+    Guid: Workflow ticket Guid
     ApprovalExplanation: The explanation supplied by the approver.
     ApprovalFrom: The identity to be contacted for approving.
     ApprovalReason: The administrator-defined reason text.
@@ -53,22 +54,22 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function Get-TppWorkflowDetail {
 
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'DN')]
     param (
         
-        [Parameter(Mandatory, ParameterSetName = 'DN', ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'DN', ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\.*" ) {
+                if ( $_ | Test-TppDnPath ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid DN"
+                    throw "'$_' is not a valid DN path"
                 }
             })]
-        [String[]] $DN,
+        [Alias('DN')]
+        [String[]] $CertificateDN,
 
-        [Parameter(Mandatory, ParameterSetName = 'Guid')]
+        [Parameter(Mandatory, ParameterSetName = 'GUID')]
         [ValidateNotNullOrEmpty()]
         [Guid[]] $Guid,
         
@@ -77,17 +78,18 @@ function Get-TppWorkflowDetail {
     )
 
     begin {
-        Write-Warning "WORK IN PROGRESS"
         $TppSession.Validate()
     }
 
     process {
         
+        Write-Verbose $PsCmdlet.ParameterSetName
+
         Switch ($PsCmdlet.ParameterSetName)	{
             'DN' {
-                $Guid = foreach ($thisDn in $DN) {
+                # DN was provided, go get the existing ticket guids
+                $GuidToProcess = foreach ($thisDn in $CertificateDN) {
             
-                    # if a guid wasn't provided, go get the existing ones
                     $params = @{
                         TppSession = $TppSession
                         Method     = 'Post'
@@ -104,9 +106,13 @@ function Get-TppWorkflowDetail {
                     }
                 }
             }
-        } 
 
-        foreach ($thisGuid in $Guid) {
+            'Guid' {
+                $GuidToProcess = $Guid
+            }
+        }
+
+        foreach ($thisGuid in $GuidToProcess) {
             $params = @{
                 TppSession = $TppSession
                 Method     = 'Post'
@@ -119,6 +125,9 @@ function Get-TppWorkflowDetail {
             $response = Invoke-TppRestMethod @params
             
             if ( $response.Result -eq [WorkflowResult]::Success ) {
+                $response | Add-Member @{
+                    Guid = $thisGuid
+                }
                 $response
             } else {
                 throw ("Error getting ticket details, error is {0}" -f [enum]::GetName([WorkflowResult], $response.Result))
