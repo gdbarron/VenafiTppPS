@@ -42,11 +42,10 @@ function Move-TppObject {
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\.*" ) {
+                if ( $_ | Test-TppDnPath ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid DN"
+                    throw "'$_' is not a valid DN path"
                 }
             })]
         [String] $SourceDN,
@@ -54,11 +53,10 @@ function Move-TppObject {
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\.*" ) {
+                if ( $_ | Test-TppDnPath ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid DN"
+                    throw "'$_' is not a valid DN path"
                 }
             })]
         [String] $TargetDN,
@@ -70,12 +68,12 @@ function Move-TppObject {
     $TppSession.Validate()
 
     # ensure the object to rename already exists
-    if ( -not (Test-TppObjectExists -DN $DN).Exists ) {
+    if ( -not (Test-TppObjectExists -DN $DN -ExistOnly) ) {
         throw ("Source DN '{0}' does not exist" -f $DN)
     }
 
     # ensure the new object doesn't already exist
-    if ( (Test-TppObjectExists -DN $TargetDN).Exists ) {
+    if ( Test-TppObjectExists -DN $TargetDN -ExistOnly ) {
         throw ("Target DN '{0}' already exists" -f $TargetDN)
     }
 

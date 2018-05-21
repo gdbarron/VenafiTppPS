@@ -6,7 +6,7 @@ Convert GUID to DN
 Convert GUID to DN
 
 .PARAMETER Guid
-Standard guid including { and }
+Standard guid, xyxyxyxy-xyxy-xyxy-xyxy-xyxyxyxyxyxy
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -15,9 +15,10 @@ Session object created from New-TppSession method.  The value defaults to the sc
 Guid
 
 .OUTPUTS
-System.String
+String representing the DN
 
 .EXAMPLE
+ConvertTo-TppDN -Guid 'xyxyxyxy-xyxy-xyxy-xyxy-xyxyxyxyxyxy'
 
 #>
 function ConvertTo-TppDN {
@@ -25,14 +26,7 @@ function ConvertTo-TppDN {
     param (
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( {
-                if ( $_ -match "^{[A-Z0-9]{8}-([A-Z0-9]{4}-){3}[A-Z0-9]{12}}$" ) {
-                    $true
-                } else {
-                    throw "'$_' is not a valid GUID"
-                }
-            })]
-        [String[]] $Guid,
+        [Guid[]] $Guid,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -46,9 +40,7 @@ function ConvertTo-TppDN {
             TppSession = $TppSession
             Method     = 'Post'
             UriLeaf    = 'config/GuidToDN'
-            Body       = @{
-                ObjectGUID = ''
-            }
+            Body       = @{ }
         }
     }
 
@@ -56,7 +48,10 @@ function ConvertTo-TppDN {
 
         foreach ( $thisGuid in $Guid ) {
 
-            $params.Body['ObjectGUID'] = $thisGuid
+            $params.Body = @{
+                ObjectGUID = "{$thisGuid}"
+            }
+            
             $response = Invoke-TppRestMethod @params
 
             if ( $response.Result -eq [ConfigResult]::Success ) {

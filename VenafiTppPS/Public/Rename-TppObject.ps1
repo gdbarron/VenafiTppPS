@@ -42,11 +42,10 @@ function Rename-TppObject {
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\Policy\\.*" ) {
+                if ( $_ | Test-TppDnPath ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid DN"
+                    throw "'$_' is not a valid DN path"
                 }
             })]
         [String] $SourceDN,
@@ -62,13 +61,13 @@ function Rename-TppObject {
     $TppSession.Validate()
 
     # ensure the object to rename already exists
-    if ( -not (Test-TppObjectExists -DN $DN).Exists ) {
+    if ( -not (Test-TppObjectExists -DN $DN -ExistOnly) ) {
         throw ("{0} does not exist" -f $DN)
     }
 
     # ensure the new object doesn't already exist
     $newDN = "{0}\{1}" -f (Split-Path $DN -Parent), $NewName
-    if ( (Test-TppObjectExists -DN $newDN).Exists ) {
+    if ( Test-TppObjectExists -DN $newDN -ExistOnly ) {
         throw ("{0} already exists" -f $newDN)
     }
 
