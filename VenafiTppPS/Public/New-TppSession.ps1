@@ -24,9 +24,35 @@ SecureString password to authenticate to ServerUrl with
 Optionally, send the session object to the pipeline.
 
 .OUTPUTS
-PSCustomObject
+PSCustomObject with the following properties:
+    APIKey - Guid representing the current session with TPP
+    Credential - Credential object provided to authenticate against TPP server.  This will be used to re-authenticate once the connection has expired.
+    ServerUrl - URL to the TPP server
+    ValidateUtil - DateTime when the session will expire.
+    CustomField - PSCustomObject containing custom fields defined on this server.  Properties include:
+        AllowedValues
+        Classes
+        ConfigAttribute
+        DN
+        DefaultValues
+        Guid
+        Label
+        Mandatory
+        Name
+        Policyable
+        RenderHidden
+        RenderReadOnly
+        Single
+        Type
+
 
 .EXAMPLE
+New-TppSession -ServerUrl https://venafitpp.mycompany.com -Credential $cred
+Connect to the TPP server and store the session object in the script variable
+
+.EXAMPLE
+$sess = New-TppSession -ServerUrl https://venafitpp.mycompany.com -Credential $cred -PassThru
+Connect to the TPP server and return the session object
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppSession/
@@ -64,13 +90,13 @@ function New-TppSession {
 	
         "Credential" {
             $sessionCredential = $Credential
-            $Username = $Credential.username
-            $Password = $Credential.GetNetworkCredential().password
+            # $Username = $Credential.username
+            # $Password = $Credential.GetNetworkCredential().password
         }
 		
         "UsernamePassword" {
             # we have username, just need password
-            $Password = ConvertTo-InsecureString $SecurePassword
+            # $Password = ConvertTo-InsecureString $SecurePassword
 
             # build a credential object to attached to the session object
             $sessionCredential = New-Object System.Management.Automation.PSCredential ($Username, $SecurePassword)
@@ -85,9 +111,9 @@ function New-TppSession {
 
     $newSession.Connect()
 
-    $Script:TppSession = $newSession
-
     if ( $PassThru ) {
         $newSession
+    } else {
+        $Script:TppSession = $newSession
     }
 }
