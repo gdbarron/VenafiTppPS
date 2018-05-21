@@ -28,8 +28,17 @@ access to all other REST calls.
 
 ### EXAMPLE 1
 ```
-
+New-TppSession -ServerUrl https://venafitpp.mycompany.com -Credential $cred
 ```
+
+Connect to the TPP server and store the session object in the script variable
+
+### EXAMPLE 2
+```
+$sess = New-TppSession -ServerUrl https://venafitpp.mycompany.com -Credential $cred -PassThru
+```
+
+Connect to the TPP server and return the session object
 
 ## PARAMETERS
 
@@ -116,7 +125,26 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## OUTPUTS
 
-### PSCustomObject
+### PSCustomObject with the following properties:
+    APIKey - Guid representing the current session with TPP
+    Credential - Credential object provided to authenticate against TPP server.  This will be used to re-authenticate once the connection has expired.
+    ServerUrl - URL to the TPP server
+    ValidateUtil - DateTime when the session will expire.
+    CustomField - PSCustomObject containing custom fields defined on this server.  Properties include:
+        AllowedValues
+        Classes
+        ConfigAttribute
+        DN
+        DefaultValues
+        Guid
+        Label
+        Mandatory
+        Name
+        Policyable
+        RenderHidden
+        RenderReadOnly
+        Single
+        Type
 
 ## NOTES
 

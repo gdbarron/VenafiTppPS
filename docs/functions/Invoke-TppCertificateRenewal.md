@@ -28,7 +28,7 @@ Invoke-TppCertificateRenew -Path '\VED\Policy\My folder\app.mycompany.com'
 ## PARAMETERS
 
 ### -DN
-this regex could be better
+{{Fill DN Description}}
 
 ```yaml
 Type: String
