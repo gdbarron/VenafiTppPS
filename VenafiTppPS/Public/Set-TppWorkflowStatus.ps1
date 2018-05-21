@@ -19,7 +19,6 @@ DN
 
 .OUTPUTS
 PSCustomObject with the following properties:
-    Guid: Workflow ticket Guid
     ApprovalExplanation: The explanation supplied by the approver.
     ApprovalFrom: The identity to be contacted for approving.
     ApprovalReason: The administrator-defined reason text.
@@ -52,12 +51,12 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Workflow-ticket-details.php?tocpath=REST%20API%20reference%7CWorkflow%20Ticket%20programming%20interfaces%7C_____5
 
 #>
-function Get-TppWorkflowDetail {
+function Set-TppWorkflowStatus {
 
-    [CmdletBinding(DefaultParameterSetName = 'DN')]
+    [CmdletBinding()]
     param (
         
-        [Parameter(Mandatory, ParameterSetName = 'DN', ValueFromPipeline)]
+        [Parameter(Mandatory, ParameterSetName = 'DN', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -69,54 +68,62 @@ function Get-TppWorkflowDetail {
         [Alias('DN')]
         [String[]] $CertificateDN,
 
-        [Parameter(Mandatory, ParameterSetName = 'GUID')]
+        [Parameter(Mandatory, ParameterSetName = 'Guid', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [Guid[]] $Guid,
+        
+        [Parameter(Mandatory)]
+        [ValidateSet('Pending', 'Approved', 'Approved After', 'Approved Between', 'Rejected')]
+        [String] $Status,
+        
+        [Parameter()]
+        [String] $Explanation,
+        
+        [Parameter()]
+        [DateTime] $ScheduledStart,
+        
+        [Parameter()]
+        [DateTime] $ScheduledStop,
         
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
 
     begin {
+        
+        switch ($Status) {
+            'Approved After' {
+                if ( -not $ScheduledStart ) {
+                    throw "A status of 'Approved After' requires a value for ScheduledStart"
+                }
+            }
+            'Approved Between' {
+                if ( -not $ScheduledStart -or -not $ScheduledStop ) {
+                    throw "A status of 'Approved Between' requires a value for ScheduledStart and ScheduledStop"
+                }
+            }
+            Default {
+            }
+        }
+
         $TppSession.Validate()
     }
 
     process {
         
-        Write-Verbose $PsCmdlet.ParameterSetName
-
         Switch ($PsCmdlet.ParameterSetName)	{
             'DN' {
-                # DN was provided, go get the existing ticket guids
-                $GuidToProcess = foreach ($thisDn in $CertificateDN) {
-            
-                    $params = @{
-                        TppSession = $TppSession
-                        Method     = 'Post'
-                        UriLeaf    = 'Workflow/Ticket/Enumerate'
-                        Body       = @{
-                            'ObjectDN' = $thisDn
-                        }
-                    }
-                
-                    $response = Invoke-TppRestMethod @params
-                
-                    if ( $response ) {
-                        $response.GUIDs
-                    }
+                $Guid = foreach ($thisDn in $DN) {
+                    $thisDn | Get-TppWorkflowDetail
                 }
-            }
-
-            'Guid' {
-                $GuidToProcess = $Guid
             }
         }
 
-        foreach ($thisGuid in $GuidToProcess) {
+        foreach ($thisGuid in $Guid) {
             $params = @{
                 TppSession = $TppSession
                 Method     = 'Post'
-                UriLeaf    = 'Workflow/Ticket/Details'
+                UriLeaf    = 'Workflow/Ticket/UpdateStatus'
                 Body       = @{
                     'GUID' = $thisGuid
                 }
@@ -124,13 +131,8 @@ function Get-TppWorkflowDetail {
                 
             $response = Invoke-TppRestMethod @params
             
-            if ( $response.Result -eq [WorkflowResult]::Success ) {
-                $response | Add-Member @{
-                    Guid = $thisGuid
-                }
-                $response
-            } else {
-                throw ("Error getting ticket details, error is {0}" -f [enum]::GetName([WorkflowResult], $response.Result))
+            if ( -not ($response.Result -eq [WorkflowResult]::Success) ) {
+                throw ("Error setting workflow ticket status, error is {0}" -f [enum]::GetName([WorkflowResult], $response.Result))
             }
         }
     }

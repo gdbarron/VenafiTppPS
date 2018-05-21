@@ -47,6 +47,10 @@ PSCustomObject with the following properties:
     TypeName: the class name of the object.
 
 .EXAMPLE
+Get-TppObject
+Get all objects
+
+.EXAMPLE
 Get-TppObject -class 'iis6'
 Get all objects of the type iis6
 
@@ -90,11 +94,10 @@ function Get-TppObject {
         [Parameter(ParameterSetName = 'FindByClass')]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED.*" ) {
+                if ( $_ | Test-TppDnPath ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid DN"
+                    throw "'$_' is not a valid DN path"
                 }
             })]
         [String] $DN = '\VED',

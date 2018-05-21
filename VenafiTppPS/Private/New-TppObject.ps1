@@ -30,11 +30,10 @@ function New-TppObject {
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                # this regex could be better
-                if ( $_ -match "^\\VED\\Policy\\.*" ) {
+                if ( $_ | Test-TppDnPath ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid DN"
+                    throw "'$_' is not a valid DN path"
                 }
             })]
         [string] $DN,
@@ -55,12 +54,12 @@ function New-TppObject {
     # $TppSession.Validate()
 
     # ensure the object doesn't already exist
-    if ( (Test-TppObjectExists -DN $DN).Exists ) {
+    if ( Test-TppObjectExists -DN $DN -ExistOnly ) {
         throw ("{0} already exists" -f $DN)
     }
     
     # ensure the parent folder exists
-    if ( (Test-TppObjectExists -DN (Split-Path $DN -Parent)).Exists ) {
+    if ( Test-TppObjectExists -DN (Split-Path $DN -Parent) -ExistOnly ) {
         throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path $DN -Parent))
     }
     
