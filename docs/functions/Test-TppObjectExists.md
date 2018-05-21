@@ -7,12 +7,12 @@ Test if an object exists
 
 ### DN (Default)
 ```
-Test-TppObjectExists -DN <String[]> [-TppSession <TppSession>] [<CommonParameters>]
+Test-TppObjectExists -DN <String[]> [-ExistOnly] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
-### Guid
+### GUID
 ```
-Test-TppObjectExists -Guid <String[]> [-TppSession <TppSession>] [<CommonParameters>]
+Test-TppObjectExists -Guid <Guid[]> [-ExistOnly] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -47,7 +47,7 @@ Aliases:
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: True (ByPropertyName)
+Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
@@ -55,14 +55,30 @@ Accept wildcard characters: False
 Guid which represents a unqiue object  Provide either this or DN.
 
 ```yaml
-Type: String[]
-Parameter Sets: Guid
+Type: Guid[]
+Parameter Sets: GUID
 Aliases:
 
 Required: True
 Position: Named
 Default value: None
 Accept pipeline input: True (ByPropertyName)
+Accept wildcard characters: False
+```
+
+### -ExistOnly
+Only return true/false instead of Object DN/Guid and existence true/false. 
+Helpful when just validating 1 object.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

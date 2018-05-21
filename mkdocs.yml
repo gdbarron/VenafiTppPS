@@ -12,6 +12,7 @@ pages:
     - Get-TppAttribute: functions/Get-TppAttribute.md
     - Get-TppCertificateDetail: functions/Get-TppCertificateDetail.md
     - Get-TppCustomField: functions/Get-TppCustomField.md
+    - Get-TppLog: functions/Get-TppLog.md
     - Get-TppObject: functions/Get-TppObject.md
     - Get-TppWorkflowDetail: functions/Get-TppWorkflowDetail.md
     - Invoke-TppCertificateRenewal: functions/Invoke-TppCertificateRenewal.md
@@ -20,5 +21,6 @@ pages:
     - New-TppSession: functions/New-TppSession.md
     - Rename-TppObject: functions/Rename-TppObject.md
     - Set-TppAttribute: functions/Set-TppAttribute.md
+    - Set-TppWorkflowStatus: functions/Set-TppWorkflowStatus.md
     - Test-TppObjectExists: functions/Test-TppObjectExists.md
 

@@ -1,18 +1,20 @@
-# Get-TppWorkflowDetail
+# Set-TppWorkflowStatus
 
 ## SYNOPSIS
 Get details about workflow tickets
 
 ## SYNTAX
 
-### DN (Default)
+### DN
 ```
-Get-TppWorkflowDetail -CertificateDN <String[]> [-TppSession <TppSession>] [<CommonParameters>]
+Set-TppWorkflowStatus -CertificateDN <String[]> -Status <String> [-Explanation <String>]
+ [-ScheduledStart <DateTime>] [-ScheduledStop <DateTime>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
-### GUID
+### Guid
 ```
-Get-TppWorkflowDetail -Guid <Guid[]> [-TppSession <TppSession>] [<CommonParameters>]
+Set-TppWorkflowStatus -Guid <Guid[]> -Status <String> [-Explanation <String>] [-ScheduledStart <DateTime>]
+ [-ScheduledStop <DateTime>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -47,7 +49,7 @@ Aliases: DN
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
@@ -56,10 +58,70 @@ Guid representing a unique ticket
 
 ```yaml
 Type: Guid[]
-Parameter Sets: GUID
+Parameter Sets: Guid
 Aliases:
 
 Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByPropertyName)
+Accept wildcard characters: False
+```
+
+### -Status
+{{Fill Status Description}}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Explanation
+{{Fill Explanation Description}}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ScheduledStart
+{{Fill ScheduledStart Description}}
+
+```yaml
+Type: DateTime
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ScheduledStop
+{{Fill ScheduledStop Description}}
+
+```yaml
+Type: DateTime
+Parameter Sets: (All)
+Aliases:
+
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -93,7 +155,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
-    Guid: Workflow ticket Guid
     ApprovalExplanation: The explanation supplied by the approver.
     ApprovalFrom: The identity to be contacted for approving.
     ApprovalReason: The administrator-defined reason text.

@@ -34,26 +34,33 @@ Find objects by DN, class, or pattern.
 
 ### EXAMPLE 1
 ```
+Get-TppObject
+```
+
+Get all objects
+
+### EXAMPLE 2
+```
 Get-TppObject -class 'iis6'
 ```
 
 Get all objects of the type iis6
 
-### EXAMPLE 2
+### EXAMPLE 3
 ```
 Get-TppObject -classes 'iis6', 'capi'
 ```
 
 Get all objects of the type iis6 or capi
 
-### EXAMPLE 3
+### EXAMPLE 4
 ```
 Get-TppObject -DN '\VED\Policy\My Policy Folder' -Recursive
 ```
 
 Get all objects in 'My Policy Folder' and subfolders
 
-### EXAMPLE 4
+### EXAMPLE 5
 ```
 Get-TppObject -DN '\VED\Policy\My Policy Folder' -Pattern 'MyDevice'
 ```
@@ -61,7 +68,7 @@ Get-TppObject -DN '\VED\Policy\My Policy Folder' -Pattern 'MyDevice'
 Get all objects in 'My Policy Folder' that match the name MyDevice. 
 Only search the folder "My Policy Folder", not subfolders.
 
-### EXAMPLE 5
+### EXAMPLE 6
 ```
 Get-TppObject -Pattern 'MyDevice' -Recursive
 ```

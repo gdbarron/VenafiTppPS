@@ -24,7 +24,7 @@ Rename device
 ## PARAMETERS
 
 ### -SourceDN
-this regex could be better
+{{Fill SourceDN Description}}
 
 ```yaml
 Type: String
