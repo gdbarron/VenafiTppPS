@@ -19,13 +19,13 @@ Path (alias: DN)
 
 .OUTPUTS
 PSCustomObject with the following properties:
-DN - Certificate path
-Success - A value of true indicates that the renewal request was successfully submitted and
-granted.
-Error - Indicates any errors that occurred. Not returned when successful
+    CertificateDN - Certificate path
+    Success - A value of true indicates that the renewal request was successfully submitted and
+    granted.
+    Error - Indicates any errors that occurred. Not returned when successful
 
 .EXAMPLE
-Invoke-TppCertificateRenew -Path '\VED\Policy\My folder\app.mycompany.com'
+Invoke-TppCertificateRenewal -CertificateDN '\VED\Policy\My folder\app.mycompany.com'
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificateRenewal/
@@ -40,7 +40,7 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 function Invoke-TppCertificateRenewal {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -49,7 +49,7 @@ function Invoke-TppCertificateRenewal {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $DN,
+        [String] $CertificateDN,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -61,21 +61,23 @@ function Invoke-TppCertificateRenewal {
 
     process {
 
-        write-verbose "Renewing $DN..."
+        write-verbose "Renewing $CertificateDN..."
 
         $params = @{
             TppSession = $TppSession
             Method     = 'Post'
             UriLeaf    = 'certificates/renew'
             Body       = @{
-                CertificateDN = $DN
+                CertificateDN = $CertificateDN
             }
         }
 
         $response = Invoke-TppRestMethod @params
+
         $response | Add-Member @{
-            'DN' = $DN
+            'CertificateDN' = $CertificateDN
         }
+
         $response
     }
 }
