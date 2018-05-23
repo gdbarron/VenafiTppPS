@@ -6,7 +6,7 @@ Renew a certificate
 ## SYNTAX
 
 ```
-Invoke-TppCertificateRenewal [-DN] <String> [[-TppSession] <TppSession>] [<CommonParameters>]
+Invoke-TppCertificateRenewal [-CertificateDN] <String> [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -22,13 +22,13 @@ to the certificate object being renewed.
 
 ### EXAMPLE 1
 ```
-Invoke-TppCertificateRenew -Path '\VED\Policy\My folder\app.mycompany.com'
+Invoke-TppCertificateRenewal -CertificateDN '\VED\Policy\My folder\app.mycompany.com'
 ```
 
 ## PARAMETERS
 
-### -DN
-{{Fill DN Description}}
+### -CertificateDN
+{{Fill CertificateDN Description}}
 
 ```yaml
 Type: String
@@ -38,7 +38,7 @@ Aliases:
 Required: True
 Position: 1
 Default value: None
-Accept pipeline input: True (ByPropertyName)
+Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
@@ -69,10 +69,10 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
-DN - Certificate path
-Success - A value of true indicates that the renewal request was successfully submitted and
-granted.
-Error - Indicates any errors that occurred. Not returned when successful
+    CertificateDN - Certificate path
+    Success - A value of true indicates that the renewal request was successfully submitted and
+    granted.
+    Error - Indicates any errors that occurred. Not returned when successful
 
 ## NOTES
 

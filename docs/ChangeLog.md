@@ -1,3 +1,9 @@
+# Version 0.3.5 (2018-05-23)
+- minor updates to cert renewal
+- basic certificate creation functionality added
+
+
+
 # Version 0.3.4 (2018-05-21)
 - get workflow details updates
 - first cut at setting workflow status
