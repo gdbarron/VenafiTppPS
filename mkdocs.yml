@@ -18,6 +18,7 @@ pages:
     - Invoke-TppCertificateRenewal: functions/Invoke-TppCertificateRenewal.md
     - Move-TppObject: functions/Move-TppObject.md
     - New-TppCapiApplication: functions/New-TppCapiApplication.md
+    - New-TppCertificate: functions/New-TppCertificate.md
     - New-TppSession: functions/New-TppSession.md
     - Rename-TppObject: functions/Rename-TppObject.md
     - Set-TppAttribute: functions/Set-TppAttribute.md
