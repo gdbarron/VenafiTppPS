@@ -12,7 +12,7 @@
     RootModule        = 'VenafiTppPS.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.3.5'
+    ModuleVersion     = '0.3.6'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -104,9 +104,8 @@
             # IconUri = ''
 
             # ReleaseNotes of this module
-            ReleaseNotes = '# Version 0.3.5 (2018-05-23)
-- minor updates to cert renewal
-- basic certificate creation functionality added'
+            ReleaseNotes = '# Version 0.3.6 (2018-05-29)
+- add certificate revocation'
 
         } # End of PSData hashtable
 

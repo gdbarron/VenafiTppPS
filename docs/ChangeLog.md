@@ -1,3 +1,8 @@
+# Version 0.3.6 (2018-05-29)
+- add certificate revocation
+
+
+
 # Version 0.3.5 (2018-05-23)
 - minor updates to cert renewal
 - basic certificate creation functionality added
