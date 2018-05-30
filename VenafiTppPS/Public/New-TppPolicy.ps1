@@ -18,6 +18,18 @@ Session object created from New-TppSession method.  The value defaults to the sc
 none
 
 .OUTPUTS
+PSCustomObject with the following properties:
+    AbsoluteGUID: The left-to-right concatenation of all of the GUIDs for all of the objects in the DN.
+    DN: The Distinguished Name (DN) of the object, provided as PolicyDN
+    GUID: The GUID that identifies the object.
+    ID: The object identifier.
+    Name: The Common Name (CN) of the object.
+    Parent: The parent DN of the object.
+    Revision: The revision of the object.
+    TypeName: will always be Policy
+
+.EXAMPLE
+New-TppPolicy -PolicyDN '\VED\Policy\Existing Policy Folder\New Policy Folder' -Description 'this is awesome'
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppPolicy/
@@ -52,18 +64,27 @@ function New-TppPolicy {
     $TppSession.Validate()
 
     $params = @{
-        DN        = $PolicyDN
-        Class     = 'Policy'
-        Attribute = @( )
+        DN    = $PolicyDN
+        Class = 'Policy'
     }
         
     if ( $Description ) {
-        $params.Attribute += @{
-            Name  = 'Description'
-            Value = $Description
+        $params += @{
+            Attribute = @(
+                @{
+                    Name  = 'Description'
+                    Value = $Description
+                }
+            )
         }
     }
 
-    New-TppObject @params
+    $response = New-TppObject @params
+
+    if ( $response.Result -eq [ConfigResult]::Success ) {
+        $response.Object
+    } else {
+        throw $response.Error
+    }
 
 }
