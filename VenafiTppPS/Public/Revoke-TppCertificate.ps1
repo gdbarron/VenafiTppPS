@@ -56,16 +56,16 @@ Invoke-TppCertificateRevocation -Thumbprint 'a909502dd82ae41433e6f83886b00d4277a
 Revoke the certificate with a reason of the CA being compromised and wait for it to complete
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificateRevocation/
+http://venafitppps.readthedocs.io/en/latest/functions/Revoke-TppCertificate/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Invoke-TppCertificateRevocation.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Revoke-TppCertificate.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-revoke.php?tocpath=REST%20API%20reference%7CCertificates%20module%20programming%20interfaces%7C_____15
 
 #>
-function Invoke-TppCertificateRevocation {
+function Revoke-TppCertificate {
     [CmdletBinding(DefaultParameterSetName = 'CertificateDN')]
     param (
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, ParameterSetName = 'CertificateDN')]
