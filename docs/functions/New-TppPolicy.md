@@ -14,12 +14,10 @@ Add a new policy folder
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
 ```
-
-{{ Add example description here }}
+New-TppPolicy -PolicyDN '\VED\Policy\Existing Policy Folder\New Policy Folder' -Description 'this is awesome'
+```
 
 ## PARAMETERS
 
@@ -78,6 +76,16 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ### none
 
 ## OUTPUTS
+
+### PSCustomObject with the following properties:
+    AbsoluteGUID: The left-to-right concatenation of all of the GUIDs for all of the objects in the DN.
+    DN: The Distinguished Name (DN) of the object, provided as PolicyDN
+    GUID: The GUID that identifies the object.
+    ID: The object identifier.
+    Name: The Common Name (CN) of the object.
+    Parent: The parent DN of the object.
+    Revision: The revision of the object.
+    TypeName: will always be Policy
 
 ## NOTES
 
