@@ -39,10 +39,10 @@ function New-TppObject {
         [string] $DN,
         
         [Parameter(Mandatory)]
-        [ValidateSet("Device", "CAPI")]
+        [ValidateSet('Device', 'CAPI', 'Policy')]
         [String] $Class,
 
-        [Parameter(Mandatory)]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [Hashtable[]] $Attribute,
 
@@ -59,7 +59,7 @@ function New-TppObject {
     }
     
     # ensure the parent folder exists
-    if ( Test-TppObjectExists -DN (Split-Path $DN -Parent) -ExistOnly ) {
+    if ( -not (Test-TppObjectExists -DN (Split-Path $DN -Parent) -ExistOnly) ) {
         throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path $DN -Parent))
     }
     
