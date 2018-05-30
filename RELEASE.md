@@ -1,1 +1,2 @@
+- add support for new policy folder creation
 - rename functions
