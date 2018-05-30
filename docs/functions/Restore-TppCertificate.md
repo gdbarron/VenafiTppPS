@@ -1,4 +1,4 @@
-# Invoke-TppCertificateRenewal
+# Restore-TppCertificate
 
 ## SYNOPSIS
 Renew a certificate
@@ -6,7 +6,7 @@ Renew a certificate
 ## SYNTAX
 
 ```
-Invoke-TppCertificateRenewal [-CertificateDN] <String> [[-TppSession] <TppSession>] [<CommonParameters>]
+Restore-TppCertificate [-CertificateDN] <String> [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -78,9 +78,9 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## RELATED LINKS
 
-[http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificateRenewal/](http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificateRenewal/)
+[http://venafitppps.readthedocs.io/en/latest/functions/Restore-TppCertificate/](http://venafitppps.readthedocs.io/en/latest/functions/Restore-TppCertificate/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Invoke-TppCertificateRenewal.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Invoke-TppCertificateRenewal.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Restore-TppCertificate.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Restore-TppCertificate.ps1)
 
 [https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-renew.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____9](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-renew.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____9)
 

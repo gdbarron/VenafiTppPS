@@ -15,13 +15,14 @@ pages:
     - Get-TppLog: functions/Get-TppLog.md
     - Get-TppObject: functions/Get-TppObject.md
     - Get-TppWorkflowDetail: functions/Get-TppWorkflowDetail.md
-    - Invoke-TppCertificateRenewal: functions/Invoke-TppCertificateRenewal.md
-    - Invoke-TppCertificateRevocation: functions/Invoke-TppCertificateRevocation.md
     - Move-TppObject: functions/Move-TppObject.md
     - New-TppCapiApplication: functions/New-TppCapiApplication.md
     - New-TppCertificate: functions/New-TppCertificate.md
+    - New-TppPolicy: functions/New-TppPolicy.md
     - New-TppSession: functions/New-TppSession.md
     - Rename-TppObject: functions/Rename-TppObject.md
+    - Restore-TppCertificate: functions/Restore-TppCertificate.md
+    - Revoke-TppCertificate: functions/Revoke-TppCertificate.md
     - Set-TppAttribute: functions/Set-TppAttribute.md
     - Set-TppWorkflowStatus: functions/Set-TppWorkflowStatus.md
     - Test-TppObjectExists: functions/Test-TppObjectExists.md
