@@ -28,16 +28,16 @@ PSCustomObject with the following properties:
 Invoke-TppCertificateRenewal -CertificateDN '\VED\Policy\My folder\app.mycompany.com'
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificateRenewal/
+http://venafitppps.readthedocs.io/en/latest/functions/Restore-TppCertificate/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Invoke-TppCertificateRenewal.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Restore-TppCertificate.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-renew.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____9
 
 #>
-function Invoke-TppCertificateRenewal {
+function Restore-TppCertificate {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
