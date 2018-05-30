@@ -1,4 +1,4 @@
-# Invoke-TppCertificateRevocation
+# Revoke-TppCertificate
 
 ## SYNOPSIS
 Revoke a certificate
@@ -7,14 +7,14 @@ Revoke a certificate
 
 ### CertificateDN (Default)
 ```
-Invoke-TppCertificateRevocation -CertificateDN <String[]> [-Reason <Int32>] [-Comments <String>] [-Disable]
- [-Wait] [-TppSession <TppSession>] [<CommonParameters>]
+Revoke-TppCertificate -CertificateDN <String[]> [-Reason <Int32>] [-Comments <String>] [-Disable] [-Wait]
+ [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### Thumbprint
 ```
-Invoke-TppCertificateRevocation -Thumbprint <String[]> [-Reason <Int32>] [-Comments <String>] [-Disable]
- [-Wait] [-TppSession <TppSession>] [<CommonParameters>]
+Revoke-TppCertificate -Thumbprint <String[]> [-Reason <Int32>] [-Comments <String>] [-Disable] [-Wait]
+ [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -182,9 +182,9 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## RELATED LINKS
 
-[http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificateRevocation/](http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificateRevocation/)
+[http://venafitppps.readthedocs.io/en/latest/functions/Revoke-TppCertificate/](http://venafitppps.readthedocs.io/en/latest/functions/Revoke-TppCertificate/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Invoke-TppCertificateRevocation.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Invoke-TppCertificateRevocation.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Revoke-TppCertificate.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Revoke-TppCertificate.ps1)
 
 [https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-revoke.php?tocpath=REST%20API%20reference%7CCertificates%20module%20programming%20interfaces%7C_____15](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-revoke.php?tocpath=REST%20API%20reference%7CCertificates%20module%20programming%20interfaces%7C_____15)
 
