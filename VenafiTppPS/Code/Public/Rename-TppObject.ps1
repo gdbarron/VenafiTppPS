@@ -27,7 +27,7 @@ Rename device
 http://venafitppps.readthedocs.io/en/latest/functions/Rename-TppObject/
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectExists/
+http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/
 
 .LINK
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Rename-TppObject.ps1
@@ -61,13 +61,13 @@ function Rename-TppObject {
     $TppSession.Validate()
 
     # ensure the object to rename already exists
-    if ( -not (Test-TppObjectExists -DN $DN -ExistOnly) ) {
+    if ( -not (Test-TppObject -DN $DN -ExistOnly) ) {
         throw ("{0} does not exist" -f $DN)
     }
 
     # ensure the new object doesn't already exist
     $newDN = "{0}\{1}" -f (Split-Path $DN -Parent), $NewName
-    if ( Test-TppObjectExists -DN $newDN -ExistOnly ) {
+    if ( Test-TppObject -DN $newDN -ExistOnly ) {
         throw ("{0} already exists" -f $newDN)
     }
 

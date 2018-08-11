@@ -27,7 +27,7 @@ Moves mycert.company.com to a new Policy folder
 http://venafitppps.readthedocs.io/en/latest/functions/Move-TppObject/
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectExists/
+http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/
 
 .LINK
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Move-TppObject.ps1
@@ -68,12 +68,12 @@ function Move-TppObject {
     $TppSession.Validate()
 
     # ensure the object to rename already exists
-    if ( -not (Test-TppObjectExists -DN $DN -ExistOnly) ) {
+    if ( -not (Test-TppObject -DN $DN -ExistOnly) ) {
         throw ("Source DN '{0}' does not exist" -f $DN)
     }
 
     # ensure the new object doesn't already exist
-    if ( Test-TppObjectExists -DN $TargetDN -ExistOnly ) {
+    if ( Test-TppObject -DN $TargetDN -ExistOnly ) {
         throw ("Target DN '{0}' already exists" -f $TargetDN)
     }
 

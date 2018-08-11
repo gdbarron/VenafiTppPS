@@ -135,7 +135,7 @@ function New-TppCapiApplication {
 
     $TppSession.Validate()
 
-    if ( -not (Test-TppObjectExists -DN $CertificateDN -ExistOnly) ) {
+    if ( -not (Test-TppObject -DN $CertificateDN -ExistOnly) ) {
         throw ("The certificate {0} does not exist" -f $CertificateDN)
     }
 
