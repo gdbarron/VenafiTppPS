@@ -100,7 +100,7 @@ function Set-TppAttribute {
         foreach ($thisDn in $DN) {
 
             $realAttributeName = $AttributeName
-            $field = $TppSession.CustomField | where {$_.Label -eq $AttributeName}
+            $field = $TppSession.CustomField | Where-Object {$_.Label -eq $AttributeName}
             if ( $field ) {
                 $realAttributeName = $field.Guid
                 Write-Verbose ("Updating custom field.  Name: {0}, Guid: {1}" -f $AttributeName, $field.Guid)

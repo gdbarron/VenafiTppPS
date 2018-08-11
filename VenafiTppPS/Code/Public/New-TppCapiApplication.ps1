@@ -50,6 +50,8 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 function New-TppCapiApplication {
 
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
+
     param (
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -147,7 +149,7 @@ function New-TppCapiApplication {
         throw "Credential object not found"
     }
 
-    if ( -not ($credentialObject | where {$_.Name -eq $credentialName -and $_.TypeName -like '*credential*'}) ) {
+    if ( -not ($credentialObject | Where-Object {$_.Name -eq $credentialName -and $_.TypeName -like '*credential*'}) ) {
         throw "CredentialDN is not a credential object"
     }
     # end of validation

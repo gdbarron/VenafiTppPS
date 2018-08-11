@@ -1,7 +1,7 @@
 function Join-UriPath {
 
     [CmdletBinding()]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingCmdletAliases', '')]
 
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
