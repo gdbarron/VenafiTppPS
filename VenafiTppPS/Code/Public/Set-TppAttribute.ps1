@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Adds a value to an attribute
 
 .DESCRIPTION
@@ -105,7 +105,7 @@ function Set-TppAttribute {
                 $realAttributeName = $field.Guid
                 Write-Verbose ("Updating custom field.  Name: {0}, Guid: {1}" -f $AttributeName, $field.Guid)
             }
-            
+
             $params.Body = @{
                 ObjectDN      = $thisDn
                 AttributeName = $realAttributeName
@@ -115,12 +115,12 @@ function Set-TppAttribute {
             # adding values can not so we must loop
             if ($NoClobber) {
                 foreach ($thisValue in $Value) {
-                    
+
                     $params.Body += @{
                         Value = $thisValue
                     }
                     $response = Invoke-TppRestMethod @params
-        
+
                     [PSCustomObject] @{
                         DN      = $thisDn
                         Success = $response.Result -eq [ConfigResult]::Success

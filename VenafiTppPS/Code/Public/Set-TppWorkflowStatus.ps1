@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Get details about workflow tickets
 
 .DESCRIPTION
@@ -55,7 +55,7 @@ function Set-TppWorkflowStatus {
 
     [CmdletBinding()]
     param (
-        
+
         [Parameter(Mandatory, ParameterSetName = 'DN', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
@@ -71,26 +71,26 @@ function Set-TppWorkflowStatus {
         [Parameter(Mandatory, ParameterSetName = 'Guid', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [Guid[]] $Guid,
-        
+
         [Parameter(Mandatory)]
         [ValidateSet('Pending', 'Approved', 'Approved After', 'Approved Between', 'Rejected')]
         [String] $Status,
-        
+
         [Parameter()]
         [String] $Explanation,
-        
+
         [Parameter()]
         [DateTime] $ScheduledStart,
-        
+
         [Parameter()]
         [DateTime] $ScheduledStop,
-        
+
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
 
     begin {
-        
+
         switch ($Status) {
             'Approved After' {
                 if ( -not $ScheduledStart ) {
@@ -110,7 +110,7 @@ function Set-TppWorkflowStatus {
     }
 
     process {
-        
+
         Switch ($PsCmdlet.ParameterSetName)	{
             'DN' {
                 $Guid = foreach ($thisDn in $DN) {
@@ -128,9 +128,9 @@ function Set-TppWorkflowStatus {
                     'GUID' = $thisGuid
                 }
             }
-                
+
             $response = Invoke-TppRestMethod @params
-            
+
             if ( -not ($response.Result -eq [WorkflowResult]::Success) ) {
                 throw ("Error setting workflow ticket status, error is {0}" -f [enum]::GetName([WorkflowResult], $response.Result))
             }

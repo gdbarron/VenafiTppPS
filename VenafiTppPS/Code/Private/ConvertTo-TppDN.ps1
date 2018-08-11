@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Convert GUID to DN
 
 .DESCRIPTION
@@ -51,7 +51,7 @@ function ConvertTo-TppDN {
             $params.Body = @{
                 ObjectGUID = "{$thisGuid}"
             }
-            
+
             $response = Invoke-TppRestMethod @params
 
             if ( $response.Result -eq [ConfigResult]::Success ) {

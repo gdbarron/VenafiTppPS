@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Rename an object of any type
 
 .DESCRIPTION
@@ -49,11 +49,11 @@ function Rename-TppObject {
                 }
             })]
         [String] $SourceDN,
-        
+
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [String] $NewName,
-        
+
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
@@ -82,7 +82,7 @@ function Rename-TppObject {
     }
 
     $response = Invoke-TppRestMethod @params
- 
+
     if ( $response.Result -ne [ConfigResult]::Success ) {
         throw $response.Error
     }

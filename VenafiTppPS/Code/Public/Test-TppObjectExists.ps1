@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Test if an object exists
 
 .DESCRIPTION
@@ -56,7 +56,7 @@ function Test-TppObjectExists {
                 }
             })]
         [string[]] $DN,
-        
+
         [Parameter(Mandatory, ParameterSetName = 'GUID', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [Guid[]] $Guid,

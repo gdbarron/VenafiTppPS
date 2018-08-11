@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Get details about workflow tickets
 
 .DESCRIPTION
@@ -56,7 +56,7 @@ function Get-TppWorkflowDetail {
 
     [CmdletBinding(DefaultParameterSetName = 'DN')]
     param (
-        
+
         [Parameter(Mandatory, ParameterSetName = 'DN', ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
@@ -72,7 +72,7 @@ function Get-TppWorkflowDetail {
         [Parameter(Mandatory, ParameterSetName = 'GUID')]
         [ValidateNotNullOrEmpty()]
         [Guid[]] $Guid,
-        
+
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
@@ -82,14 +82,14 @@ function Get-TppWorkflowDetail {
     }
 
     process {
-        
+
         Write-Verbose $PsCmdlet.ParameterSetName
 
         Switch ($PsCmdlet.ParameterSetName)	{
             'DN' {
                 # DN was provided, go get the existing ticket guids
                 $GuidToProcess = foreach ($thisDn in $CertificateDN) {
-            
+
                     $params = @{
                         TppSession = $TppSession
                         Method     = 'Post'
@@ -98,9 +98,9 @@ function Get-TppWorkflowDetail {
                             'ObjectDN' = $thisDn
                         }
                     }
-                
+
                     $response = Invoke-TppRestMethod @params
-                
+
                     if ( $response ) {
                         $response.GUIDs
                     }
@@ -121,9 +121,9 @@ function Get-TppWorkflowDetail {
                     'GUID' = $thisGuid
                 }
             }
-                
+
             $response = Invoke-TppRestMethod @params
-            
+
             if ( $response.Result -eq [WorkflowResult]::Success ) {
                 $response | Add-Member @{
                     Guid = $thisGuid

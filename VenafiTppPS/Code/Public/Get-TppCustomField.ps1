@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Get custom field details
 
 .DESCRIPTION
@@ -54,7 +54,7 @@ function Get-TppCustomField {
         [Parameter(Mandatory)]
         [ValidateSet('Device', 'X509 Certificate')]
         [string] $Class,
-        
+
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )

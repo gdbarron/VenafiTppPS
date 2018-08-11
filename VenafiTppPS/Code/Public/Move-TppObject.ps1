@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Move an object of any type
 
 .DESCRIPTION
@@ -49,7 +49,7 @@ function Move-TppObject {
                 }
             })]
         [String] $SourceDN,
-        
+
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
@@ -60,7 +60,7 @@ function Move-TppObject {
                 }
             })]
         [String] $TargetDN,
-        
+
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
@@ -88,7 +88,7 @@ function Move-TppObject {
     }
 
     $response = Invoke-TppRestMethod @params
- 
+
     if ( $response.Result -ne [ConfigResult]::Success ) {
         throw $response.Error
     }

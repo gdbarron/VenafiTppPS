@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Get the TPP log
 
 .DESCRIPTION
@@ -35,7 +35,7 @@ function Get-TppLog {
     param (
         [Parameter()]
         [Int] $Limit,
-        
+
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
@@ -56,5 +56,5 @@ function Get-TppLog {
     }
 
     Invoke-TppRestMethod @params
- 
+
 }

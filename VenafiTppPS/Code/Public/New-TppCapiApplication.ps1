@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Create a new CAPI application object
 
 .DESCRIPTION
@@ -61,7 +61,7 @@ function New-TppCapiApplication {
                 }
             })]
         [string] $DN,
-        
+
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [String] $FriendlyName,
@@ -78,7 +78,7 @@ function New-TppCapiApplication {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $CertificateDN,    
+        [String] $CertificateDN,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
@@ -93,7 +93,7 @@ function New-TppCapiApplication {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $CredentialDN,    
+        [String] $CredentialDN,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
@@ -175,7 +175,7 @@ function New-TppCapiApplication {
             }
         )
     }
-        
+
     if ( $Disabled ) {
         $params.Attribute += @{
             Name  = 'Disabled'
