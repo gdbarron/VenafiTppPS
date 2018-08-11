@@ -89,15 +89,15 @@ try {
 }
 
 # update nuspec version
-$nuspec = [xml] (Get-Content $nuspecPath -Raw)
-$nuspec.package.metadata.version = $NewVersion.ToString()
-$nuspec.Save($nuspecPath)
+# $nuspec = [xml] (Get-Content $nuspecPath -Raw)
+# $nuspec.package.metadata.version = $NewVersion.ToString()
+# $nuspec.Save($nuspecPath)
 
 try {
     Write-Output "Updating master branch source"
     git config user.email 'greg@jagtechnical.com'
     git config user.name 'Greg Brownstein'
-    git add *.nuspec
+    # git add *.nuspec
     git add *.psd1
     git status -v
     git commit -m "Updated $ModuleName Version to $NewVersion ***NO_CI***"
