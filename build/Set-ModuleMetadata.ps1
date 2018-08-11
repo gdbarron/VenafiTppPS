@@ -28,8 +28,8 @@ $ErrorActionPreference = "Stop"
 # get current environment variables just for reference
 Get-ChildItem env:
 
-$manifestPath = '{0}\Modules\{1}\code\{1}.psd1' -f $env:BUILD_SOURCESDIRECTORY, $ModuleName
-$nuspecPath = "{0}\Modules\$ModuleName\$ModuleName.nuspec" -f $env:BUILD_SOURCESDIRECTORY
+$manifestPath = '{0}\{1}\code\{1}.psd1' -f $env:BUILD_SOURCESDIRECTORY, $ModuleName
+$nuspecPath = "{0}\$ModuleName\$ModuleName.nuspec" -f $env:BUILD_SOURCESDIRECTORY
 Write-Output "Processing module path $manifestPath and nuspec path $nuspecPath"
 try {
     $manifest = Import-PowerShellDataFile $manifestPath
@@ -45,61 +45,8 @@ Write-Output "Old Version - $Version"
 [version]$NewVersion = "{0}.{1}.{2}" -f $Version.Major, $Version.Minor, ($Version.Build + 1)
 Write-Output "New Version - $NewVersion"
 
-
-<#If required modules are sepcified, they must be imported otherwise test-modulemanifest/update-modulemanifest will error out with the error
-'The specified RequiredModules entry 'Deloitte.GTS.Utilities' in the module manifest is invalid.  Try again after updating this entry with valid values.
-
-https://stackoverflow.com/questions/46216038/how-do-i-define-requiredmodules-in-a-powershell-module-manifest-psd1
-https://github.com/PowerShell/PowerShellGet/blob/90c5a3d4c8a2e698d38cfb5ef4b1c44d79180d66/Tests/PSGetPublishModule.Tests.ps1#L1470
-
-This needs to be revisited to provide support for required modules that are not available in our repository.
-For now, an errow will be thrown for any module not matching the name Deloitte
-
-Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
-Write-Output "Attempting to add module path $AllModulesPath\$($RequiredModuleName)\code ."
-$env:PSModulePath += ";$AllModulesPath\$($RequiredModuleName)\code"
-
-
-
-Tried to get this working but removed dependency for now and should revisit.
-Need the build agent to be able to install modules from its own repostitory.  Not sure how to do that without a PAT.
-
-
-
-$AllModulesPath = "{0}\Modules" -f $env:BUILD_SOURCESDIRECTORY
-
-    If (@($Manifest.RequiredModules))
-    {
-        Write-Output "Required modules are specified.  Attempting to install."
-
-        #$securePassword = ConvertTo-SecureString $($env:SYSTEM_ACCESSTOKEN) -AsPlainText -Force
-        #$vstsCredential = New-Object System.Management.Automation.PSCredential 'VssAdministrator', $securePassword
-
-        Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
-        Register-PSRepository -Name GTS_Packages -SourceLocation https://app0762-cto-sre.pkgs.visualstudio.com/_packaging/GTS_Packages/nuget/v2
-
-        @($Manifest.RequiredModules).Foreach({
-            $RequiredModuleName = $_
-            If ($RequiredModuleName -notlike '*Deloitte*')
-            {
-                Throw "Required module ($($RequiredModuleName)) is not available in the Deloitte repository."
-            }
-
-            #Attempt to import
-            Write-Output "Attempting to install module $($RequiredModuleName)."
-
-            try {
-                Install-Module -Name $RequiredModuleName -scope CurrentUser
-            }
-            catch {
-                Throw "Problem importing $($RequiredModuleName).  $_"
-            }
-        })
-    }
-#>
-
 # Load the module, read the exported functions and aliases, update the psd1
-$FunctionFiles = Get-ChildItem ".\Modules\$ModuleName\code\Public\*.ps1" |
+$FunctionFiles = Get-ChildItem ".\$ModuleName\code\Public\*.ps1" |
     Where-Object { $_.name -notmatch 'Tests' }
 $ExportFunctions = @()
 $ExportAliases = @()
@@ -148,8 +95,8 @@ $nuspec.Save($nuspecPath)
 
 try {
     Write-Output "Updating master branch source"
-    git config user.email $env:BUILD_REQUESTEDFOREMAIL
-    git config user.name $env:BUILD_REQUESTEDFOR
+    git config user.email 'greg@jagtechnical.com'
+    git config user.name 'Greg Brownstein'
     git add *.nuspec
     git add *.psd1
     git status -v
