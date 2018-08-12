@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Test if an object exists
 
 .DESCRIPTION
@@ -33,16 +33,16 @@ Object                    Exists
 Test for existence by DN
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectExists/
+http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Test-TppObjectExists.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Test-TppObject.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-isvalid.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____24
 
 #>
-function Test-TppObjectExists {
+function Test-TppObject {
 
     [CmdletBinding(DefaultParameterSetName = 'DN')]
     param (
@@ -56,7 +56,7 @@ function Test-TppObjectExists {
                 }
             })]
         [string[]] $DN,
-        
+
         [Parameter(Mandatory, ParameterSetName = 'GUID', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [Guid[]] $Guid,

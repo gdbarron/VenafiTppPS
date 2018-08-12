@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Create a new Venafi TPP session
 
 .DESCRIPTION
@@ -87,13 +87,13 @@ function New-TppSession {
     )
 
     Switch ($PsCmdlet.ParameterSetName)	{
-	
+
         "Credential" {
             $sessionCredential = $Credential
             # $Username = $Credential.username
             # $Password = $Credential.GetNetworkCredential().password
         }
-		
+
         "UsernamePassword" {
             # we have username, just need password
             # $Password = ConvertTo-InsecureString $SecurePassword
@@ -101,7 +101,7 @@ function New-TppSession {
             # build a credential object to attached to the session object
             $sessionCredential = New-Object System.Management.Automation.PSCredential ($Username, $SecurePassword)
         }
-		
+
     }
 
     $newSession = [TppSession] @{

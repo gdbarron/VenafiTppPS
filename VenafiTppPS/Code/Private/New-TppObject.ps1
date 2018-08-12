@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Create a new object
 
 .DESCRIPTION
@@ -37,7 +37,7 @@ function New-TppObject {
                 }
             })]
         [string] $DN,
-        
+
         [Parameter(Mandatory)]
         [ValidateSet('Device', 'CAPI', 'Policy')]
         [String] $Class,
@@ -54,15 +54,15 @@ function New-TppObject {
     # $TppSession.Validate()
 
     # ensure the object doesn't already exist
-    if ( Test-TppObjectExists -DN $DN -ExistOnly ) {
+    if ( Test-TppObject -DN $DN -ExistOnly ) {
         throw ("{0} already exists" -f $DN)
     }
-    
+
     # ensure the parent folder exists
-    if ( -not (Test-TppObjectExists -DN (Split-Path $DN -Parent) -ExistOnly) ) {
+    if ( -not (Test-TppObject -DN (Split-Path $DN -Parent) -ExistOnly) ) {
         throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path $DN -Parent))
     }
-    
+
     $params = @{
         TppSession = $TppSession
         Method     = 'Post'

@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Get attributes for a given object
 
 .DESCRIPTION
@@ -72,7 +72,7 @@ function Get-TppAttribute {
                 }
             })]
         [String[]] $DN,
-        
+
         [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy')]
         [Parameter(ParameterSetName = 'NonEffectivePolicy')]
         [ValidateNotNullOrEmpty()]
@@ -109,7 +109,7 @@ function Get-TppAttribute {
     }
 
     process {
-	
+
         foreach ( $thisDN in $DN ) {
 
             $baseParams.Body['ObjectDN'] = $thisDN
@@ -121,18 +121,18 @@ function Get-TppAttribute {
 
                 # TODO: convert to ArrayList
                 # $configValues = [System.Collections.ArrayList] @()
-    
+
                 # get the attribute values one by one as there is no
                 # api which allows passing a list
                 foreach ( $thisAttribute in $AttributeName ) {
-    
+
                     $params = $baseParams.Clone()
                     $params.Body += @{
                         AttributeName = $thisAttribute
                     }
-    
+
                     $response = Invoke-TppRestMethod @params
-    
+
                     if ( $response ) {
                         $configValues += [PSCustomObject] @{
                             Name  = $thisAttribute
@@ -157,14 +157,14 @@ function Get-TppAttribute {
             if ( $configValues ) {
 
                 # convert custom field guids to names
-                $updatedConfigValues = $configValues | % {
+                $updatedConfigValues = $configValues.ForEach{
 
                     $thisConfigValue = $_
                     $thisConfigValue | Add-Member @{
                         IsCustomField = $false
                     }
 
-                    $customField = $TppSession.CustomField | where {$_.Guid -eq $thisConfigValue.Name}
+                    $customField = $TppSession.CustomField | Where-Object {$_.Guid -eq $thisConfigValue.Name}
                     if ( $customField ) {
                         $thisConfigValue.Name = $customField.Label
                         $thisConfigValue.IsCustomField = $true

@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Create a new CAPI application object
 
 .DESCRIPTION
@@ -50,6 +50,8 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 function New-TppCapiApplication {
 
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
+
     param (
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -61,7 +63,7 @@ function New-TppCapiApplication {
                 }
             })]
         [string] $DN,
-        
+
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [String] $FriendlyName,
@@ -78,7 +80,7 @@ function New-TppCapiApplication {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $CertificateDN,    
+        [String] $CertificateDN,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
@@ -93,7 +95,7 @@ function New-TppCapiApplication {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $CredentialDN,    
+        [String] $CredentialDN,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
@@ -135,7 +137,7 @@ function New-TppCapiApplication {
 
     $TppSession.Validate()
 
-    if ( -not (Test-TppObjectExists -DN $CertificateDN -ExistOnly) ) {
+    if ( -not (Test-TppObject -DN $CertificateDN -ExistOnly) ) {
         throw ("The certificate {0} does not exist" -f $CertificateDN)
     }
 
@@ -147,7 +149,7 @@ function New-TppCapiApplication {
         throw "Credential object not found"
     }
 
-    if ( -not ($credentialObject | where {$_.Name -eq $credentialName -and $_.TypeName -like '*credential*'}) ) {
+    if ( -not ($credentialObject | Where-Object {$_.Name -eq $credentialName -and $_.TypeName -like '*credential*'}) ) {
         throw "CredentialDN is not a credential object"
     }
     # end of validation
@@ -175,7 +177,7 @@ function New-TppCapiApplication {
             }
         )
     }
-        
+
     if ( $Disabled ) {
         $params.Attribute += @{
             Name  = 'Disabled'

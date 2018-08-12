@@ -54,7 +54,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method. 
+Session object created from New-TppSession method.
 The value defaults to the script session object $TppSession.
 
 ```yaml
@@ -85,7 +85,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Move-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/Move-TppObject/)
 
-[http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectExists/](http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectExists/)
+[http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/)
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Move-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Move-TppObject.ps1)
 

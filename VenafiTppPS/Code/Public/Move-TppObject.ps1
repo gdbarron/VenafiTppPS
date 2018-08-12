@@ -1,15 +1,15 @@
 <#
-.SYNOPSIS 
-Rename an object of any type
+.SYNOPSIS
+Move an object of any type
 
 .DESCRIPTION
-Rename an object of any type
+Move an object of any type
 
-.PARAMETER DN
+.PARAMETER SourceDN
 Full path to an object in TPP
 
-.PARAMETER NewName
-New name for the object
+.PARAMETER TargetDN
+New path
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -20,23 +20,23 @@ none
 .OUTPUTS
 
 .EXAMPLE
-Rename-TppObject -DN '\VED\Policy\My Devices\OldDeviceName' -NewName 'NewDeviceName'
-Rename device
+Move-TppObject -SourceDN '\VED\Policy\My Folder\mycert.company.com' -TargetDN '\VED\Policy\New Folder\mycert.company.com'
+Moves mycert.company.com to a new Policy folder
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Rename-TppObject/
+http://venafitppps.readthedocs.io/en/latest/functions/Move-TppObject/
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectExists/
+http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Rename-TppObject.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Move-TppObject.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-renameobject.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____36
 
 #>
-function Rename-TppObject {
+function Move-TppObject {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
@@ -49,11 +49,18 @@ function Rename-TppObject {
                 }
             })]
         [String] $SourceDN,
-        
+
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [String] $NewName,
-        
+        [ValidateScript( {
+                if ( $_ | Test-TppDnPath ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid DN path"
+                }
+            })]
+        [String] $TargetDN,
+
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
@@ -61,14 +68,13 @@ function Rename-TppObject {
     $TppSession.Validate()
 
     # ensure the object to rename already exists
-    if ( -not (Test-TppObjectExists -DN $DN -ExistOnly) ) {
-        throw ("{0} does not exist" -f $DN)
+    if ( -not (Test-TppObject -DN $DN -ExistOnly) ) {
+        throw ("Source DN '{0}' does not exist" -f $DN)
     }
 
     # ensure the new object doesn't already exist
-    $newDN = "{0}\{1}" -f (Split-Path $DN -Parent), $NewName
-    if ( Test-TppObjectExists -DN $newDN -ExistOnly ) {
-        throw ("{0} already exists" -f $newDN)
+    if ( Test-TppObject -DN $TargetDN -ExistOnly ) {
+        throw ("Target DN '{0}' already exists" -f $TargetDN)
     }
 
     $params = @{
@@ -76,13 +82,13 @@ function Rename-TppObject {
         Method     = 'Post'
         UriLeaf    = 'config/RenameObject'
         Body       = @{
-            ObjectDN    = $DN
-            NewObjectDN = $newDN
+            ObjectDN    = $SourceDN
+            NewObjectDN = $TargetDN
         }
     }
 
     $response = Invoke-TppRestMethod @params
- 
+
     if ( $response.Result -ne [ConfigResult]::Success ) {
         throw $response.Error
     }
