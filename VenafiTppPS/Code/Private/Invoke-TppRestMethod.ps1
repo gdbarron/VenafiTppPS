@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Generic REST call for Venafi
 
 .DESCRIPTION
@@ -33,7 +33,7 @@ function Invoke-TppRestMethod {
         [String] $ServerUrl,
 
         [Parameter(Mandatory)]
-        [ValidateSet("Get", "Post", "Patch", "Put", "Delete")] 
+        [ValidateSet("Get", "Post", "Patch", "Put", "Delete")]
         [String] $Method,
 
         [Parameter(Mandatory)]
@@ -62,11 +62,11 @@ function Invoke-TppRestMethod {
     if ( $Header ) {
         $hdr += $Header
     }
-		
+
     if ( $Body ) {
         $restBody = $Body
         if ( $Method -ne 'Get' ) {
-            $restBody = ConvertTo-Json $Body -depth 5 
+            $restBody = ConvertTo-Json $Body -depth 5
         }
     }
 

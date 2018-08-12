@@ -1,5 +1,5 @@
 class TppSession {
-    
+
     [string] $APIKey
     [System.Management.Automation.PSCredential] $Credential
     [string] $ServerUrl
@@ -70,7 +70,7 @@ class TppSession {
         if ( -not $this.CustomField ) {
             $allFields = (Get-TppCustomField -TppSession $this -Class 'X509 Certificate').Items
             $deviceFields = (Get-TppCustomField -TppSession $this -Class 'Device').Items
-            $allFields += $deviceFields | where {$_.Guid -notin $allFields.Guid}
+            $allFields += $deviceFields | Where-Object {$_.Guid -notin $allFields.Guid}
             $this.CustomField = $allFields
         }
 

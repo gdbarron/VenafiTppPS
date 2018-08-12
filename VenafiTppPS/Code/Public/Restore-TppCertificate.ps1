@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Renew a certificate
 
 .DESCRIPTION

@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Get basic or full details about certificates
 
 .DESCRIPTION
@@ -89,10 +89,10 @@ function Get-TppCertificateDetail {
         [Parameter(ParameterSetName = 'Basic')]
         [ValidateNotNullOrEmpty()]
         [hashtable] $Query,
-        
+
         [Parameter(ParameterSetName = 'Basic')]
         [int] $Limit = 0,
-        
+
         [Parameter(Mandatory, ParameterSetName = 'Full', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [String[]] $Guid,
@@ -106,7 +106,7 @@ function Get-TppCertificateDetail {
     }
 
     process {
-        
+
         Switch ($PsCmdlet.ParameterSetName)	{
             'Basic' {
                 $params = @{
