@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Find objects by DN, class, or pattern
 
 .DESCRIPTION
@@ -101,7 +101,7 @@ function Get-TppObject {
                 }
             })]
         [String] $DN = '\VED',
-        
+
         [Parameter(Mandatory, ParameterSetName = 'FindByClass')]
         [ValidateNotNullOrEmpty()]
         [String] $Class,
@@ -124,7 +124,7 @@ function Get-TppObject {
         [Parameter(ParameterSetName = 'FindByDN')]
         [Parameter(ParameterSetName = 'FindByClass')]
         [Bool] $Recursive = $true,
-        
+
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
@@ -211,7 +211,7 @@ function Get-TppObject {
             }
 
         }
-            
+
     }
 
     $response = Invoke-TppRestMethod @params

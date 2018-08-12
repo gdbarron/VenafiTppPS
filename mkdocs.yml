@@ -25,5 +25,5 @@ pages:
     - Revoke-TppCertificate: functions/Revoke-TppCertificate.md
     - Set-TppAttribute: functions/Set-TppAttribute.md
     - Set-TppWorkflowStatus: functions/Set-TppWorkflowStatus.md
-    - Test-TppObjectExists: functions/Test-TppObjectExists.md
+    - Test-TppObject: functions/Test-TppObject.md
 

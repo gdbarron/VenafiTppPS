@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Revoke a certificate
 
 .DESCRIPTION
@@ -83,11 +83,11 @@ function Revoke-TppCertificate {
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName = 'Thumbprint')]
         [ValidateNotNullOrEmpty()]
         [String[]] $Thumbprint,
-        
+
         [Parameter()]
         [ValidateRange(0, 5)]
         [Int] $Reason,
-        
+
         [Parameter()]
         [ValidateNotNullOrEmpty()]
         [String] $Comments,
@@ -124,7 +124,7 @@ function Revoke-TppCertificate {
                     CertificateDN = $CertificateDN
                 }
             }
-            
+
             'Thumbprint' {
                 write-verbose "Revoking $Thumbprint..."
                 $certValueToRevoke = @{
@@ -132,7 +132,7 @@ function Revoke-TppCertificate {
                 }
             }
         }
-        
+
         $params.Body = $certValueToRevoke
 
         if ( $Reason ) {
@@ -154,7 +154,7 @@ function Revoke-TppCertificate {
         }
 
         $response = Invoke-TppRestMethod @params
-        
+
         if ( $Wait ) {
             while (-not $response.Revoked) {
                 Start-Sleep -Seconds 1

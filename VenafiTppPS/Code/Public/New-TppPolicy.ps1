@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Add a new policy folder
 
 .DESCRIPTION
@@ -52,7 +52,7 @@ function New-TppPolicy {
                 }
             })]
         [string] $PolicyDN,
-        
+
         [Parameter()]
         [ValidateNotNullOrEmpty()]
         [String] $Description,
@@ -67,7 +67,7 @@ function New-TppPolicy {
         DN    = $PolicyDN
         Class = 'Policy'
     }
-        
+
     if ( $Description ) {
         $params += @{
             Attribute = @(

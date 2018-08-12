@@ -1,4 +1,4 @@
-# Test-TppObjectExists
+# Test-TppObject
 
 ## SYNOPSIS
 Test if an object exists
@@ -7,12 +7,12 @@ Test if an object exists
 
 ### DN (Default)
 ```
-Test-TppObjectExists -DN <String[]> [-ExistOnly] [-TppSession <TppSession>] [<CommonParameters>]
+Test-TppObject -DN <String[]> [-ExistOnly] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### GUID
 ```
-Test-TppObjectExists -Guid <Guid[]> [-ExistOnly] [-TppSession <TppSession>] [<CommonParameters>]
+Test-TppObject -Guid <Guid[]> [-ExistOnly] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -35,8 +35,8 @@ Test for existence by DN
 ## PARAMETERS
 
 ### -DN
-DN path to object. 
-Provide either this or Guid. 
+DN path to object.
+Provide either this or Guid.
 This is the default if both are provided.
 
 ```yaml
@@ -67,7 +67,7 @@ Accept wildcard characters: False
 ```
 
 ### -ExistOnly
-Only return true/false instead of Object DN/Guid and existence true/false. 
+Only return true/false instead of Object DN/Guid and existence true/false.
 Helpful when just validating 1 object.
 
 ```yaml
@@ -83,7 +83,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method. 
+Session object created from New-TppSession method.
 The value defaults to the script session object $TppSession.
 
 ```yaml
@@ -114,9 +114,9 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## RELATED LINKS
 
-[http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectExists/](http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectExists/)
+[http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Test-TppObjectExists.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Test-TppObjectExists.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Test-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Test-TppObject.ps1)
 
 [https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-isvalid.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____24](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-isvalid.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____24)
 

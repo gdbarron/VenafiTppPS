@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 Enrolls or provisions a new certificate
 
 .DESCRIPTION
