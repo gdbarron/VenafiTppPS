@@ -94,7 +94,7 @@ try {
 # $nuspec.Save($nuspecPath)
 
 try {
-    Write-Output "Updating master branch source"
+    Write-Output ("Updating {0} branch source" -f $env:BUILD_SOURCEBRANCHNAME)
     git config user.email 'greg@jagtechnical.com'
     git config user.name 'Greg Brownstein'
     # git add *.nuspec
@@ -102,7 +102,7 @@ try {
     git status -v
     git commit -m "Updated $ModuleName Version to $NewVersion ***NO_CI***"
 
-    # git push https://$($env:SYSTEM_ACCESSTOKEN)@app0762-cto-sre.visualstudio.com/App0762-CTO-SRE-PowerShell/_git/App0762-CTO-SRE-PowerShell ('HEAD:{0}' -f $env:BUILD_SOURCEBRANCHNAME)
+    git push https://$($env:SYSTEM_ACCESSTOKEN)@app0762-cto-sre.visualstudio.com/App0762-CTO-SRE-PowerShell/_git/App0762-CTO-SRE-PowerShell ('HEAD:{0}' -f $env:BUILD_SOURCEBRANCHNAME)
     # git push https://$($env:SYSTEM_ACCESSTOKEN)@app0762-cto-sre.visualstudio.com/App0762-CTO-SRE-PowerShell/_git/App0762-CTO-SRE-PowerShell HEAD:master
     Write-Output ("Updated {0} branch source" -f $env:BUILD_SOURCEBRANCHNAME)
 
