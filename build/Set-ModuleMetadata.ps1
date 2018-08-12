@@ -102,8 +102,8 @@ try {
     git status -v
     git commit -m "Updated $ModuleName Version to $NewVersion ***NO_CI***"
 
-    git push https://$($env:SYSTEM_ACCESSTOKEN)@app0762-cto-sre.visualstudio.com/App0762-CTO-SRE-PowerShell/_git/App0762-CTO-SRE-PowerShell ('HEAD:{0}' -f $env:BUILD_SOURCEBRANCHNAME)
-    # git push https://$($env:SYSTEM_ACCESSTOKEN)@app0762-cto-sre.visualstudio.com/App0762-CTO-SRE-PowerShell/_git/App0762-CTO-SRE-PowerShell HEAD:master
+    git push https://$(GitHubPAT)@github.com/gdbarron/VenafiTppPS.git ('HEAD:{0}' -f $env:BUILD_SOURCEBRANCHNAME)
+
     Write-Output ("Updated {0} branch source" -f $env:BUILD_SOURCEBRANCHNAME)
 
 } catch {
