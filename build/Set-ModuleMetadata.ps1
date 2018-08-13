@@ -77,15 +77,26 @@ try {
         Aliases: $ExportAliases
         Release notes: $releaseNotes
     "
-    Update-ModuleManifest -Path $manifestPath -ModuleVersion $newVersion
-    if ( $ExportFunctions ) {
-        Update-ModuleManifest -Path $manifestPath -FunctionsToExport $ExportFunctions
-    }
-    if ( $ExportAliases ) {
-        Update-ModuleManifest -Path $manifestPath -AliasesToExport $ExportAliases
+
+    $updateParams = @{
+        Path = $manifestPath
+        ModuleVersion = $newVersion
+        ReleaseNotes = $releaseNotes
     }
 
-    Update-ModuleManifest -Path $manifestPath -ReleaseNotes $releaseNotes
+    if ( $ExportFunctions ) {
+        $updateParams += @{
+            FunctionsToExport = $ExportFunctions
+        }
+    }
+
+    if ( $ExportAliases ) {
+        $updateParams += @{
+            AliasesToExport = $ExportAliases
+        }
+    }
+
+    Update-ModuleManifest @updateParams
 
     Write-Output "Updated the module metadata"
 } catch {
