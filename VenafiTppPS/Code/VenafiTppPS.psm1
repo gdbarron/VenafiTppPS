@@ -12,7 +12,7 @@ $folders | % {
 
     $files = Get-ChildItem -Path $PSScriptRoot\$_\*.ps1 -Recurse
     # $files = Get-ChildItem -Path $PSScriptRoot\$_\*.ps1 -Recurse -ErrorAction SilentlyContinue
-    
+
     Foreach ( $thisFile in $files ) {
         Try {
             . $thisFile.fullname
@@ -26,6 +26,6 @@ $publicFiles = Get-ChildItem -Path $PSScriptRoot\public\*.ps1 -Recurse -ErrorAct
 Export-ModuleMember -Function $publicFiles.Basename
 
 $Script:TppSession = New-Object 'TppSession'
-$script:VenafiUrl = $null
-Export-ModuleMember -variable VenafiUrl
+# $script:VenafiUrl = $null
+# Export-ModuleMember -variable VenafiUrl
 Export-ModuleMember -variable TppSession

@@ -67,13 +67,15 @@ foreach ($FunctionFile in $FunctionFiles) {
     }
 }
 
-
+# get release notes
+$releaseNotes = Get-Content -Path ('{0}\release.md' -f $env:BUILD_SOURCESDIRECTORY) -Raw
 
 try {
     Write-Output "Updating the module metadata
         New version: $newVersion
         Functions: $ExportFunctions
         Aliases: $ExportAliases
+        Release notes: $releaseNotes
     "
     Update-ModuleManifest -Path $manifestPath -ModuleVersion $newVersion
     if ( $ExportFunctions ) {
@@ -82,21 +84,18 @@ try {
     if ( $ExportAliases ) {
         Update-ModuleManifest -Path $manifestPath -AliasesToExport $ExportAliases
     }
+
+    Update-ModuleManifest -Path $manifestPath -ReleaseNotes $releaseNotes
+
     Write-Output "Updated the module metadata"
 } catch {
     Write-Error "Failed to update the module metadata - $_"
 }
 
-# update nuspec version
-# $nuspec = [xml] (Get-Content $nuspecPath -Raw)
-# $nuspec.package.metadata.version = $NewVersion.ToString()
-# $nuspec.Save($nuspecPath)
-
 try {
     Write-Output ("Updating {0} branch source" -f $env:BUILD_SOURCEBRANCHNAME)
     git config user.email 'greg@jagtechnical.com'
     git config user.name 'Greg Brownstein'
-    # git add *.nuspec
     git add *.psd1
     git status -v
     git commit -m "Updated $ModuleName Version to $NewVersion ***NO_CI***"

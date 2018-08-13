@@ -1,2 +1,2 @@
-# Version 0.3.9 (2018-08-12)
 - move build/release to VSTS
+- rename param in Get-TppCertificateDetail to "Filter" to match venafi docs
