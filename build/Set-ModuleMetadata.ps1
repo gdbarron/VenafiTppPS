@@ -112,11 +112,13 @@ try {
     git commit -m "Updated $ModuleName Version to $NewVersion ***NO_CI***"
 
     # if we are performing pull request validation, do not push the code to the repo
-    if ( $env:BUILD_REASON -ne 'PullRequest') {
+    if ( $env:BUILD_REASON -eq 'PullRequest') {
+        Write-Output "Bypassing git push given this build is for pull request validation"
+    } else {
         git push https://$($env:GitHubPAT)@github.com/gdbarron/VenafiTppPS.git ('HEAD:{0}' -f $env:BUILD_SOURCEBRANCHNAME)
+        Write-Output ("Updated {0} branch source" -f $env:BUILD_SOURCEBRANCHNAME)
     }
 
-    Write-Output ("Updated {0} branch source" -f $env:BUILD_SOURCEBRANCHNAME)
 
 } catch {
     $_ | Format-List -Force
