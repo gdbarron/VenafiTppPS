@@ -27,14 +27,14 @@ $ErrorActionPreference = "Stop"
 
 # get current environment variables just for reference
 Get-ChildItem env:
+$branch = $env:BUILD_SOURCEBRANCHNAME
 
 $manifestPath = '{0}\{1}\code\{1}.psd1' -f $env:BUILD_SOURCESDIRECTORY, $ModuleName
-$nuspecPath = "{0}\$ModuleName\$ModuleName.nuspec" -f $env:BUILD_SOURCESDIRECTORY
-Write-Output "Processing module path $manifestPath and nuspec path $nuspecPath"
+Write-Output "Processing module path $manifestPath"
+
 try {
     $manifest = Import-PowerShellDataFile $manifestPath
-}
-catch {
+} catch {
     throw "Unable to import PSD file -- check for proper definition file syntax.  `
     Try importing the PSD manually in a local powershell session to verify the cause of this error (import-powershelldatafile <psd1 file>) $_"
 }
@@ -68,45 +68,59 @@ foreach ($FunctionFile in $FunctionFiles) {
     }
 }
 
-
+# get release notes
+$releaseNotes = Get-Content -Path ('{0}\release.md' -f $env:BUILD_SOURCESDIRECTORY) -Raw
 
 try {
     Write-Output "Updating the module metadata
         New version: $newVersion
         Functions: $ExportFunctions
         Aliases: $ExportAliases
+        Release notes: $releaseNotes
     "
-    Update-ModuleManifest -Path $manifestPath -ModuleVersion $newVersion
+
+    $updateParams = @{
+        Path = $manifestPath
+        ModuleVersion = $newVersion
+        ReleaseNotes = $releaseNotes
+    }
+
     if ( $ExportFunctions ) {
-        Update-ModuleManifest -Path $manifestPath -FunctionsToExport $ExportFunctions
+        $updateParams += @{
+            FunctionsToExport = $ExportFunctions
+        }
     }
+
     if ( $ExportAliases ) {
-        Update-ModuleManifest -Path $manifestPath -AliasesToExport $ExportAliases
+        $updateParams += @{
+            AliasesToExport = $ExportAliases
+        }
     }
+
+    Update-ModuleManifest @updateParams
+
     Write-Output "Updated the module metadata"
 } catch {
     Write-Error "Failed to update the module metadata - $_"
 }
 
-# update nuspec version
-# $nuspec = [xml] (Get-Content $nuspecPath -Raw)
-# $nuspec.package.metadata.version = $NewVersion.ToString()
-# $nuspec.Save($nuspecPath)
-
 try {
-    Write-Output ("Updating {0} branch source" -f $env:BUILD_SOURCEBRANCHNAME)
+    Write-Output ("Updating {0} branch source" -f $branch)
     git config user.email 'greg@jagtechnical.com'
     git config user.name 'Greg Brownstein'
-    # git add *.nuspec
     git add *.psd1
     git status -v
     git commit -m "Updated $ModuleName Version to $NewVersion ***NO_CI***"
 
-    git push https://$($env:GitHubPAT)@github.com/gdbarron/VenafiTppPS.git ('HEAD:{0}' -f $env:BUILD_SOURCEBRANCHNAME)
-
-    Write-Output ("Updated {0} branch source" -f $env:BUILD_SOURCEBRANCHNAME)
+    # if we are performing pull request validation, do not push the code to the repo
+    if ( $env:BUILD_REASON -eq 'PullRequest') {
+        Write-Output "Bypassing git push given this build is for pull request validation"
+    } else {
+        git push https://$($env:GitHubPAT)@github.com/gdbarron/VenafiTppPS.git ('HEAD:{0}' -f $branch)
+        Write-Output ("Updated {0} branch source" -f $branch)
+    }
 
 } catch {
+    Write-Output ("Failed to update {0} branch with updated module metadata" -f $branch)
     $_ | Format-List -Force
-    Write-Output "Failed to update master branch with updated module metadata"
 }

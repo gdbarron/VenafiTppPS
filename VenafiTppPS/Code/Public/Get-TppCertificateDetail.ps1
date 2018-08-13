@@ -6,7 +6,7 @@ Get basic or full details about certificates
 Get details about a certificate based on search criteria.  See the examples for a few of the available options; the SDK provides a full list.  See Certificates attribute filters, https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-Certificates-search-attribute.php, and Certificates status filters, https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-Certificates-search-status.php.
 Additional details can be had by passing the guid.
 
-.PARAMETER Query
+.PARAMETER Filter
 Hashtable providing 1 or more key/value pairs with search criteria.
 
 .PARAMETER Limit
@@ -47,19 +47,19 @@ Guid returns a PSCustomObject with the following properties:
     ValidationDetails
 
 .EXAMPLE
-Get-TppCertificateDetail -query @{'ValidToLess'='2018-04-30T00:00:00.0000000Z'}
+Get-TppCertificateDetail -Filter @{'ValidToLess'='2018-04-30T00:00:00.0000000Z'}
 Find all certificates expiring before a certain date
 
 .EXAMPLE
-Get-TppCertificateDetail -query @{'ParentDn'='\VED\Policy\My folder'}
+Get-TppCertificateDetail -Filter @{'ParentDn'='\VED\Policy\My folder'}
 Find all certificates in the specified folder
 
 .EXAMPLE
-Get-TppCertificateDetail -query @{'ParentDnRecursive'='\VED\Policy\My folder'}
+Get-TppCertificateDetail -Filter @{'ParentDnRecursive'='\VED\Policy\My folder'}
 Find all certificates in the specified folder and subfolders
 
 .EXAMPLE
-Get-TppCertificateDetail -query @{'ParentDnRecursive'='\VED\Policy\My folder'} -limit 20
+Get-TppCertificateDetail -Filter @{'ParentDnRecursive'='\VED\Policy\My folder'} -limit 20
 Find all certificates in the specified folder and subfolders, but limit the results to 20
 
 .EXAMPLE
@@ -88,7 +88,8 @@ function Get-TppCertificateDetail {
     param (
         [Parameter(ParameterSetName = 'Basic')]
         [ValidateNotNullOrEmpty()]
-        [hashtable] $Query,
+        [Alias('Query')]
+        [Hashtable] $Filter,
 
         [Parameter(ParameterSetName = 'Basic')]
         [int] $Limit = 0,
