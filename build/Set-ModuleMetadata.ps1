@@ -33,8 +33,7 @@ $nuspecPath = "{0}\$ModuleName\$ModuleName.nuspec" -f $env:BUILD_SOURCESDIRECTOR
 Write-Output "Processing module path $manifestPath and nuspec path $nuspecPath"
 try {
     $manifest = Import-PowerShellDataFile $manifestPath
-}
-catch {
+} catch {
     throw "Unable to import PSD file -- check for proper definition file syntax.  `
     Try importing the PSD manually in a local powershell session to verify the cause of this error (import-powershelldatafile <psd1 file>) $_"
 }
@@ -102,7 +101,10 @@ try {
     git status -v
     git commit -m "Updated $ModuleName Version to $NewVersion ***NO_CI***"
 
-    git push https://$($env:GitHubPAT)@github.com/gdbarron/VenafiTppPS.git ('HEAD:{0}' -f $env:BUILD_SOURCEBRANCHNAME)
+    # if we are performing pull request validation, do not push the code to the repo
+    if ( $env:BUILD_REASON -ne 'PullRequest') {
+        git push https://$($env:GitHubPAT)@github.com/gdbarron/VenafiTppPS.git ('HEAD:{0}' -f $env:BUILD_SOURCEBRANCHNAME)
+    }
 
     Write-Output ("Updated {0} branch source" -f $env:BUILD_SOURCEBRANCHNAME)
 
