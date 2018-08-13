@@ -27,10 +27,11 @@ $ErrorActionPreference = "Stop"
 
 # get current environment variables just for reference
 Get-ChildItem env:
+$branch = $env:BUILD_SOURCEBRANCHNAME
 
 $manifestPath = '{0}\{1}\code\{1}.psd1' -f $env:BUILD_SOURCESDIRECTORY, $ModuleName
-$nuspecPath = "{0}\$ModuleName\$ModuleName.nuspec" -f $env:BUILD_SOURCESDIRECTORY
-Write-Output "Processing module path $manifestPath and nuspec path $nuspecPath"
+Write-Output "Processing module path $manifestPath"
+
 try {
     $manifest = Import-PowerShellDataFile $manifestPath
 } catch {
@@ -104,7 +105,7 @@ try {
 }
 
 try {
-    Write-Output ("Updating {0} branch source" -f $env:BUILD_SOURCEBRANCHNAME)
+    Write-Output ("Updating {0} branch source" -f $branch)
     git config user.email 'greg@jagtechnical.com'
     git config user.name 'Greg Brownstein'
     git add *.psd1
@@ -115,12 +116,11 @@ try {
     if ( $env:BUILD_REASON -eq 'PullRequest') {
         Write-Output "Bypassing git push given this build is for pull request validation"
     } else {
-        git push https://$($env:GitHubPAT)@github.com/gdbarron/VenafiTppPS.git ('HEAD:{0}' -f $env:BUILD_SOURCEBRANCHNAME)
-        Write-Output ("Updated {0} branch source" -f $env:BUILD_SOURCEBRANCHNAME)
+        git push https://$($env:GitHubPAT)@github.com/gdbarron/VenafiTppPS.git ('HEAD:{0}' -f $branch)
+        Write-Output ("Updated {0} branch source" -f $branch)
     }
 
-
 } catch {
+    Write-Output ("Failed to update {0} branch with updated module metadata" -f $branch)
     $_ | Format-List -Force
-    Write-Output "Failed to update master branch with updated module metadata"
 }
