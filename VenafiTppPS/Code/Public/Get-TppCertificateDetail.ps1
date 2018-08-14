@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Get basic or detailed certificate information
 
