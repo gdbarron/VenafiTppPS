@@ -25,11 +25,21 @@ Param(
 
 $ErrorActionPreference = "Stop"
 
+# get platyPS needed for documentation generation
+Install-PackageProvider -Name Nuget -Scope CurrentUser -Force -Confirm:$false
+Install-Module -Name platyPS -Scope CurrentUser -Force -Confirm:$false
+Import-Module platyPS
+
 # get current environment variables just for reference
 Get-ChildItem env:
 $branch = $env:BUILD_SOURCEBRANCHNAME
+$projectRoot = $env:BUILD_SOURCESDIRECTORY
+$BuildDate = Get-Date -uFormat '%Y-%m-%d'
+$releaseNotesPath = "$projectRoot\RELEASE.md"
+$changeLogPath = "$projectRoot\docs\ChangeLog.md"
 
-$manifestPath = '{0}\{1}\code\{1}.psd1' -f $env:BUILD_SOURCESDIRECTORY, $ModuleName
+
+$manifestPath = '{0}\{1}\code\{1}.psd1' -f $projectRoot, $ModuleName
 Write-Output "Processing module path $manifestPath"
 
 try {
@@ -69,7 +79,7 @@ foreach ($FunctionFile in $FunctionFiles) {
 }
 
 # get release notes
-$releaseNotes = Get-Content -Path ('{0}\release.md' -f $env:BUILD_SOURCESDIRECTORY) -Raw
+$releaseNotes = Get-Content -Path $releaseNotesPath -Raw
 
 try {
     Write-Output "Updating the module metadata
@@ -104,11 +114,69 @@ try {
     Write-Error "Failed to update the module metadata - $_"
 }
 
+
+############### UPDATE DOCS #################
+$modulePath = $manifestPath.Replace('.psd1', '.psm1')
+
+"Loading Module from $modulePath to update docs"
+Remove-Module $ModuleName -Force -ea SilentlyContinue -Verbose
+# platyPS + AppVeyor requires the module to be loaded in Global scope
+Import-Module $modulePath -force -Verbose
+
+#Build YAMLText starting with the header
+$YMLtext = (Get-Content "$projectRoot\header-mkdocs.yml") -join "`n"
+$YMLtext = "$YMLtext`n"
+$parameters = @{
+    Path        = $releaseNotesPath
+    ErrorAction = 'SilentlyContinue'
+}
+$ReleaseText = (Get-Content @parameters) -join "`n"
+if ($ReleaseText) {
+    $ReleaseText | Set-Content "$projectRoot\docs\RELEASE.md"
+    $YMLText = "$YMLtext  - Release Notes: RELEASE.md`n"
+}
+if ((Test-Path -Path $changeLogPath)) {
+    $YMLText = "$YMLtext  - Change Log: ChangeLog.md`n"
+}
+$YMLText = "$YMLtext  - Functions:`n"
+# Drain the swamp
+$parameters = @{
+    Recurse     = $true
+    Force       = $true
+    Path        = "$projectRoot\docs\functions"
+    ErrorAction = 'SilentlyContinue'
+}
+$null = Remove-Item @parameters
+$Params = @{
+    Path        = "$projectRoot\docs\functions"
+    type        = 'directory'
+    ErrorAction = 'SilentlyContinue'
+}
+$null = New-Item @Params
+$Params = @{
+    Module       = $ModuleName
+    Force        = $true
+    OutputFolder = "$projectRoot\docs\functions"
+    NoMetadata   = $true
+}
+New-MarkdownHelp @Params | foreach-object {
+    $Function = $_.Name -replace '\.md', ''
+    $Part = "    - {0}: functions/{1}" -f $Function, $_.Name
+    $YMLText = "{0}{1}`n" -f $YMLText, $Part
+    $Part
+}
+$YMLtext | Set-Content -Path "$projectRoot\mkdocs.yml"
+
+$YMLtext
+gci "$projectRoot\docs" -Recurse
+
 try {
     Write-Output ("Updating {0} branch source" -f $branch)
     git config user.email 'greg@jagtechnical.com'
     git config user.name 'Greg Brownstein'
     git add *.psd1
+    git add *.md
+    git add "$projectRoot\mkdocs.yml"
     git status -v
     git commit -m "Updated $ModuleName Version to $NewVersion ***NO_CI***"
 
