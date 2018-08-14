@@ -40,7 +40,7 @@ Retrieve all effective configurations for a certificate
 
 .EXAMPLE
 Get-TppAttribute -DN '\VED\Policy\My Folder\myapp.company.com' -AttributeName 'driver name'
-Retrieve all effective configurations for a certificate
+Retrieve all the value for attribute driver name from certificate myapp.company.com
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppAttribute/

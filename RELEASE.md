@@ -1,2 +1,3 @@
-- move build/release to VSTS
-- rename param in Get-TppCertificateDetail to "Filter" to match venafi docs
+- add identity search
+- add get current identity
+- massive update to Get-TppCertificateDetail to remove Filter hashtable param and replace with individual parameters
