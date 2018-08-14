@@ -112,7 +112,7 @@ try {
 
 
 ############### UPDATE DOCS #################
-$modulePath = manifestPath.Replace('.psd1', '.psm1')
+$modulePath = $manifestPath.Replace('.psd1', '.psm1')
 
 "Loading Module from $modulePath to update docs"
 Remove-Module $ModuleName -Force -ea SilentlyContinue
