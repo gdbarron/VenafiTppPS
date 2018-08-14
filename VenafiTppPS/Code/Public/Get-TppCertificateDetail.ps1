@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Get basic or full details about certificates
+Get basic or detailed certificate information
 
 .DESCRIPTION
 Get certificate info based on a variety of attributes.
@@ -490,7 +490,7 @@ function Get-TppCertificateDetail {
     process {
 
         Switch ($PsCmdlet.ParameterSetName)	{
-            {$_ -in 'NoPath','ByPath'} {
+            {$_ -in 'NoPath', 'ByPath'} {
 
                 $response = Invoke-TppRestMethod @params
 
