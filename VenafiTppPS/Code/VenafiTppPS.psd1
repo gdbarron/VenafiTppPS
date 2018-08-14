@@ -12,7 +12,7 @@
 RootModule = 'VenafiTppPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.3.11'
+ModuleVersion = '0.4.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -69,11 +69,11 @@ ScriptsToProcess = 'classes\*.ps1'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Get-TppAttribute', 'Get-TppCertificateDetail', 'Get-TppCustomField', 
-               'Get-TppLog', 'Get-TppObject', 'Get-TppWorkflowDetail', 
-               'Move-TppObject', 'New-TppCapiApplication', 'New-TppCertificate', 
-               'New-TppPolicy', 'New-TppSession', 'Rename-TppObject', 
-               'Restore-TppCertificate', 'Revoke-TppCertificate', 'Set-TppAttribute', 
+FunctionsToExport = 'Get-TppAttribute', 'Get-TppCertificateDetail', 'Get-TppCustomField',
+               'Get-TppLog', 'Get-TppObject', 'Get-TppWorkflowDetail',
+               'Move-TppObject', 'New-TppCapiApplication', 'New-TppCertificate',
+               'New-TppPolicy', 'New-TppSession', 'Rename-TppObject',
+               'Restore-TppCertificate', 'Revoke-TppCertificate', 'Set-TppAttribute',
                'Set-TppWorkflowStatus', 'Test-TppObject'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
