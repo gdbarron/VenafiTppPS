@@ -25,6 +25,11 @@ Param(
 
 $ErrorActionPreference = "Stop"
 
+# get platyPS needed for documentation generation
+Install-PackageProvider -Name Nuget -Scope CurrentUser -Force -Confirm:$false
+Install-Module -Name platyPS -Scope CurrentUser -Force -Confirm:$false
+Import-Module platyPS
+
 # get current environment variables just for reference
 Get-ChildItem env:
 $branch = $env:BUILD_SOURCEBRANCHNAME
