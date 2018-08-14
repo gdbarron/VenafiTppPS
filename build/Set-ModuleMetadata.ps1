@@ -34,6 +34,10 @@ Import-Module platyPS
 Get-ChildItem env:
 $branch = $env:BUILD_SOURCEBRANCHNAME
 $projectRoot = $env:BUILD_SOURCESDIRECTORY
+$BuildDate = Get-Date -uFormat '%Y-%m-%d'
+$releaseNotesPath = "$projectRoot\RELEASE.md"
+$changeLogPath = "$projectRoot\docs\ChangeLog.md"
+
 
 $manifestPath = '{0}\{1}\code\{1}.psd1' -f $projectRoot, $ModuleName
 Write-Output "Processing module path $manifestPath"
@@ -75,7 +79,7 @@ foreach ($FunctionFile in $FunctionFiles) {
 }
 
 # get release notes
-$releaseNotes = Get-Content -Path ('{0}\release.md' -f $projectRoot) -Raw
+$releaseNotes = Get-Content -Path $releaseNotesPath -Raw
 
 try {
     Write-Output "Updating the module metadata
@@ -123,7 +127,7 @@ Import-Module $modulePath -force -Verbose
 $YMLtext = (Get-Content "$projectRoot\header-mkdocs.yml") -join "`n"
 $YMLtext = "$YMLtext`n"
 $parameters = @{
-    Path        = $ReleaseNotes
+    Path        = $releaseNotesPath
     ErrorAction = 'SilentlyContinue'
 }
 $ReleaseText = (Get-Content @parameters) -join "`n"
@@ -131,7 +135,7 @@ if ($ReleaseText) {
     $ReleaseText | Set-Content "$projectRoot\docs\RELEASE.md"
     $YMLText = "$YMLtext  - Release Notes: RELEASE.md`n"
 }
-if ((Test-Path -Path $ChangeLog)) {
+if ((Test-Path -Path $changeLogPath)) {
     $YMLText = "$YMLtext  - Change Log: ChangeLog.md`n"
 }
 $YMLText = "$YMLtext  - Functions:`n"
