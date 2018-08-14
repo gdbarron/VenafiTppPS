@@ -171,6 +171,8 @@ try {
     git config user.email 'greg@jagtechnical.com'
     git config user.name 'Greg Brownstein'
     git add *.psd1
+    git add *.md
+    git add "$projectRoot\mkdocs.yml"
     git status -v
     git commit -m "Updated $ModuleName Version to $NewVersion ***NO_CI***"
 
