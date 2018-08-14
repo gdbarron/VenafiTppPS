@@ -120,7 +120,7 @@ Session object created from New-TppSession method.  The value defaults to the sc
 Guid
 
 .OUTPUTS
-Basic parameter set returns a PSCustomObject with the following properties:
+ByPath and NoPath parameter sets returns a PSCustomObject with the following properties:
     CreatedOn
     DN
     Guid
@@ -152,20 +152,20 @@ Get-TppCertificateDetail -ValidToLess ([DateTime] "2018-01-01")
 Find all certificates expiring before a certain date
 
 .EXAMPLE
-Get-TppCertificateDetail -Filter @{'ParentDn'='\VED\Policy\My folder'}
-Find all certificates in the specified folder
+Get-TppCertificateDetail -ValidToLess ([DateTime] "2018-01-01") -Limit 5
+Find 5 certificates expiring before a certain date
 
 .EXAMPLE
-Get-TppCertificateDetail -Filter @{'ParentDnRecursive'='\VED\Policy\My folder'}
-Find all certificates in the specified folder and subfolders
+Get-TppCertificateDetail -Path '\VED\Policy\My Policy'
+Find all certificates in a specific path
 
 .EXAMPLE
-Get-TppCertificateDetail -Filter @{'ParentDnRecursive'='\VED\Policy\My folder'} -limit 20
-Find all certificates in the specified folder and subfolders, but limit the results to 20
+Get-TppCertificateDetail -Path '\VED\Policy\My Policy' -Recursive
+Find all certificates in a specific path and all subfolders
 
 .EXAMPLE
-$certs | Get-TppCertificateDetail
-Get detailed certificate info after performing basic query
+Get-TppCertificateDetail -ValidToLess ([DateTime] "2018-01-01") -Limit 5 | Get-TppCertificateDetail
+Get detailed certificate info on the first 5 certificates expiring before a certain date
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppCertificateDetail/
