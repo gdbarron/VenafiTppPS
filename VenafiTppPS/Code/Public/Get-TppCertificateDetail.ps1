@@ -38,11 +38,11 @@ Example - 'RSA','DSA'
 Find certificates by public key size.
 Example - 1024,2048
 
-.PARAMETER KeySizeGreater
+.PARAMETER KeySizeGreaterThan
 Find certificates with a key size greater than the specified value.
 Example - 1024
 
-.PARAMETER KeySizeLess
+.PARAMETER KeySizeLessThan
 Find certificates with a key size less than the specified value.
 Example: 1025
 
@@ -94,21 +94,60 @@ Example - 'sha1RSA','md5RSA','sha256RSA'
 Find certificates by one or more SHA-1 thumbprints.
 Example - 71E8672798C03842735293EF49425EF06C7FA8AB&
 
-.PARAMETER ValidFrom
+.PARAMETER IssueDate
 Find certificates by the date of issue.
 Example - [DateTime] '2017-10-24'
 
-.PARAMETER ValidTo
+.PARAMETER ExpireDate
 Find certificates by expiration date.
 Example - [DateTime] '2017-10-24'
 
-.PARAMETER ValidToGreater
+.PARAMETER ExpireAfter
 Find certificates that expire after a certain date. Specify YYYY-MM-DD or the ISO 8601 format, for example YYYY-MM-DDTHH:MM:SS.mmmmmmmZ.
 Example - [DateTime] '2017-10-24'
 
-.PARAMETER ValidToLess
+.PARAMETER ExpireBefore
 Find certificates that expire before a certain date. Specify YYYY-MM-DD or the ISO 8601 format, for example YYYY-MM-DDTHH:MM:SS.mmmmmmmZ.
 Example - [DateTime] '2017-10-24'
+
+.PARAMETER Enabled
+Include only certificates that are enabled or disabled
+
+.PARAMETER InError
+Include only certificates by error state: No error or in an error state
+
+.PARAMETER NetworkValidationEnabled
+Include only certificates with network validation enabled or disabled
+
+.PARAMETER CreateDate
+Find certificates that were created at an exact date and time
+
+.PARAMETER CreatedAfter
+Find certificate created after this date and time
+
+.PARAMETER CreatedBefore
+Find certificate created before this date and time
+
+.PARAMETER ManagementType
+Find certificates with a Management type of Unassigned, Monitoring, Enrollment, or Provisioning
+
+.PARAMETER PendingWorkflow
+Include only certificates that have a pending workflow resolution (have an outstanding workflow ticket)
+
+.PARAMETER Stage
+Find certificates by one or more stages in the certificate lifecycle
+
+.PARAMETER StageGreaterThan
+Find certificates with a stage greater than the specified stage (does not include specified stage)
+
+.PARAMETER StageLessThan
+Find certificates with a stage less than the specified stage (does not include specified stage)
+
+.PARAMETER ValidationEnabled
+Include only certificates with validation enabled or disabled
+
+.PARAMETER ValidationState
+Find certificates with a validation state of Blank, Success, or Failure
 
 .PARAMETER Guid
 Guid representing a unique certificate in Venafi.
@@ -148,11 +187,11 @@ Guid returns a PSCustomObject with the following properties:
     ValidationDetails
 
 .EXAMPLE
-Get-TppCertificateDetail -ValidToLess ([DateTime] "2018-01-01")
+Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01")
 Find all certificates expiring before a certain date
 
 .EXAMPLE
-Get-TppCertificateDetail -ValidToLess ([DateTime] "2018-01-01") -Limit 5
+Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01") -Limit 5
 Find 5 certificates expiring before a certain date
 
 .EXAMPLE
@@ -164,7 +203,7 @@ Get-TppCertificateDetail -Path '\VED\Policy\My Policy' -Recursive
 Find all certificates in a specific path and all subfolders
 
 .EXAMPLE
-Get-TppCertificateDetail -ValidToLess ([DateTime] "2018-01-01") -Limit 5 | Get-TppCertificateDetail
+Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01") -Limit 5 | Get-TppCertificateDetail
 Get detailed certificate info on the first 5 certificates expiring before a certain date
 
 .LINK
@@ -229,11 +268,11 @@ function Get-TppCertificateDetail {
 
         [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(ParameterSetName = 'NoPath')]
-        [Int] $KeySizeGreater,
+        [Int] $KeySizeGreaterThan,
 
         [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(ParameterSetName = 'NoPath')]
-        [Int] $KeySizeLess,
+        [Int] $KeySizeLessThan,
 
         [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(ParameterSetName = 'NoPath')]
@@ -289,19 +328,105 @@ function Get-TppCertificateDetail {
 
         [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(ParameterSetName = 'NoPath')]
-        [DateTime] $ValidFrom,
+        [Alias('ValidFrom')]
+        [DateTime] $IssueDate,
 
         [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(ParameterSetName = 'NoPath')]
-        [DateTime] $ValidTo,
+        [Alias('ValidTo')]
+        [DateTime] $ExpireDate,
 
         [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(ParameterSetName = 'NoPath')]
-        [DateTime] $ValidToGreater,
+        [Alias('ValidToGreater')]
+        [DateTime] $ExpireAfter,
 
         [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(ParameterSetName = 'NoPath')]
-        [DateTime] $ValidToLess,
+        [Alias('ValidToLess')]
+        [DateTime] $ExpireBefore,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [bool] $Enabled,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [bool] $InError,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [bool] $NetworkValidationEnabled,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [datetime] $CreateDate,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [Alias('CreatedOnGreater')]
+        [datetime] $CreatedAfter,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [Alias('CreatedOnLess')]
+        [datetime] $CreatedBefore,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [ValidateSet('Unassigned', 'Monitoring', 'Enrollment', 'Provisioning')]
+        [String[]] $ManagementType,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [Switch] $PendingWorkflow,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [ValidateScript( {
+                $enumValues = Get-EnumValues -EnumName 'CertificateStage'
+                if ( $_ -in $enumValues.Values ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
+                }
+            })]
+        [int[]] $Stage,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [Alias('StageGreater')]
+        [ValidateScript( {
+                $enumValues = Get-EnumValues -EnumName 'CertificateStage'
+                if ( $_ -in $enumValues.Values ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
+                }
+            })]
+        [int] $StageGreaterThan,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [Alias('StageLess')]
+        [ValidateScript( {
+                $enumValues = Get-EnumValues -EnumName 'CertificateStage'
+                if ( $_ -in $enumValues.Values ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
+                }
+            })]
+        [int] $StageLessThan,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [bool] $ValidationEnabled,
+
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [ValidateSet('Blank', 'Success', 'Failure')]
+        [String[]] $ValidationState,
 
         [Parameter(Mandatory, ParameterSetName = 'Full', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
@@ -325,153 +450,112 @@ function Get-TppCertificateDetail {
                     }
                 }
 
-                if ( $Path ) {
-                    if ( $Recursive ) {
-                        $params.Body += @{
-                            ParentDnRecursive = $Path
-                        }
-                    } else {
-                        $params.Body += @{
-                            ParentDn = $Path
+                switch ($PSBoundParameters.Keys) {
+                    'Path' {
+                        if ( $PSBoundParameters['Recursive'] ) {
+                            $params.Body.Add( 'ParentDnRecursive', $Path )
+                        } else {
+                            $params.Body.Add( 'ParentDn', $Path )
                         }
                     }
-                }
-
-                if ( $Country ) {
-                    $params.Body += @{
-                        C = $Country
+                    'Country' {
+                        $params.Body.Add( 'C', $Country )
                     }
-                }
-
-                if ( $CommonName ) {
-                    $params.Body += @{
-                        CN = $CommonName
+                    'CommonName' {
+                        $params.Body.Add( 'CN', $CommonName )
                     }
-                }
-
-                if ( $Issuer ) {
-                    $params.Body += @{
-                        Issuer = $Issuer
+                    'Issuer' {
+                        $params.Body.Add( 'Issuer', $Issuer )
                     }
-                }
-
-                if ( $KeyAlgorithm ) {
-                    $params.Body += @{
-                        KeyAlgorithm = $KeyAlgorithm -join ','
+                    'KeyAlgorithm' {
+                        $params.Body.Add( 'KeyAlgorithm', $KeyAlgorithm -join ',' )
                     }
-                }
-
-                if ( $KeySize ) {
-                    $params.Body += @{
-                        KeySize = $KeySize -join ','
+                    'KeySize' {
+                        $params.Body.Add( 'KeySize', $KeySize -join ',' )
                     }
-                }
-
-                if ( $KeySizeGreater ) {
-                    $params.Body += @{
-                        KeySizeGreater = $KeySizeGreater
+                    'KeySizeGreaterThan' {
+                        $params.Body.Add( 'KeySizeGreater', $KeySizeGreaterThan )
                     }
-                }
-
-                if ( $KeySizeLess ) {
-                    $params.Body += @{
-                        KeySizeLess = $KeySizeLess
+                    'KeySizeLessThan' {
+                        $params.Body.Add( 'KeySizeLess', $KeySizeLessThan )
                     }
-                }
-
-                if ( $Locale ) {
-                    $params.Body += @{
-                        L = $Locale -join ','
+                    'Locale' {
+                        $params.Body.Add( 'L', $Locale -join ',' )
                     }
-                }
-
-                if ( $Organization ) {
-                    $params.Body += @{
-                        O = $Organization -join ','
+                    'Organization' {
+                        $params.Body.Add( 'O', $Organization -join ',' )
                     }
-                }
-
-                if ( $OrganizationUnit ) {
-                    $params.Body += @{
-                        OU = $OrganizationUnit -join ','
+                    'OrganizationUnit' {
+                        $params.Body.Add( 'OU', $OrganizationUnit -join ',' )
                     }
-                }
-
-                if ( $State ) {
-                    $params.Body += @{
-                        S = $State -join ','
+                    'State' {
+                        $params.Body.Add( 'S', $State -join ',' )
                     }
-                }
-
-                if ( $SanDns ) {
-                    $params.Body += @{
-                        'SAN-DNS' = $SanDns
+                    'SanDns' {
+                        $params.Body.Add( 'SAN-DAN', $SanDns )
                     }
-                }
-
-                if ( $SanEmail ) {
-                    $params.Body += @{
-                        'SAN-Email' = $SanEmail
+                    'SanEmail' {
+                        $params.Body.Add( 'SAN-Email', $SanEmail )
                     }
-                }
-
-                if ( $SanIP ) {
-                    $params.Body += @{
-                        'SAN-IP' = $SanIP
+                    'SanIP' {
+                        $params.Body.Add( 'SAN-IP', $SanIP )
                     }
-                }
-
-                if ( $SanUpn ) {
-                    $params.Body += @{
-                        'SAN-UPN' = $SanUpn
+                    'SanUpn' {
+                        $params.Body.Add( 'SAN-UPN', $SanUpn )
                     }
-                }
-
-                if ( $SanUri ) {
-                    $params.Body += @{
-                        'SAN-URI' = $SanUri
+                    'SanUri' {
+                        $params.Body.Add( 'SAN-URI', $SanUri )
                     }
-                }
-
-                if ( $SerialNumber ) {
-                    $params.Body += @{
-                        Serial = $SerialNumber
+                    'SerialNumber' {
+                        $params.Body.Add( 'Serial', $SerialNumber )
                     }
-                }
-
-                if ( $SignatureAlgorithm ) {
-                    $params.Body += @{
-                        SignatureAlgorithm = $SignatureAlgorithm -join ','
+                    'SignatureAlgorithm' {
+                        $params.Body.Add( 'SignatureAlgorithm', $SignatureAlgorithm -join ',' )
                     }
-                }
-
-                if ( $Thumbprint ) {
-                    $params.Body += @{
-                        Thumbprint = $Thumbprint
+                    'Thumbprint' {
+                        $params.Body.Add( 'Thumbprint', $Thumbprint )
                     }
-                }
-
-                if ( $ValidFrom ) {
-                    $params.Body += @{
-                        ValidFrom = $ValidFrom.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" )
+                    'IssueDate' {
+                        $params.Body.Add( 'ValidFrom', $IssueDate.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
                     }
-                }
-
-                if ( $ValidTo ) {
-                    $params.Body += @{
-                        ValidTo = $ValidTo.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" )
+                    'ExpireDate' {
+                        $params.Body.Add( 'ValidTo', $ExpireDate.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
                     }
-                }
-
-                if ( $ValidToGreater ) {
-                    $params.Body += @{
-                        ValidToGreater = $ValidToGreater.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" )
+                    'ExpireAfter' {
+                        $params.Body.Add( 'ValidToGreater', $ExpireAfter.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") )
                     }
-                }
-
-                if ( $ValidToLess ) {
-                    $params.Body += @{
-                        ValidToLess = $ValidToLess.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" )
+                    'ExpireBefore' {
+                        $params.Body.Add( 'ValidToLess', $ExpireBefore.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") )
+                    }
+                    'Enabled' {
+                        $params.Body.Add( 'Disabled', [int] (-not $Enabled) )
+                    }
+                    'InError' {
+                        $params.Body.Add( 'InError', [int] $InError )
+                    }
+                    'NetworkValidationEnabled' {
+                        $params.Body.Add( 'NetworkValidationDisabled', [int] (-not $NetworkValidationEnabled) )
+                    }
+                    'ManagementType' {
+                        $params.Body.Add( 'ManagementType', $ManagementType -join ',' )
+                    }
+                    'PendingWorkflow' {
+                        $params.Body.Add( 'PendingWorkflow', '')
+                    }
+                    'Stage' {
+                        $params.Body.Add( 'Stage', $Stage -join ',' )
+                    }
+                    'StageGreaterThan' {
+                        $params.Body.Add( 'StageGreater', $StageGreaterThan )
+                    }
+                    'StageLessThan' {
+                        $params.Body.Add( 'StageLess', $StageLessThan )
+                    }
+                    'ValidationEnabled' {
+                        $params.Body.Add( 'ValidationDisabled', [int] (-not $ValidationEnabled) )
+                    }
+                    'ValidationState' {
+                        $params.Body.Add( 'ValidationState', $ValidationState -join ',' )
                     }
                 }
             }
