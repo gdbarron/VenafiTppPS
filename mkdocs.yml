@@ -6,12 +6,13 @@ theme: readthedocs
 copyright: ""
 pages:
   - Home: index.md
-  - Realse Notes: RELEASE.md
+  - Release Notes: RELEASE.md
   - Change Log: ChangeLog.md
   - Functions:
     - Get-TppAttribute: functions/Get-TppAttribute.md
     - Get-TppCertificateDetail: functions/Get-TppCertificateDetail.md
     - Get-TppCustomField: functions/Get-TppCustomField.md
+    - Get-TppIdentity: functions/Get-TppIdentity.md
     - Get-TppLog: functions/Get-TppLog.md
     - Get-TppObject: functions/Get-TppObject.md
     - Get-TppWorkflowDetail: functions/Get-TppWorkflowDetail.md
@@ -25,5 +26,4 @@ pages:
     - Revoke-TppCertificate: functions/Revoke-TppCertificate.md
     - Set-TppAttribute: functions/Set-TppAttribute.md
     - Set-TppWorkflowStatus: functions/Set-TppWorkflowStatus.md
-    - Test-TppObject: functions/Test-TppObject.md
 

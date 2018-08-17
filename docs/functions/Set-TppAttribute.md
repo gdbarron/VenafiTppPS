@@ -119,14 +119,12 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## INPUTS
 
 ### System.String[] for DN
-
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
-    DN = path to object
-    Success = boolean indicating success or failure
-    Error = Error message in case of failure
-
+###     DN = path to object
+###     Success = boolean indicating success or failure
+###     Error = Error message in case of failure
 ## NOTES
 
 ## RELATED LINKS

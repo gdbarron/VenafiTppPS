@@ -126,26 +126,25 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
-    APIKey - Guid representing the current session with TPP
-    Credential - Credential object provided to authenticate against TPP server.  This will be used to re-authenticate once the connection has expired.
-    ServerUrl - URL to the TPP server
-    ValidateUtil - DateTime when the session will expire.
-    CustomField - PSCustomObject containing custom fields defined on this server.  Properties include:
-        AllowedValues
-        Classes
-        ConfigAttribute
-        DN
-        DefaultValues
-        Guid
-        Label
-        Mandatory
-        Name
-        Policyable
-        RenderHidden
-        RenderReadOnly
-        Single
-        Type
-
+###     APIKey - Guid representing the current session with TPP
+###     Credential - Credential object provided to authenticate against TPP server.  This will be used to re-authenticate once the connection has expired.
+###     ServerUrl - URL to the TPP server
+###     ValidateUtil - DateTime when the session will expire.
+###     CustomField - PSCustomObject containing custom fields defined on this server.  Properties include:
+###         AllowedValues
+###         Classes
+###         ConfigAttribute
+###         DN
+###         DefaultValues
+###         Guid
+###         Label
+###         Mandatory
+###         Name
+###         Policyable
+###         RenderHidden
+###         RenderReadOnly
+###         Single
+###         Type
 ## NOTES
 
 ## RELATED LINKS

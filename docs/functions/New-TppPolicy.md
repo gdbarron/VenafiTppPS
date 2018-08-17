@@ -74,19 +74,17 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## INPUTS
 
 ### none
-
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
-    AbsoluteGUID: The left-to-right concatenation of all of the GUIDs for all of the objects in the DN.
-    DN: The Distinguished Name (DN) of the object, provided as PolicyDN
-    GUID: The GUID that identifies the object.
-    ID: The object identifier.
-    Name: The Common Name (CN) of the object.
-    Parent: The parent DN of the object.
-    Revision: The revision of the object.
-    TypeName: will always be Policy
-
+###     AbsoluteGUID: The left-to-right concatenation of all of the GUIDs for all of the objects in the DN.
+###     DN: The Distinguished Name (DN) of the object, provided as PolicyDN
+###     GUID: The GUID that identifies the object.
+###     ID: The object identifier.
+###     Name: The Common Name (CN) of the object.
+###     Parent: The parent DN of the object.
+###     Revision: The revision of the object.
+###     TypeName: will always be Policy
 ## NOTES
 
 ## RELATED LINKS
