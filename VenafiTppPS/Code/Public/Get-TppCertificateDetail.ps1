@@ -38,11 +38,11 @@ Example - 'RSA','DSA'
 Find certificates by public key size.
 Example - 1024,2048
 
-.PARAMETER KeySizeGreater
+.PARAMETER KeySizeGreaterThan
 Find certificates with a key size greater than the specified value.
 Example - 1024
 
-.PARAMETER KeySizeLess
+.PARAMETER KeySizeLessThan
 Find certificates with a key size less than the specified value.
 Example: 1025
 
@@ -94,21 +94,60 @@ Example - 'sha1RSA','md5RSA','sha256RSA'
 Find certificates by one or more SHA-1 thumbprints.
 Example - 71E8672798C03842735293EF49425EF06C7FA8AB&
 
-.PARAMETER ValidFrom
+.PARAMETER IssueDate
 Find certificates by the date of issue.
 Example - [DateTime] '2017-10-24'
 
-.PARAMETER ValidTo
+.PARAMETER ExpireDate
 Find certificates by expiration date.
 Example - [DateTime] '2017-10-24'
 
-.PARAMETER ValidToGreater
+.PARAMETER ExpireAfter
 Find certificates that expire after a certain date. Specify YYYY-MM-DD or the ISO 8601 format, for example YYYY-MM-DDTHH:MM:SS.mmmmmmmZ.
 Example - [DateTime] '2017-10-24'
 
-.PARAMETER ValidToLess
+.PARAMETER ExpireBefore
 Find certificates that expire before a certain date. Specify YYYY-MM-DD or the ISO 8601 format, for example YYYY-MM-DDTHH:MM:SS.mmmmmmmZ.
 Example - [DateTime] '2017-10-24'
+
+.PARAMETER Enabled
+Include only certificates that are enabled or disabled
+
+.PARAMETER InError
+Include only certificates by error state: No error or in an error state
+
+.PARAMETER NetworkValidationEnabled
+Include only certificates with network validation enabled or disabled
+
+.PARAMETER CreateDate
+Find certificates that were created at an exact date and time
+
+.PARAMETER CreatedAfter
+Find certificate created after this date and time
+
+.PARAMETER CreatedBefore
+Find certificate created before this date and time
+
+.PARAMETER ManagementType
+Find certificates with a Management type of Unassigned, Monitoring, Enrollment, or Provisioning
+
+.PARAMETER PendingWorkflow
+Include only certificates that have a pending workflow resolution (have an outstanding workflow ticket)
+
+.PARAMETER Stage
+Find certificates by one or more stages in the certificate lifecycle
+
+.PARAMETER StageGreaterThan
+Find certificates with a stage greater than the specified stage (does not include specified stage)
+
+.PARAMETER StageLessThan
+Find certificates with a stage less than the specified stage (does not include specified stage)
+
+.PARAMETER ValidationEnabled
+Include only certificates with validation enabled or disabled
+
+.PARAMETER ValidationState
+Find certificates with a validation state of Blank, Success, or Failure
 
 .PARAMETER Guid
 Guid representing a unique certificate in Venafi.
@@ -148,11 +187,11 @@ Guid returns a PSCustomObject with the following properties:
     ValidationDetails
 
 .EXAMPLE
-Get-TppCertificateDetail -ValidToLess ([DateTime] "2018-01-01")
+Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01")
 Find all certificates expiring before a certain date
 
 .EXAMPLE
-Get-TppCertificateDetail -ValidToLess ([DateTime] "2018-01-01") -Limit 5
+Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01") -Limit 5
 Find 5 certificates expiring before a certain date
 
 .EXAMPLE
@@ -164,7 +203,7 @@ Get-TppCertificateDetail -Path '\VED\Policy\My Policy' -Recursive
 Find all certificates in a specific path and all subfolders
 
 .EXAMPLE
-Get-TppCertificateDetail -ValidToLess ([DateTime] "2018-01-01") -Limit 5 | Get-TppCertificateDetail
+Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01") -Limit 5 | Get-TppCertificateDetail
 Get detailed certificate info on the first 5 certificates expiring before a certain date
 
 .LINK
@@ -229,11 +268,11 @@ function Get-TppCertificateDetail {
 
         [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(ParameterSetName = 'NoPath')]
-        [Int] $KeySizeGreater,
+        [Int] $KeySizeGreaterThan,
 
         [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(ParameterSetName = 'NoPath')]
-        [Int] $KeySizeLess,
+        [Int] $KeySizeLessThan,
 
         [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(ParameterSetName = 'NoPath')]
@@ -365,7 +404,7 @@ function Get-TppCertificateDetail {
                     throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
                 }
             })]
-        [int] $StageGT,
+        [int] $StageGreaterThan,
 
         [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(ParameterSetName = 'NoPath')]
@@ -378,7 +417,7 @@ function Get-TppCertificateDetail {
                     throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
                 }
             })]
-        [int] $StageLT,
+        [int] $StageLessThan,
 
         [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(ParameterSetName = 'NoPath')]
@@ -434,11 +473,11 @@ function Get-TppCertificateDetail {
                     'KeySize' {
                         $params.Body.Add( 'KeySize', $KeySize -join ',' )
                     }
-                    'KeySizeGreater' {
-                        $params.Body.Add( 'KeySizeGreater', $KeySizeGreater )
+                    'KeySizeGreaterThan' {
+                        $params.Body.Add( 'KeySizeGreater', $KeySizeGreaterThan )
                     }
-                    'KeySizeLess' {
-                        $params.Body.Add( 'KeySizeLess', $KeySizeLess )
+                    'KeySizeLessThan' {
+                        $params.Body.Add( 'KeySizeLess', $KeySizeLessThan )
                     }
                     'Locale' {
                         $params.Body.Add( 'L', $Locale -join ',' )
@@ -477,16 +516,16 @@ function Get-TppCertificateDetail {
                         $params.Body.Add( 'Thumbprint', $Thumbprint )
                     }
                     'IssueDate' {
-                        $params.Body.Add( 'ValidFrom', $ValidFrom.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
+                        $params.Body.Add( 'ValidFrom', $IssueDate.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
                     }
                     'ExpireDate' {
-                        $params.Body.Add( 'ValidTo', $ValidTo.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
+                        $params.Body.Add( 'ValidTo', $ExpireDate.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
                     }
                     'ExpireAfter' {
-                        $params.Body.Add( 'ValidToGreater', $ValidToGreater.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") )
+                        $params.Body.Add( 'ValidToGreater', $ExpireAfter.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") )
                     }
                     'ExpireBefore' {
-                        $params.Body.Add( 'ValidToLess', $ValidToLess.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") )
+                        $params.Body.Add( 'ValidToLess', $ExpireBefore.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") )
                     }
                     'Enabled' {
                         $params.Body.Add( 'Disabled', [int] (-not $Enabled) )
@@ -506,11 +545,11 @@ function Get-TppCertificateDetail {
                     'Stage' {
                         $params.Body.Add( 'Stage', $Stage -join ',' )
                     }
-                    'StageGT' {
-                        $params.Body.Add( 'StageGreater', $StageGT )
+                    'StageGreaterThan' {
+                        $params.Body.Add( 'StageGreater', $StageGreaterThan )
                     }
-                    'StageLT' {
-                        $params.Body.Add( 'StageLess', $StageLT )
+                    'StageLessThan' {
+                        $params.Body.Add( 'StageLess', $StageLessThan )
                     }
                     'ValidationEnabled' {
                         $params.Body.Add( 'ValidationDisabled', [int] (-not $ValidationEnabled) )
