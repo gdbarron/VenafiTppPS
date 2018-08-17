@@ -1,3 +1,3 @@
-- add identity search
-- add get current identity
-- massive update to Get-TppCertificateDetail to remove Filter hashtable param and replace with individual parameters
+- add status filters to Get-TppCertificateDetail, all filters added
+- certificate stage enum added
+- Get-EnumValues function added
