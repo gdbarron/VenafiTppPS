@@ -169,15 +169,13 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## INPUTS
 
 ### CertificateDN (alias: DN) or Thumbprint
-
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
-    CertificateDN/Thumbprint - Whichever value was provided
-    Requested - Indicates whether revocation has been requested.  Only returned if the revocation was requested, but not completed yet.
-    Revoked - Indicates whether revocation has been completed.  Only returned once complete.
-    Error - Indicates any errors that occurred. Not returned when successful
-
+###     CertificateDN/Thumbprint - Whichever value was provided
+###     Requested - Indicates whether revocation has been requested.  Only returned if the revocation was requested, but not completed yet.
+###     Revoked - Indicates whether revocation has been completed.  Only returned once complete.
+###     Error - Indicates any errors that occurred. Not returned when successful
 ## NOTES
 
 ## RELATED LINKS

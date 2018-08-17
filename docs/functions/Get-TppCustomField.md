@@ -62,28 +62,26 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## INPUTS
 
 ### None
-
 ## OUTPUTS
 
 ### Query returns a PSCustomObject with the following properties:
-    Items
-        AllowedValues
-        Classes
-        ConfigAttribute
-        DN
-        DefaultValues
-        Guid
-        Label
-        Mandatory
-        Name
-        Policyable
-        RenderHidden
-        RenderReadOnly
-        Single
-        Type
-    Locked
-    Result
-
+###     Items
+###         AllowedValues
+###         Classes
+###         ConfigAttribute
+###         DN
+###         DefaultValues
+###         Guid
+###         Label
+###         Mandatory
+###         Name
+###         Policyable
+###         RenderHidden
+###         RenderReadOnly
+###         Single
+###         Type
+###     Locked
+###     Result
 ## NOTES
 All custom fields are retrieved upon inital connect to the server and a property of TppSession
 

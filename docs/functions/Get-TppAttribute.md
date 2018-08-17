@@ -43,7 +43,7 @@ Retrieve all effective configurations for a certificate
 Get-TppAttribute -DN '\VED\Policy\My Folder\myapp.company.com' -AttributeName 'driver name'
 ```
 
-Retrieve all effective configurations for a certificate
+Retrieve all the value for attribute driver name from certificate myapp.company.com
 
 ## PARAMETERS
 
@@ -128,16 +128,14 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## INPUTS
 
 ### DN by property name
-
 ## OUTPUTS
 
 ### PSCustomObject with properties DN and Config.
-    DN, path provided to the function
-    Attribute, PSCustomObject with the following properties:
-        Name
-        Values
-        IsCustomField
-
+###     DN, path provided to the function
+###     Attribute, PSCustomObject with the following properties:
+###         Name
+###         Values
+###         IsCustomField
 ## NOTES
 
 ## RELATED LINKS

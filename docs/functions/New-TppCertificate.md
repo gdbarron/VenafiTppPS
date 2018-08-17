@@ -137,14 +137,12 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## INPUTS
 
 ### None
-
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
-    CertificateDN - The Trust Protection Platform DN of the newly created certificate object, if it was successfully created. Otherwise, this value is absent.
-    Guid - A Guid that uniquely identifies the certificate.
-    Error - The reason why Certificates/Request could no create the certificate. Otherwise, this value is not present.
-
+###     CertificateDN - The Trust Protection Platform DN of the newly created certificate object, if it was successfully created. Otherwise, this value is absent.
+###     Guid - A Guid that uniquely identifies the certificate.
+###     Error - The reason why Certificates/Request could no create the certificate. Otherwise, this value is not present.
 ## NOTES
 
 ## RELATED LINKS

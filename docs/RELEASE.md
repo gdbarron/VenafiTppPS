@@ -1,2 +1,3 @@
-# Version 0.3.8 (2018-05-30)
-- bugfixes
+- add status filters to Get-TppCertificateDetail, all filters added
+- certificate stage enum added
+- Get-EnumValues function added

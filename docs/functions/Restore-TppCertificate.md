@@ -65,15 +65,13 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## INPUTS
 
 ### Path (alias: DN)
-
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
-    CertificateDN - Certificate path
-    Success - A value of true indicates that the renewal request was successfully submitted and
-    granted.
-    Error - Indicates any errors that occurred. Not returned when successful
-
+###     CertificateDN - Certificate path
+###     Success - A value of true indicates that the renewal request was successfully submitted and
+###     granted.
+###     Error - Indicates any errors that occurred. Not returned when successful
 ## NOTES
 
 ## RELATED LINKS

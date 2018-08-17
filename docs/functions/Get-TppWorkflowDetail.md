@@ -89,22 +89,20 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## INPUTS
 
 ### DN
-
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
-    Guid: Workflow ticket Guid
-    ApprovalExplanation: The explanation supplied by the approver.
-    ApprovalFrom: The identity to be contacted for approving.
-    ApprovalReason: The administrator-defined reason text.
-    Approvers: An array of workflow approvers for the certificate.
-    Blocking: The object that the ticket is associated with.
-    Created: The date/time the ticket was created.
-    IssuedDueTo: The workflow object that caused this ticket to be created (if any).
-    Result: Integer result code indicating success 1 or failure. For more information, see Workflow result codes.
-    Status: The status of the ticket.
-    Updated: The date/time that the ticket was last updated.
-
+###     Guid: Workflow ticket Guid
+###     ApprovalExplanation: The explanation supplied by the approver.
+###     ApprovalFrom: The identity to be contacted for approving.
+###     ApprovalReason: The administrator-defined reason text.
+###     Approvers: An array of workflow approvers for the certificate.
+###     Blocking: The object that the ticket is associated with.
+###     Created: The date/time the ticket was created.
+###     IssuedDueTo: The workflow object that caused this ticket to be created (if any).
+###     Result: Integer result code indicating success 1 or failure. For more information, see Workflow result codes.
+###     Status: The status of the ticket.
+###     Updated: The date/time that the ticket was last updated.
 ## NOTES
 
 ## RELATED LINKS
