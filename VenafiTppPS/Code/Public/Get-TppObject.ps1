@@ -23,10 +23,11 @@ A list of attribute names to limit the search against.  Only valid when searchin
 The path to start our search.  If not provided, the root, \VED, is used.
 
 .PARAMETER Recursive
-Searches the subordinates of the object specified in DN.
+Searches the subordinates of the object specified in Path.
 Not supported when searching Classes or by Pattern.
 
 .PARAMETER Folder
+Treat path as root folder for search instead of the end of the path as an item wtihin the parent.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -47,7 +48,15 @@ PSCustomObject with the following properties:
 
 .EXAMPLE
 Get-TppObject -Recursive
-Get all objects
+Get all objects.  The default path is \VED and recursive option will search all subfolders.
+
+.EXAMPLE
+Get-TppObject -Path '\VED\Policy'
+Get the Policy item with the VED folder
+
+.EXAMPLE
+Get-TppObject -Path '\VED\Policy' -Folder
+Get items within the policy folder
 
 .EXAMPLE
 Get-TppObject -Class 'iis6'
@@ -183,7 +192,7 @@ function Get-TppObject {
         }
     }
 
-    # we have a default value even if not provided so always add path
+    # \ved is top level so need to get subitems
     if ( $Path -eq '\VED' ) {
         $byFolder = $true
     }
