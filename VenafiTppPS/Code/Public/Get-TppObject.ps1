@@ -26,6 +26,8 @@ The path to start our search.  If not provided, the root, \VED, is used.
 Searches the subordinates of the object specified in DN.
 Not supported when searching Classes or by Pattern.
 
+.PARAMETER Folder
+
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
@@ -118,6 +120,11 @@ function Get-TppObject {
         [Parameter(ParameterSetName = 'FindByClass')]
         [switch] $Recursive,
 
+        [Parameter(ParameterSetName = 'FindByDN')]
+        [Parameter(ParameterSetName = 'FindByClass')]
+        [Parameter(ParameterSetName = 'FindByPattern')]
+        [switch] $Folder,
+
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
@@ -130,7 +137,7 @@ function Get-TppObject {
         TppSession = $TppSession
         Method     = 'Post'
         UriLeaf    = 'placeholder'
-        Body       = 'placeholder'
+        Body       = @{}
     }
 
     Switch ($PsCmdlet.ParameterSetName)	{
@@ -141,7 +148,6 @@ function Get-TppObject {
 
         'FindByDN' {
             $params.UriLeaf = 'config/enumerate'
-            $params.Body = @{ObjectDN = $Path}
         }
 
         'FindByClass' {
@@ -154,13 +160,13 @@ function Get-TppObject {
         }
     }
 
-    # we have a default value even if not provided so always add path
-    $params.Body.Add( 'ObjectDN', $Path )
+    $byFolder = $false
 
-    # add other filters
+    # add filters
     switch ($PSBoundParameters.Keys) {
         'Pattern' {
             $params.Body.Add( 'Pattern', $Pattern )
+            $byFolder = $true
         }
 
         'AttributeName' {
@@ -169,13 +175,35 @@ function Get-TppObject {
 
         'Recursive' {
             $params.Body.Add( 'Recursive', 'true' )
+            $byFolder = $true
         }
+
+        'Folder' {
+            $byFolder = $true
+        }
+    }
+
+    # we have a default value even if not provided so always add path
+    if ( $Path -eq '\VED' ) {
+        $byFolder = $true
+    }
+
+    if ( $byFolder ) {
+        $params.Body.ObjectDN = $Path
+        $objectName = $null
+    } else {
+        $params.Body.Add( 'ObjectDN', (Split-Path $Path -Parent) )
+        $objectName = Split-Path $Path -Leaf
     }
 
     $response = Invoke-TppRestMethod @params
 
     if ( $response.Result -eq [ConfigResult]::Success ) {
-        $response.Objects
+        if ( $objectName ) {
+            $response.Objects.Where{$_.Name -eq $objectName}
+        } else {
+            $response.Objects
+        }
     } else {
         throw $response.Error
     }
