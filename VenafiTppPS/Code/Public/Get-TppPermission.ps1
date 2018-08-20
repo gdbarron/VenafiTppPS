@@ -153,7 +153,11 @@ function Get-TppPermission {
                 }
 
                 'Effective' {
-                    $params.UriLeaf += "/$ProviderType/$ProviderName/$UniversalId/Effective"
+                    if ( $ProviderType -eq 'local' ) {
+                        $params.UriLeaf += "/$ProviderType/$UniversalId/Effective"
+                    } else {
+                        $params.UriLeaf += "/$ProviderType/$ProviderName/$UniversalId/Effective"
+                    }
                     $response = Invoke-TppRestMethod @params
                     [PSCustomObject] @{
                         GUID                 = $thisGuid
@@ -162,7 +166,11 @@ function Get-TppPermission {
                 }
 
                 'Principal' {
-                    $params.UriLeaf += "/$ProviderType/$ProviderName/$UniversalId"
+                    if ( $ProviderType -eq 'local' ) {
+                        $params.UriLeaf += "/$ProviderType/$UniversalId"
+                    } else {
+                        $params.UriLeaf += "/$ProviderType/$ProviderName/$UniversalId"
+                    }
                     $response = Invoke-TppRestMethod @params
                     [PSCustomObject] @{
                         GUID                = $thisGuid
