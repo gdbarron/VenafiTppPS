@@ -64,47 +64,49 @@ Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01") -Limit 5 | Get-
 Get detailed certificate info on the first 5 certificates expiring before a certain date
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Get-TppCertificateDetail/
+http://venafitppps.readthedocs.io/en/latest/functions/Get-TppPermission/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppCertificateDetail.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppPermission.ps1
 
 .LINK
-https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Certificates.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____3
+https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____1
 
 .LINK
-https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Certificates-guid.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____5
+https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid-external.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____2
 
 .LINK
-https://msdn.microsoft.com/en-us/library/system.web.httputility(v=vs.110).aspx
+https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid-local.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____3
+
+.LINK
+https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid-principal.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____5
 
 #>
 function Get-TppPermission {
 
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ParameterSetName = 'Default', ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [Parameter(Mandatory, ParameterSetName = 'Effective', ValueFromPipelineByPropertyName)]
-        [Parameter(Mandatory, ParameterSetName = 'Principal', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'List', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'Local', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'External', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [String[]] $Guid,
 
-        [Parameter(Mandatory, ParameterSetName = 'Effective')]
-        [Parameter(Mandatory, ParameterSetName = 'Principal')]
-        [ValidateSet('local', 'AD', 'LDAP')]
-        [string] $ProviderType,
+        [Parameter(Mandatory, ParameterSetName = 'External')]
+        [ValidateSet('AD', 'LDAP')]
+        [string] $ExternalProviderType,
 
-        [Parameter(Mandatory, ParameterSetName = 'Effective')]
-        [Parameter(Mandatory, ParameterSetName = 'Principal')]
-        [string] $ProviderName,
+        [Parameter(Mandatory, ParameterSetName = 'External')]
+        [string] $ExternalProviderName,
 
-        [Parameter(Mandatory, ParameterSetName = 'Effective')]
-        [Parameter(Mandatory, ParameterSetName = 'Principal')]
+        [Parameter(Mandatory, ParameterSetName = 'Local')]
+        [Parameter(Mandatory, ParameterSetName = 'External')]
         [Alias('Universal')]
         [string] $UniversalId,
 
-        [Parameter(ParameterSetName = 'Default')]
-        [Parameter(Mandatory, ParameterSetName = 'Effective')]
+        [Parameter(ParameterSetName = 'List')]
+        [Parameter(ParameterSetName = 'Local')]
+        [Parameter(ParameterSetName = 'External')]
         [switch] $Effective,
 
         [Parameter()]
@@ -129,22 +131,25 @@ function Get-TppPermission {
             $params.UriLeaf = $uriLeaf
 
             Switch ($PsCmdlet.ParameterSetName)	{
-                'Default' {
+                'List' {
                     $perms = Invoke-TppRestMethod @params
-                    if ( $Effective ) {
+                    if ( $PSBoundParameters.ContainsKey('Effective') ) {
                         $perms.ForEach{
-                            # get provider and principal
+                            # get details from list of perms on the object
+                            # loop through and get effective perms on each by re-calling this function
+                            # TODO: update split to support local
                             $type, $name, $id = $_.Split('+:')
                             $effectiveParams = @{
-                                Guid         = $thisGuid
-                                ProviderType = $type
-                                ProviderName = $name
-                                UniversalId  = $id
-                                Effective = $true
+                                Guid                 = $thisGuid
+                                ExternalProviderType = $type
+                                ExternalProviderName = $name
+                                UniversalId          = $id
+                                Effective            = $true
                             }
                             Get-TppPermission @effectiveParams
                         }
                     } else {
+                        # just list out users/groups with rights
                         [PSCustomObject] @{
                             GUID        = $thisGuid
                             Permissions = $perms
@@ -152,35 +157,34 @@ function Get-TppPermission {
                     }
                 }
 
-                'Effective' {
-                    if ( $ProviderType -eq 'local' ) {
-                        $params.UriLeaf += "/$ProviderType/$UniversalId/Effective"
+                {$_ -in 'Local', 'External'} {
+                    # different URLs if local vs external
+                    if ( $PSBoundParameters.ContainsKey('ExternalProviderType') ) {
+                        $params.UriLeaf += "/$ExternalProviderType/$ExternalProviderName/$UniversalId"
                     } else {
-                        $params.UriLeaf += "/$ProviderType/$ProviderName/$UniversalId/Effective"
+                        $params.UriLeaf += "/local/$UniversalId"
                     }
-                    $response = Invoke-TppRestMethod @params
-                    [PSCustomObject] @{
-                        GUID                 = $thisGuid
-                        EffectivePermissions = $response.EffectivePermissions
-                    }
-                }
 
-                'Principal' {
-                    if ( $ProviderType -eq 'local' ) {
-                        $params.UriLeaf += "/$ProviderType/$UniversalId"
-                    } else {
-                        $params.UriLeaf += "/$ProviderType/$ProviderName/$UniversalId"
+                    if ( $PSBoundParameters.ContainsKey('Effective') ) {
+                        $params.UriLeaf += '/Effective'
                     }
+
                     $response = Invoke-TppRestMethod @params
-                    [PSCustomObject] @{
-                        GUID                = $thisGuid
-                        ExplicitPermissions = $response.ExplicitPermissions
-                        ImplicitPermissions = $response.ImplicitPermissions
+
+                    if ( $PSBoundParameters.ContainsKey('Effective') ) {
+                        [PSCustomObject] @{
+                            GUID                 = $thisGuid
+                            EffectivePermissions = $response.EffectivePermissions
+                        }
+                    } else {
+                        [PSCustomObject] @{
+                            GUID                = $thisGuid
+                            ExplicitPermissions = $response.ExplicitPermissions
+                            ImplicitPermissions = $response.ImplicitPermissions
+                        }
                     }
                 }
             }
-
         }
-
     }
 }
