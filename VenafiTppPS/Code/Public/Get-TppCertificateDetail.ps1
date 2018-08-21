@@ -492,7 +492,7 @@ function Get-TppCertificateDetail {
                         $params.Body.Add( 'S', $State -join ',' )
                     }
                     'SanDns' {
-                        $params.Body.Add( 'SAN-DAN', $SanDns )
+                        $params.Body.Add( 'SAN-DNS', $SanDns )
                     }
                     'SanEmail' {
                         $params.Body.Add( 'SAN-Email', $SanEmail )
