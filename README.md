@@ -1,6 +1,6 @@
 # VenafiTppPS - PowerShell module for Venafi Trust Protection Platform
 
-[![Build status](https://ci.appveyor.com/api/projects/status/vxyan36tsimle56b?svg=true)](https://ci.appveyor.com/project/GregBrownstein/venafitppps)
+[![Build status](https://gd-barron.visualstudio.com/VenafiTppPS/_apis/build/status/VenafiTppPS)](https://gd-barron.visualstudio.com/VenafiTppPS/_build/latest?definitionId=1)
 
 ### Documentation can be found at [http://venafitppps.readthedocs.io](http://venafitppps.readthedocs.io)
 
