@@ -1,74 +1,85 @@
 # Get-TppObject
 
 ## SYNOPSIS
-Find objects by DN, class, or pattern
+Find objects by DN path, class, or pattern
 
 ## SYNTAX
 
 ### FindByDN (Default)
 ```
-Get-TppObject [-DN <String>] [-Pattern <String>] [-Recursive <Boolean>] [-TppSession <TppSession>]
+Get-TppObject [-Path <String>] [-Pattern <String>] [-Recursive] [-Folder] [-TppSession <TppSession>]
  [<CommonParameters>]
 ```
 
 ### FindByClass
 ```
-Get-TppObject [-DN <String>] -Class <String> [-Pattern <String>] [-Recursive <Boolean>]
+Get-TppObject [-Path <String>] -Class <String[]> [-Pattern <String>] [-Recursive] [-Folder]
  [-TppSession <TppSession>] [<CommonParameters>]
-```
-
-### FindByClasses
-```
-Get-TppObject -Classes <String[]> [-Pattern <String>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### FindByPattern
 ```
-Get-TppObject -Pattern <String> [-AttributeName <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppObject -Pattern <String> [-AttributeName <String[]>] [-Folder] [-TppSession <TppSession>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Find objects by DN, class, or pattern.
+Find objects by DN path, class, or pattern.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Get-TppObject
+Get-TppObject -Recursive
 ```
 
-Get all objects
+Get all objects. 
+The default path is \VED and recursive option will search all subfolders.
 
 ### EXAMPLE 2
 ```
-Get-TppObject -class 'iis6'
+Get-TppObject -Path '\VED\Policy'
+```
+
+Get the Policy item with the VED folder
+
+### EXAMPLE 3
+```
+Get-TppObject -Path '\VED\Policy' -Folder
+```
+
+Get items within the policy folder
+
+### EXAMPLE 4
+```
+Get-TppObject -Class 'iis6'
 ```
 
 Get all objects of the type iis6
 
-### EXAMPLE 3
+### EXAMPLE 5
 ```
-Get-TppObject -classes 'iis6', 'capi'
+Get-TppObject -Class 'iis6', 'capi'
 ```
 
 Get all objects of the type iis6 or capi
 
-### EXAMPLE 4
+### EXAMPLE 6
 ```
-Get-TppObject -DN '\VED\Policy\My Policy Folder' -Recursive
+Get-TppObject -Path '\VED\Policy\My Policy Folder' -Recursive
 ```
 
 Get all objects in 'My Policy Folder' and subfolders
 
-### EXAMPLE 5
+### EXAMPLE 7
 ```
-Get-TppObject -DN '\VED\Policy\My Policy Folder' -Pattern 'MyDevice'
+Get-TppObject -Path '\VED\Policy\My Policy Folder' -Pattern 'MyDevice'
 ```
 
 Get all objects in 'My Policy Folder' that match the name MyDevice. 
 Only search the folder "My Policy Folder", not subfolders.
 
-### EXAMPLE 6
+### EXAMPLE 8
 ```
 Get-TppObject -Pattern 'MyDevice' -Recursive
 ```
@@ -78,14 +89,14 @@ As starting DN isn't provided, this will search all.
 
 ## PARAMETERS
 
-### -DN
+### -Path
 The path to start our search. 
 If not provided, the root, \VED, is used.
 
 ```yaml
 Type: String
 Parameter Sets: FindByDN, FindByClass
-Aliases:
+Aliases: DN
 
 Required: False
 Position: Named
@@ -99,23 +110,8 @@ Single class name to search.
 To provide a list, use Classes.
 
 ```yaml
-Type: String
-Parameter Sets: FindByClass
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Classes
-List of class names to search on
-
-```yaml
 Type: String[]
-Parameter Sets: FindByClasses
+Parameter Sets: FindByClass
 Aliases:
 
 Required: True
@@ -138,7 +134,7 @@ You can also use both literals and wildcards in a pattern.
 
 ```yaml
 Type: String
-Parameter Sets: FindByDN, FindByClass, FindByClasses
+Parameter Sets: FindByDN, FindByClass
 Aliases:
 
 Required: False
@@ -177,18 +173,32 @@ Accept wildcard characters: False
 ```
 
 ### -Recursive
-Searches the subordinates of the object specified in DN.
+Searches the subordinates of the object specified in Path.
 Not supported when searching Classes or by Pattern.
-Default value is true.
 
 ```yaml
-Type: Boolean
+Type: SwitchParameter
 Parameter Sets: FindByDN, FindByClass
 Aliases:
 
 Required: False
 Position: Named
-Default value: True
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Folder
+Treat path as root folder for search instead of the end of the path as an item wtihin the parent.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -215,6 +225,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
+### None
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
