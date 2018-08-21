@@ -15,6 +15,7 @@ pages:
     - Get-TppIdentity: functions/Get-TppIdentity.md
     - Get-TppLog: functions/Get-TppLog.md
     - Get-TppObject: functions/Get-TppObject.md
+    - Get-TppPermission: functions/Get-TppPermission.md
     - Get-TppWorkflowDetail: functions/Get-TppWorkflowDetail.md
     - Move-TppObject: functions/Move-TppObject.md
     - New-TppCapiApplication: functions/New-TppCapiApplication.md
