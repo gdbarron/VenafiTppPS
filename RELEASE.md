@@ -1,3 +1,7 @@
-- add status filters to Get-TppCertificateDetail, all filters added
-- certificate stage enum added
-- Get-EnumValues function added
+- add Get-TppPermission
+- refactor Get-TppObject
+    - The DN parameter is now Path which will become the standard for all functions.
+    - Classes parameter has been removed and Class been made an array
+    - Add Folder parameter to treat the Path as a folder and not an item within the parent folder.  This will retrieve all subitems.
+    - Recursive is now off by default
+- fix San-Dns name in Get-TppCertificateDetail, thanks @jeffreyluce!

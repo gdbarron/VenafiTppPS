@@ -1,15 +1,12 @@
 <#
 .SYNOPSIS
-Find objects by DN, class, or pattern
+Find objects by DN path, class, or pattern
 
 .DESCRIPTION
-Find objects by DN, class, or pattern.
+Find objects by DN path, class, or pattern.
 
 .PARAMETER Class
 Single class name to search.  To provide a list, use Classes.
-
-.PARAMETER Classes
-List of class names to search on
 
 .PARAMETER Pattern
 A pattern to match against object attribute values:
@@ -22,18 +19,21 @@ You can also use both literals and wildcards in a pattern.
 .PARAMETER AttributeName
 A list of attribute names to limit the search against.  Only valid when searching by pattern.
 
-.PARAMETER DN
+.PARAMETER Path
 The path to start our search.  If not provided, the root, \VED, is used.
 
 .PARAMETER Recursive
-Searches the subordinates of the object specified in DN.
+Searches the subordinates of the object specified in Path.
 Not supported when searching Classes or by Pattern.
-Default value is true.
+
+.PARAMETER Folder
+Treat path as root folder for search instead of the end of the path as an item wtihin the parent.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
+None
 
 .OUTPUTS
 PSCustomObject with the following properties:
@@ -47,23 +47,31 @@ PSCustomObject with the following properties:
     TypeName: the class name of the object.
 
 .EXAMPLE
-Get-TppObject
-Get all objects
+Get-TppObject -Recursive
+Get all objects.  The default path is \VED and recursive option will search all subfolders.
 
 .EXAMPLE
-Get-TppObject -class 'iis6'
+Get-TppObject -Path '\VED\Policy'
+Get the Policy item with the VED folder
+
+.EXAMPLE
+Get-TppObject -Path '\VED\Policy' -Folder
+Get items within the policy folder
+
+.EXAMPLE
+Get-TppObject -Class 'iis6'
 Get all objects of the type iis6
 
 .EXAMPLE
-Get-TppObject -classes 'iis6', 'capi'
+Get-TppObject -Class 'iis6', 'capi'
 Get all objects of the type iis6 or capi
 
 .EXAMPLE
-Get-TppObject -DN '\VED\Policy\My Policy Folder' -Recursive
+Get-TppObject -Path '\VED\Policy\My Policy Folder' -Recursive
 Get all objects in 'My Policy Folder' and subfolders
 
 .EXAMPLE
-Get-TppObject -DN '\VED\Policy\My Policy Folder' -Pattern 'MyDevice'
+Get-TppObject -Path '\VED\Policy\My Policy Folder' -Pattern 'MyDevice'
 Get all objects in 'My Policy Folder' that match the name MyDevice.  Only search the folder "My Policy Folder", not subfolders.
 
 .EXAMPLE
@@ -100,20 +108,16 @@ function Get-TppObject {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $DN = '\VED',
+        [Alias('DN')]
+        [String] $Path = '\VED',
 
         [Parameter(Mandatory, ParameterSetName = 'FindByClass')]
         [ValidateNotNullOrEmpty()]
-        [String] $Class,
-
-        [Parameter(Mandatory, ParameterSetName = 'FindByClasses')]
-        [ValidateNotNullOrEmpty()]
-        [String[]] $Classes,
+        [String[]] $Class,
 
         [Parameter(Mandatory, ParameterSetName = 'FindByPattern')]
         [Parameter(ParameterSetName = 'FindByDN')]
         [Parameter(ParameterSetName = 'FindByClass')]
-        [Parameter(ParameterSetName = 'FindByClasses')]
         [ValidateNotNullOrEmpty()]
         [String] $Pattern,
 
@@ -123,7 +127,12 @@ function Get-TppObject {
 
         [Parameter(ParameterSetName = 'FindByDN')]
         [Parameter(ParameterSetName = 'FindByClass')]
-        [Bool] $Recursive = $true,
+        [switch] $Recursive,
+
+        [Parameter(ParameterSetName = 'FindByDN')]
+        [Parameter(ParameterSetName = 'FindByClass')]
+        [Parameter(ParameterSetName = 'FindByPattern')]
+        [switch] $Folder,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -133,91 +142,77 @@ function Get-TppObject {
 
     Write-Verbose $PsCmdlet.ParameterSetName
 
+    $params = @{
+        TppSession = $TppSession
+        Method     = 'Post'
+        UriLeaf    = 'placeholder'
+        Body       = @{}
+    }
+
     Switch ($PsCmdlet.ParameterSetName)	{
         'FindByPattern' {
-            $params = @{
-                TppSession = $TppSession
-                Method     = 'Post'
-                UriLeaf    = 'config/find'
-                Body       = @{
-                    Pattern = $Pattern
-                }
-            }
-
-            if ( $AttributeName ) {
-                $params.body += @{
-                    AttributeNames = $AttributeName
-                }
-            }
-
+            $params.UriLeaf = 'config/find'
+            $params.Body = @{Pattern = $Pattern}
         }
 
         'FindByDN' {
-            $params = @{
-                TppSession = $TppSession
-                Method     = 'Post'
-                UriLeaf    = 'config/enumerate'
-                Body       = @{
-                    ObjectDN = $DN
-                }
-            }
-
-            if ( $Pattern ) {
-                $params.body += @{
-                    Pattern = $Pattern
-                }
-            }
-
-            if ( $Recursive ) {
-                $params.body += @{
-                    Recursive = 'true'
-                }
-            }
+            $params.UriLeaf = 'config/enumerate'
         }
 
-        {$_ -in 'FindByClass', 'FindByClasses'} {
-            $params = @{
-                TppSession = $TppSession
-                Method     = 'Post'
-                UriLeaf    = 'config/FindObjectsOfClass'
-            }
-
-            if ( $Class ) {
-                $body = @{Class = $Class}
+        'FindByClass' {
+            $params.UriLeaf = 'config/FindObjectsOfClass'
+            if ( $Class.Count -eq 1 ) {
+                $params.Body = @{Class = $Class[0]}
             } else {
-                $body = @{Classes = $Classes}
+                $params.Body = @{Classes = $Class}
             }
+        }
+    }
 
-            $params += @{
-                Body = $body
-            }
+    $byFolder = $false
 
-            if ( $Pattern ) {
-                $params.body += @{
-                    Pattern = $Pattern
-                }
-            }
-
-            if ( $DN ) {
-                $params.body += @{
-                    ObjectDN = $DN
-                }
-            }
-
-            if ( $Recursive ) {
-                $params.body += @{
-                    Recursive = 'true'
-                }
-            }
-
+    # add filters
+    switch ($PSBoundParameters.Keys) {
+        'Pattern' {
+            $params.Body.Add( 'Pattern', $Pattern )
+            $byFolder = $true
         }
 
+        'AttributeName' {
+            $params.Body.Add( 'AttributeNames', $AttributeName )
+        }
+
+        'Recursive' {
+            $params.Body.Add( 'Recursive', 'true' )
+            $byFolder = $true
+        }
+
+        'Folder' {
+            $byFolder = $true
+        }
+    }
+
+    # \ved is top level so need to get subitems
+    if ( $Path -eq '\VED' ) {
+        $byFolder = $true
+    }
+
+    if ( $byFolder ) {
+        $params.Body.ObjectDN = $Path
+        $objectName = $null
+    } else {
+        $params.Body.Add( 'ObjectDN', (Split-Path $Path -Parent) )
+        $objectName = Split-Path $Path -Leaf
     }
 
     $response = Invoke-TppRestMethod @params
 
     if ( $response.Result -eq [ConfigResult]::Success ) {
-        $response.Objects
+        if ( $objectName ) {
+            $response.Objects.Where{$_.Name -eq $objectName}
+        } else {
+            $response.Objects
+        }
     } else {
         throw $response.Error
     }
