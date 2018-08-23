@@ -13,6 +13,7 @@ pages:
     - Get-TppCertificateDetail: functions/Get-TppCertificateDetail.md
     - Get-TppCustomField: functions/Get-TppCustomField.md
     - Get-TppIdentity: functions/Get-TppIdentity.md
+    - Get-TppIdentityAttribute: functions/Get-TppIdentityAttribute.md
     - Get-TppLog: functions/Get-TppLog.md
     - Get-TppObject: functions/Get-TppObject.md
     - Get-TppPermission: functions/Get-TppPermission.md
