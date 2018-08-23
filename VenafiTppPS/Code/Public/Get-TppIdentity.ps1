@@ -7,7 +7,7 @@ Returns information about individual identity, group identity, or distribution g
 If no identity types are selected, all types will be included in the search.
 
 .PARAMETER Name
-The individual identity, group identity, or distribution group name to search for in the provider. For non-local identity providers, such as AD and LDAP, use both the Filter and Limit parameters. For an Active Directory provider, Identity/Browse searches the Ambiguous Name Resolution (ANR) attributes in the AD provider. The attributes, which are included in ANR lookups, can be controlled by the AD administrator or from the default set that is available from Microsoft.
+The individual identity, group identity, or distribution group name to search for in the provider. For non-local identity providers, such as AD and LDAP, use both the Filter and Limit parameters.
 
 .PARAMETER Limit
 Limit how many items are returned, the default is 100.
@@ -84,22 +84,22 @@ https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function Get-TppIdentity {
 
-    [CmdletBinding(DefaultParameterSetName = 'Default')]
+    [CmdletBinding(DefaultParameterSetName = 'Browse')]
     param (
-        [Parameter(Mandatory, ParameterSetName = 'Default', ValueFromPipeline)]
+        [Parameter(Mandatory, ParameterSetName = 'Browse', ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [String[]] $Name,
 
-        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'Browse')]
         [int] $Limit = 100,
 
-        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'Browse')]
         [Switch] $IncludeUsers,
 
-        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'Browse')]
         [Switch] $IncludeSecurityGroups,
 
-        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'Browse')]
         [Switch] $IncludeDistributionGroups,
 
         [Parameter(Mandatory, ParameterSetName = 'Me')]
@@ -114,13 +114,13 @@ function Get-TppIdentity {
 
         $identityType = 0
         # determine settings to use
-        if ( $IncludeUsers ) {
+        if ( $PSBoundParameters.ContainsKey('IncludeUsers') ) {
             $identityType += [IdentityType]::User
         }
-        if ( $IncludeSecurityGroups ) {
+        if ( $PSBoundParameters.ContainsKey('IncludeSecurityGroups') ) {
             $identityType += [IdentityType]::SecurityGroups
         }
-        if ( $IncludeDistributionGroups ) {
+        if ( $PSBoundParameters.ContainsKey('IncludeDistributionGroups') ) {
             $identityType += [IdentityType]::DistributionGroups
         }
 
@@ -130,7 +130,7 @@ function Get-TppIdentity {
         }
 
         Switch ($PsCmdlet.ParameterSetName)	{
-            'Default' {
+            'Browse' {
                 $params = @{
                     TppSession = $TppSession
                     Method     = 'Post'
@@ -156,7 +156,7 @@ function Get-TppIdentity {
     process {
 
         Switch ($PsCmdlet.ParameterSetName)	{
-            'Default' {
+            'Browse' {
                 $response = $Name.ForEach{
                     $params.Body.Filter = $_
                     Invoke-TppRestMethod @params

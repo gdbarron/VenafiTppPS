@@ -8,14 +8,19 @@ Determine who has rights for TPP objects and what those rights are
 .PARAMETER Guid
 Guid representing a unique object in Venafi.
 
-.PARAMETER ExternalProviderType
-External provider type with users/groups to assign permissions.  AD and LDAP are currently supported.
-
-.PARAMETER ExternalProviderName
-Name of the external provider as configured in TPP
-
-.PARAMETER UniversalId
+.PARAMETER PrefixedUniversalId
 The id that represents the user or group.  Use Get-TppIdentity to get the id.
+
+.PARAMETER Effective
+Get effective permissions for the specific user or group on the object.
+If only an object guid is provided with this switch, all user and group permssions will be provided.
+
+.PARAMETER ExplicitImplicit
+Get explicit and implicit permissions for the specific user or group on the object.
+If only an object guid is provided with this switch, all user and group permssions will be provided.
+
+.PARAMETER Attribute
+Retrieve identity attribute values for the users and groups.  Attributes include Group Membership, Name, Internet Email Address, Given Name, Surname.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -28,40 +33,44 @@ List parameter set returns a PSCustomObject with the properties ObjectGuid and P
 
 Local and external parameter sets returns a PSCustomObject with the following properties:
     ObjectGuid
-    ProviderType
-    ProviderName
-    UniversalId
+    PrefixedUniversalId
     EffectivePermissions (if Effective switch is used)
-    ExplicitPermissions (if Effective switch is NOT used)
-    ImplicitPermissions (if Effective switch is NOT used)
+    ExplicitPermissions (if ExplicitImplicit switch is used)
+    ImplicitPermissions (if ExplicitImplicit switch is used)
+    Attribute (if Attribute provided)
 
 .EXAMPLE
 Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission
-ObjectGuid                             Permissions
+ObjectGuid                             PrefixedUniversalId
 ----                                   -----------
 {1234abcd-g6g6-h7h7-faaf-f50cd6610cba} {AD+mydomain.com:1234567890olikujyhtgrfedwsqa, AD+mydomain.com:azsxdcfvgbhnjmlk09877654321}
 
-Get permissions for a specific policy folder
+Get users/groups permissioned to a policy folder
+
+.EXAMPLE
+Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Attribute 'Given Name','Surname'
+ObjectGuid                             PrefixedUniversalId                              Attribute
+----------                             -------------------                              ---------
+{1234abcd-g6g6-h7h7-faaf-f50cd6610cba} AD+mydomain.com:1234567890olikujyhtgrfedwsqa {@{Name=Given Name; Value=Greg}, @{Name=Surname; Value=Brownstein}}
+{1234abcd-g6g6-h7h7-faaf-f50cd6610cba} AD+mydomain.com:azsxdcfvgbhnjmlk09877654321 {@{Name=Given Name; Value=Greg}, @{Name=Surname; Value=Brownstein}}
+
+Get users/groups permissioned to a policy folder including identity attributes for those users/groups
 
 .EXAMPLE
 Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Effective
 ObjectGuid           : {1234abcd-g6g6-h7h7-faaf-f50cd6610cba}
-ProviderType         : AD
-ProviderName         : mydomain.com
-UniversalId          : 1234567890olikujyhtgrfedwsqa
+PrefixedUniversalId  : AD+mydomain.com:1234567890olikujyhtgrfedwsqa
 EffectivePermissions : @{IsAssociateAllowed=False; IsCreateAllowed=True; IsDeleteAllowed=True; IsManagePermissionsAllowed=True; IsPolicyWriteAllowed=True;
                        IsPrivateKeyReadAllowed=True; IsPrivateKeyWriteAllowed=True; IsReadAllowed=True; IsRenameAllowed=True; IsRevokeAllowed=False; IsViewAllowed=True;
                        IsWriteAllowed=True}
 
 ObjectGuid           : {1234abcd-g6g6-h7h7-faaf-f50cd6610cba}
-ProviderType         : AD
-ProviderName         : mydomain.com
-UniversalId          : azsxdcfvgbhnjmlk09877654321
+PrefixedUniversalId  : AD+mydomain.com:azsxdcfvgbhnjmlk09877654321
 EffectivePermissions : @{IsAssociateAllowed=False; IsCreateAllowed=False; IsDeleteAllowed=False; IsManagePermissionsAllowed=False; IsPolicyWriteAllowed=True;
                        IsPrivateKeyReadAllowed=False; IsPrivateKeyWriteAllowed=False; IsReadAllowed=True; IsRenameAllowed=False; IsRevokeAllowed=True; IsViewAllowed=False;
                        IsWriteAllowed=True}
 
-Get effective permissions for a specific policy folder
+Get effective permissions for users/groups on a specific policy folder
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppPermission/
@@ -87,27 +96,31 @@ function Get-TppPermission {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ParameterSetName = 'List', ValueFromPipelineByPropertyName)]
-        [Parameter(Mandatory, ParameterSetName = 'Local', ValueFromPipelineByPropertyName)]
-        [Parameter(Mandatory, ParameterSetName = 'External', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'Effective', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'ExplicitImplicit', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [String[]] $Guid,
+        [Alias('ObjectGuid')]
+        [guid[]] $Guid,
 
-        [Parameter(Mandatory, ParameterSetName = 'External')]
-        [ValidateSet('AD', 'LDAP')]
-        [string] $ExternalProviderType,
-
-        [Parameter(Mandatory, ParameterSetName = 'External')]
-        [string] $ExternalProviderName,
-
-        [Parameter(Mandatory, ParameterSetName = 'Local')]
-        [Parameter(Mandatory, ParameterSetName = 'External')]
-        [Alias('Universal')]
-        [string] $UniversalId,
+        [Parameter(Mandatory, ParameterSetName = 'Effective')]
+        [Parameter(Mandatory, ParameterSetName = 'ExplicitImplicit')]
+        [ValidateScript( {
+                $_ -match '(AD|LDAP)+\S+:\w{32}$' -or $_ -match 'local:\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+            })]
+        [Alias('PrefixedUniversal')]
+        [string[]] $PrefixedUniversalId,
 
         [Parameter(ParameterSetName = 'List')]
-        [Parameter(ParameterSetName = 'Local')]
-        [Parameter(ParameterSetName = 'External')]
+        [Parameter(ParameterSetName = 'Effective')]
         [switch] $Effective,
+
+        [Parameter(ParameterSetName = 'List')]
+        [Parameter(ParameterSetName = 'ExplicitImplicit')]
+        [switch] $ExplicitImplicit,
+
+        [Parameter()]
+        [ValidateSet('Group Membership', 'Name', 'Internet Email Address', 'Given Name', 'Surname')]
+        [string[]] $Attribute,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -116,97 +129,117 @@ function Get-TppPermission {
     begin {
         $TppSession.Validate()
 
+        Write-Verbose ("Parameter set {0}" -f $PsCmdlet.ParameterSetName)
+
         $params = @{
             TppSession = $TppSession
             Method     = 'Get'
             UriLeaf    = 'placeholder'
         }
+
+        $returnObject = @()
     }
 
     process {
 
         $GUID.ForEach{
-            $thisGuid = $_
+            $thisGuid = "{$_}"
             $uriLeaf = "Permissions/Object/$thisGuid"
             $params.UriLeaf = $uriLeaf
 
             Switch ($PsCmdlet.ParameterSetName)	{
                 'List' {
                     $perms = Invoke-TppRestMethod @params
-                    if ( $PSBoundParameters.ContainsKey('Effective') ) {
-                        $perms.ForEach{
+                    $perms.ForEach{
+                        if ( $PSBoundParameters.ContainsKey('Effective') -or $PSBoundParameters.ContainsKey('ExplicitImplicit') ) {
                             # get details from list of perms on the object
-                            # loop through and get effective perms on each by re-calling this function
+                            # loop through and get perms on each by re-calling this function
 
-                            if ( $_.StartsWith('local:') ) {
-
-                                $type, $id = $_.Split(':')
-                                $effectiveParams = @{
-                                    Guid        = $thisGuid
-                                    UniversalId = $id
-                                    Effective   = $true
-                                }
-                            } else {
-                                $type, $name, $id = $_.Split('+:')
-                                $effectiveParams = @{
-                                    Guid                 = $thisGuid
-                                    ExternalProviderType = $type
-                                    ExternalProviderName = $name
-                                    UniversalId          = $id
-                                    Effective            = $true
-                                }
+                            $permParams = @{
+                                Guid                = $thisGuid
+                                PrefixedUniversalId = $_
                             }
-                            Get-TppPermission @effectiveParams
-                        }
-                    } else {
-                        # just list out users/groups with rights
-                        [PSCustomObject] @{
-                            ObjectGuid  = $thisGuid
-                            Permissions = $perms
+
+                            if ( $PSBoundParameters.ContainsKey('Effective') ) {
+                                $permParams.Add( 'Effective', $true )
+                            } else {
+                                $permParams.Add( 'ExplicitImplicit', $true )
+                            }
+
+                            if ( $PSBoundParameters.ContainsKey('Attribute') ) {
+                                $permParams.Add( 'Attribute', $Attribute )
+                            }
+
+                            Get-TppPermission @permParams
+                        } else {
+                            # just list out users/groups with rights
+                            $returnObject += [PSCustomObject] @{
+                                ObjectGuid          = $thisGuid
+                                PrefixedUniversalId = $_
+                            }
                         }
                     }
                 }
 
-                {$_ -in 'Local', 'External'} {
+                {$_ -in 'Effective', 'ExplicitImplicit'} {
 
-                    # different URLs if local vs external
-                    if ( $PSBoundParameters.ContainsKey('ExternalProviderType') ) {
-                        $params.UriLeaf += "/$ExternalProviderType/$ExternalProviderName/$UniversalId"
-                        $providerType = $ExternalProviderType
-                        $providerName = $ExternalProviderName
-                    } else {
-                        $params.UriLeaf += "/local/$UniversalId"
-                        $providerType = 'local'
-                        $providerName = ''
-                    }
+                    $PrefixedUniversalId.ForEach{
+                        $thisId = $_
 
-                    if ( $PSBoundParameters.ContainsKey('Effective') ) {
-                        $params.UriLeaf += '/Effective'
-                    }
-
-                    $response = Invoke-TppRestMethod @params
-
-                    $returnObject = [PSCustomObject] @{
-                        ObjectGuid   = $thisGuid
-                        ProviderType = $providerType
-                        ProviderName = $providerName
-                        UniversalId  = $UniversalId
-                    }
-
-                    if ( $PSBoundParameters.ContainsKey('Effective') ) {
-                        $returnObject | Add-Member @{
-                            EffectivePermissions = $response.EffectivePermissions
+                        if ( $thisId.StartsWith('local:') ) {
+                            # format of local is local:universalId
+                            $type, $id = $thisId.Split(':')
+                            $params.UriLeaf += "/local/$id"
+                        } else {
+                            # external source, eg. AD, LDAP
+                            # format is type+name:universalId
+                            $type, $name, $id = $thisId.Split('+:')
+                            $params.UriLeaf += "/$type/$name/$id"
                         }
-                    } else {
-                        $returnObject | Add-Member @{
-                            ExplicitPermissions = $response.ExplicitPermissions
-                            ImplicitPermissions = $response.ImplicitPermissions
-                        }
-                    }
 
-                    $returnObject
+                        if ( $PSBoundParameters.ContainsKey('Effective') ) {
+                            $params.UriLeaf += '/Effective'
+                        }
+
+                        $response = Invoke-TppRestMethod @params
+
+                        $thisReturnObject = [PSCustomObject] @{
+                            ObjectGuid          = $thisGuid
+                            PrefixedUniversalId = $thisId
+                        }
+
+                        if ( $PSBoundParameters.ContainsKey('Effective') ) {
+                            $thisReturnObject | Add-Member @{
+                                EffectivePermissions = $response.EffectivePermissions
+                            }
+                        } else {
+                            $thisReturnObject | Add-Member @{
+                                ExplicitPermissions = $response.ExplicitPermissions
+                                ImplicitPermissions = $response.ImplicitPermissions
+                            }
+                        }
+
+                        $returnObject += $thisReturnObject
+                    }
                 }
             }
+
+            if ( $PSBoundParameters.ContainsKey('Attribute') ) {
+
+                $returnObject | Add-Member @{
+                    Attribute = $null
+                }
+
+                $returnObject.ForEach{
+                    $thisObject = $_
+                    $Attribute.ForEach{
+                        $attribResponse = Get-TppIdentityAttribute -PrefixedUniversalId $thisObject.PrefixedUniversalId -Attribute $Attribute
+                        $thisObject.Attribute = $attribResponse.Attribute
+                        }
+                    }
+                }
+
+            $returnObject
         }
     }
 }
