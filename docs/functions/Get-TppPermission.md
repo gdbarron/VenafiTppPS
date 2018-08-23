@@ -5,21 +5,22 @@ Get permissions for TPP objects
 
 ## SYNTAX
 
-### External
+### ExplicitImplicit
 ```
-Get-TppPermission -Guid <String[]> -ExternalProviderType <String> -ExternalProviderName <String>
- -UniversalId <String> [-Effective] [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppPermission -Guid <Guid[]> -PrefixedUniversalId <String[]> [-ExplicitImplicit] [-Attribute <String[]>]
+ [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
-### Local
+### Effective
 ```
-Get-TppPermission -Guid <String[]> -UniversalId <String> [-Effective] [-TppSession <TppSession>]
- [<CommonParameters>]
+Get-TppPermission -Guid <Guid[]> -PrefixedUniversalId <String[]> [-Effective] [-Attribute <String[]>]
+ [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### List
 ```
-Get-TppPermission -Guid <String[]> [-Effective] [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppPermission -Guid <Guid[]> [-Effective] [-ExplicitImplicit] [-Attribute <String[]>]
+ [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -32,34 +33,42 @@ Determine who has rights for TPP objects and what those rights are
 Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission
 ```
 
-ObjectGuid                             Permissions
+ObjectGuid                             PrefixedUniversalId
 ----                                   -----------
 {1234abcd-g6g6-h7h7-faaf-f50cd6610cba} {AD+mydomain.com:1234567890olikujyhtgrfedwsqa, AD+mydomain.com:azsxdcfvgbhnjmlk09877654321}
 
-Get permissions for a specific policy folder
+Get users/groups permissioned to a policy folder
 
 ### EXAMPLE 2
+```
+Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Attribute 'Given Name','Surname'
+```
+
+ObjectGuid                             PrefixedUniversalId                              Attribute
+----------                             -------------------                              ---------
+{1234abcd-g6g6-h7h7-faaf-f50cd6610cba} AD+mydomain.com:1234567890olikujyhtgrfedwsqa {@{Name=Given Name; Value=Greg}, @{Name=Surname; Value=Brownstein}}
+{1234abcd-g6g6-h7h7-faaf-f50cd6610cba} AD+mydomain.com:azsxdcfvgbhnjmlk09877654321 {@{Name=Given Name; Value=Greg}, @{Name=Surname; Value=Brownstein}}
+
+Get users/groups permissioned to a policy folder including identity attributes for those users/groups
+
+### EXAMPLE 3
 ```
 Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Effective
 ```
 
 ObjectGuid           : {1234abcd-g6g6-h7h7-faaf-f50cd6610cba}
-ProviderType         : AD
-ProviderName         : mydomain.com
-UniversalId          : 1234567890olikujyhtgrfedwsqa
+PrefixedUniversalId  : AD+mydomain.com:1234567890olikujyhtgrfedwsqa
 EffectivePermissions : @{IsAssociateAllowed=False; IsCreateAllowed=True; IsDeleteAllowed=True; IsManagePermissionsAllowed=True; IsPolicyWriteAllowed=True;
                        IsPrivateKeyReadAllowed=True; IsPrivateKeyWriteAllowed=True; IsReadAllowed=True; IsRenameAllowed=True; IsRevokeAllowed=False; IsViewAllowed=True;
                        IsWriteAllowed=True}
 
 ObjectGuid           : {1234abcd-g6g6-h7h7-faaf-f50cd6610cba}
-ProviderType         : AD
-ProviderName         : mydomain.com
-UniversalId          : azsxdcfvgbhnjmlk09877654321
+PrefixedUniversalId  : AD+mydomain.com:azsxdcfvgbhnjmlk09877654321
 EffectivePermissions : @{IsAssociateAllowed=False; IsCreateAllowed=False; IsDeleteAllowed=False; IsManagePermissionsAllowed=False; IsPolicyWriteAllowed=True;
                        IsPrivateKeyReadAllowed=False; IsPrivateKeyWriteAllowed=False; IsReadAllowed=True; IsRenameAllowed=False; IsRevokeAllowed=True; IsViewAllowed=False;
                        IsWriteAllowed=True}
 
-Get effective permissions for a specific policy folder
+Get effective permissions for users/groups on a specific policy folder
 
 ## PARAMETERS
 
@@ -67,9 +76,9 @@ Get effective permissions for a specific policy folder
 Guid representing a unique object in Venafi.
 
 ```yaml
-Type: String[]
+Type: Guid[]
 Parameter Sets: (All)
-Aliases:
+Aliases: ObjectGuid
 
 Required: True
 Position: Named
@@ -78,45 +87,14 @@ Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
 
-### -ExternalProviderType
-External provider type with users/groups to assign permissions. 
-AD and LDAP are currently supported.
-
-```yaml
-Type: String
-Parameter Sets: External
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ExternalProviderName
-Name of the external provider as configured in TPP
-
-```yaml
-Type: String
-Parameter Sets: External
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -UniversalId
+### -PrefixedUniversalId
 The id that represents the user or group. 
 Use Get-TppIdentity to get the id.
 
 ```yaml
-Type: String
-Parameter Sets: External, Local
-Aliases: Universal
+Type: String[]
+Parameter Sets: ExplicitImplicit, Effective
+Aliases: PrefixedUniversal
 
 Required: True
 Position: Named
@@ -126,16 +104,49 @@ Accept wildcard characters: False
 ```
 
 ### -Effective
-{{Fill Effective Description}}
+Get effective permissions for the specific user or group on the object.
+If only an object guid is provided with this switch, all user and group permssions will be provided.
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: (All)
+Parameter Sets: Effective, List
 Aliases:
 
 Required: False
 Position: Named
 Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ExplicitImplicit
+Get explicit and implicit permissions for the specific user or group on the object.
+If only an object guid is provided with this switch, all user and group permssions will be provided.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: ExplicitImplicit, List
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Attribute
+Retrieve identity attribute values for the users and groups. 
+Attributes include Group Membership, Name, Internet Email Address, Given Name, Surname.
+
+```yaml
+Type: String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -168,12 +179,11 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ### List parameter set returns a PSCustomObject with the properties ObjectGuid and Permissions
 ### Local and external parameter sets returns a PSCustomObject with the following properties:
 ###     ObjectGuid
-###     ProviderType
-###     ProviderName
-###     UniversalId
+###     PrefixedUniversalId
 ###     EffectivePermissions (if Effective switch is used)
-###     ExplicitPermissions (if Effective switch is NOT used)
-###     ImplicitPermissions (if Effective switch is NOT used)
+###     ExplicitPermissions (if ExplicitImplicit switch is used)
+###     ImplicitPermissions (if ExplicitImplicit switch is used)
+###     Attribute (if Attribute provided)
 ## NOTES
 
 ## RELATED LINKS

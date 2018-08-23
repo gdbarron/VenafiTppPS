@@ -1,7 +1,5 @@
-- add Get-TppPermission
-- refactor Get-TppObject
-    - The DN parameter is now Path which will become the standard for all functions.
-    - Classes parameter has been removed and Class been made an array
-    - Add Folder parameter to treat the Path as a folder and not an item within the parent folder.  This will retrieve all subitems.
-    - Recursive is now off by default
-- fix San-Dns name in Get-TppCertificateDetail, thanks @jeffreyluce!
+- add Get-TppIdentityAttribute
+- update Get-TppPermission
+    - add Explicit/Implicit permissions in addition to Effective
+    - utilize Prefixed Universal ID
+    - add ability to retrieve identity attribute values

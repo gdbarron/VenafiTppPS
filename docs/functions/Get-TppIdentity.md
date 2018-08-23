@@ -5,7 +5,7 @@ Get identity details
 
 ## SYNTAX
 
-### Default (Default)
+### Browse (Default)
 ```
 Get-TppIdentity -Name <String[]> [-Limit <Int32>] [-IncludeUsers] [-IncludeSecurityGroups]
  [-IncludeDistributionGroups] [-TppSession <TppSession>] [<CommonParameters>]
@@ -64,12 +64,10 @@ Find authenticated user identity and all associated identities
 ### -Name
 The individual identity, group identity, or distribution group name to search for in the provider.
 For non-local identity providers, such as AD and LDAP, use both the Filter and Limit parameters.
-For an Active Directory provider, Identity/Browse searches the Ambiguous Name Resolution (ANR) attributes in the AD provider.
-The attributes, which are included in ANR lookups, can be controlled by the AD administrator or from the default set that is available from Microsoft.
 
 ```yaml
 Type: String[]
-Parameter Sets: Default
+Parameter Sets: Browse
 Aliases:
 
 Required: True
@@ -84,7 +82,7 @@ Limit how many items are returned, the default is 100.
 
 ```yaml
 Type: Int32
-Parameter Sets: Default
+Parameter Sets: Browse
 Aliases:
 
 Required: False
@@ -99,7 +97,7 @@ Include user identity type in search
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: Default
+Parameter Sets: Browse
 Aliases:
 
 Required: False
@@ -114,7 +112,7 @@ Include security group identity type in search
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: Default
+Parameter Sets: Browse
 Aliases:
 
 Required: False
@@ -129,7 +127,7 @@ Include distribution group identity type in search
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: Default
+Parameter Sets: Browse
 Aliases:
 
 Required: False
