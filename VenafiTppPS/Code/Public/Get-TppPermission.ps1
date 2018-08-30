@@ -210,12 +210,12 @@ function Get-TppPermission {
 
                         if ( $PSBoundParameters.ContainsKey('Effective') ) {
                             $thisReturnObject | Add-Member @{
-                                EffectivePermissions = $response.EffectivePermissions
+                                EffectivePermissions = [TppPermission] $response.EffectivePermissions
                             }
                         } else {
                             $thisReturnObject | Add-Member @{
-                                ExplicitPermissions = $response.ExplicitPermissions
-                                ImplicitPermissions = $response.ImplicitPermissions
+                                ExplicitPermissions = [TppPermission] $response.ExplicitPermissions
+                                ImplicitPermissions = [TppPermission] $response.ImplicitPermissions
                             }
                         }
 
