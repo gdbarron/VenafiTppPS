@@ -45,7 +45,10 @@ function Invoke-TppRestMethod {
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [Hashtable] $Body
+        [Hashtable] $Body,
+
+        [Parameter()]
+        [switch] $UseWebRequest
     )
 
     Switch ($PsCmdlet.ParameterSetName)	{
@@ -79,6 +82,17 @@ function Invoke-TppRestMethod {
     }
 
     Write-Verbose ($params | ConvertTo-Json | out-string)
-    Invoke-RestMethod @params
+
+    if ( $PSBoundParameters.ContainsKey('UseWebRequest') ) {
+        Write-Verbose "Using Invoke-WebRequest"
+        try {
+            Invoke-WebRequest @params
+        } catch {
+            $_.Exception.Response
+        }
+    } else {
+        Write-Verbose "Using Invoke-RestMethod"
+        Invoke-RestMethod @params
+    }
 }
 

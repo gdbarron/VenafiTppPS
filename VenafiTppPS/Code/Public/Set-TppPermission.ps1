@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-Get permissions for TPP objects
+Set permissions for TPP objects
 
 .DESCRIPTION
 Determine who has rights for TPP objects and what those rights are
@@ -88,32 +88,24 @@ function Set-TppPermission {
 
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ParameterSetName = 'List', ValueFromPipelineByPropertyName)]
-        [Parameter(Mandatory, ParameterSetName = 'Effective', ValueFromPipelineByPropertyName)]
-        [Parameter(Mandatory, ParameterSetName = 'ExplicitImplicit', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [ValidateNotNullOrEmpty()]
+        [PSCustomObject[]] $InputObject,
+
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [Alias('ObjectGuid')]
         [guid[]] $Guid,
 
-        [Parameter(Mandatory, ParameterSetName = 'Effective')]
-        [Parameter(Mandatory, ParameterSetName = 'ExplicitImplicit')]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateScript( {
                 $_ -match '(AD|LDAP)+\S+:\w{32}$' -or $_ -match 'local:\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
             })]
         [Alias('PrefixedUniversal')]
         [string[]] $PrefixedUniversalId,
 
-        [Parameter(ParameterSetName = 'List')]
-        [Parameter(ParameterSetName = 'Effective')]
-        [switch] $Effective,
-
-        [Parameter(ParameterSetName = 'List')]
-        [Parameter(ParameterSetName = 'ExplicitImplicit')]
-        [switch] $ExplicitImplicit,
-
-        [Parameter()]
-        [ValidateSet('Group Membership', 'Name', 'Internet Email Address', 'Given Name', 'Surname')]
-        [string[]] $Attribute,
+        [Parameter(Mandatory)]
+        [TppPermission] $Permission,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -122,117 +114,49 @@ function Set-TppPermission {
     begin {
         $TppSession.Validate()
 
-        Write-Verbose ("Parameter set {0}" -f $PsCmdlet.ParameterSetName)
-
         $params = @{
-            TppSession = $TppSession
-            Method     = 'Get'
-            UriLeaf    = 'placeholder'
+            TppSession    = $TppSession
+            Method        = 'Post'
+            UriLeaf       = 'placeholder'
+            Body          = $Permission.Splat()
+            UseWebRequest = $true
         }
-
-        $returnObject = @()
     }
 
     process {
 
+        $PSBoundParameters.ContainsKey('InputObject')
         $GUID.ForEach{
             $thisGuid = "{$_}"
-            $uriLeaf = "Permissions/Object/$thisGuid"
-            $params.UriLeaf = $uriLeaf
+            $params.UriLeaf = "Permissions/Object/$thisGuid"
 
-            Switch ($PsCmdlet.ParameterSetName)	{
-                'List' {
-                    $perms = Invoke-TppRestMethod @params
-                    $perms.ForEach{
-                        if ( $PSBoundParameters.ContainsKey('Effective') -or $PSBoundParameters.ContainsKey('ExplicitImplicit') ) {
-                            # get details from list of perms on the object
-                            # loop through and get perms on each by re-calling this function
+            $PrefixedUniversalId.ForEach{
+                $thisId = $_
 
-                            $permParams = @{
-                                Guid                = $thisGuid
-                                PrefixedUniversalId = $_
-                            }
-
-                            if ( $PSBoundParameters.ContainsKey('Effective') ) {
-                                $permParams.Add( 'Effective', $true )
-                            } else {
-                                $permParams.Add( 'ExplicitImplicit', $true )
-                            }
-
-                            if ( $PSBoundParameters.ContainsKey('Attribute') ) {
-                                $permParams.Add( 'Attribute', $Attribute )
-                            }
-
-                            Get-TppPermission @permParams
-                        } else {
-                            # just list out users/groups with rights
-                            $returnObject += [PSCustomObject] @{
-                                ObjectGuid          = $thisGuid
-                                PrefixedUniversalId = $_
-                            }
-                        }
-                    }
+                if ( $thisId.StartsWith('local:') ) {
+                    # format of local is local:universalId
+                    $type, $id = $thisId.Split(':')
+                    $params.UriLeaf += "/local/$id"
+                } else {
+                    # external source, eg. AD, LDAP
+                    # format is type+name:universalId
+                    $type, $name, $id = $thisId.Split('+:')
+                    $params.UriLeaf += "/$type/$name/$id"
                 }
 
-                {$_ -in 'Effective', 'ExplicitImplicit'} {
-
-                    $PrefixedUniversalId.ForEach{
-                        $thisId = $_
-
-                        if ( $thisId.StartsWith('local:') ) {
-                            # format of local is local:universalId
-                            $type, $id = $thisId.Split(':')
-                            $params.UriLeaf += "/local/$id"
-                        } else {
-                            # external source, eg. AD, LDAP
-                            # format is type+name:universalId
-                            $type, $name, $id = $thisId.Split('+:')
-                            $params.UriLeaf += "/$type/$name/$id"
-                        }
-
-                        if ( $PSBoundParameters.ContainsKey('Effective') ) {
-                            $params.UriLeaf += '/Effective'
-                        }
-
+                $response = Invoke-TppRestMethod @params
+                Write-Verbose $response.StatusCode
+                switch ($response.StatusCode) {
+                    'Conflict' {
+                        # user/group already has permissions defined on this object
+                        # need to use a put method instead
+                        Write-Warning "Existing user/group found, updating existing permissions"
+                        $params.Method = 'Put'
                         $response = Invoke-TppRestMethod @params
-
-                        $thisReturnObject = [PSCustomObject] @{
-                            ObjectGuid          = $thisGuid
-                            PrefixedUniversalId = $thisId
-                        }
-
-                        if ( $PSBoundParameters.ContainsKey('Effective') ) {
-                            $thisReturnObject | Add-Member @{
-                                EffectivePermissions = [TppPermission] $response.EffectivePermissions
-                            }
-                        } else {
-                            $thisReturnObject | Add-Member @{
-                                ExplicitPermissions = [TppPermission] $response.ExplicitPermissions
-                                ImplicitPermissions = [TppPermission] $response.ImplicitPermissions
-                            }
-                        }
-
-                        $returnObject += $thisReturnObject
                     }
                 }
+                $response
             }
-
-            if ( $PSBoundParameters.ContainsKey('Attribute') ) {
-
-                $returnObject | Add-Member @{
-                    Attribute = $null
-                }
-
-                $returnObject.ForEach{
-                    $thisObject = $_
-                    $Attribute.ForEach{
-                        $attribResponse = Get-TppIdentityAttribute -PrefixedUniversalId $thisObject.PrefixedUniversalId -Attribute $Attribute
-                        $thisObject.Attribute = $attribResponse.Attribute
-                        }
-                    }
-                }
-
-            $returnObject
         }
     }
 }

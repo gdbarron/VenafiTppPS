@@ -144,8 +144,7 @@ function Get-TppPermission {
 
         $GUID.ForEach{
             $thisGuid = "{$_}"
-            $uriLeaf = "Permissions/Object/$thisGuid"
-            $params.UriLeaf = $uriLeaf
+            $params.UriLeaf = "Permissions/Object/$thisGuid"
 
             Switch ($PsCmdlet.ParameterSetName)	{
                 'List' {

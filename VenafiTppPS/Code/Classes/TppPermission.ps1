@@ -13,5 +13,18 @@ class TppPermission {
     [bool] $IsViewAllowed
     [bool] $IsWriteAllowed
 
+    [HashTable] Splat() {
+
+        $splat = @{}
+        $propNames = $this | gm | where {$_.MemberType -eq 'Property'} | select -ExpandProperty Name
+
+        foreach ($prop in $propNames) {
+            if ($this.GetType().GetProperty($prop)) {
+                $splat.Add($prop, $this.$prop)
+            }
+        }
+
+        return $splat
+    }
 }
 
