@@ -434,7 +434,7 @@ function Get-TppCertificateDetail {
 
         [Parameter(Mandatory, ParameterSetName = 'Full', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [String[]] $Guid,
+        [guid[]] $Guid,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -593,7 +593,7 @@ function Get-TppCertificateDetail {
 
             'Full' {
                 $GUID.ForEach{
-                    $params.UriLeaf = [System.Web.HttpUtility]::HtmlEncode("certificates/$_")
+                    $params.UriLeaf = [System.Web.HttpUtility]::HtmlEncode("certificates/{$_}")
                     Invoke-TppRestMethod @params
                 }
             }
