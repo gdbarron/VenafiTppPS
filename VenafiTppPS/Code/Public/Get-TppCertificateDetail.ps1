@@ -428,6 +428,10 @@ function Get-TppCertificateDetail {
         [ValidateSet('Blank', 'Success', 'Failure')]
         [String[]] $ValidationState,
 
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [switch] $Full,
+
         [Parameter(Mandatory, ParameterSetName = 'Full', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [String[]] $Guid,
@@ -579,7 +583,11 @@ function Get-TppCertificateDetail {
                 $response = Invoke-TppRestMethod @params
 
                 if ( $response ) {
-                    $response.Certificates
+                    if ( $PSBoundParameters.ContainsKey('Full') ) {
+                        $response.Certificates | Get-TppCertificateDetail
+                    } else {
+                        $response.Certificates
+                    }
                 }
             }
 
