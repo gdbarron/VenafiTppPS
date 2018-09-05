@@ -84,14 +84,14 @@ function Invoke-TppRestMethod {
     Write-Verbose ($params | ConvertTo-Json | out-string)
 
     if ( $PSBoundParameters.ContainsKey('UseWebRequest') ) {
-        Write-Verbose "Using Invoke-WebRequest"
+        Write-Debug "Using Invoke-WebRequest"
         try {
             Invoke-WebRequest @params
         } catch {
             $_.Exception.Response
         }
     } else {
-        Write-Verbose "Using Invoke-RestMethod"
+        Write-Debug "Using Invoke-RestMethod"
         Invoke-RestMethod @params
     }
 }

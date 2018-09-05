@@ -6,16 +6,13 @@ Set permissions for TPP objects
 Determine who has rights for TPP objects and what those rights are
 
 .PARAMETER Guid
-Guid representing a unique object in Venafi.
+Guid representing a unique object
 
 .PARAMETER PrefixedUniversalId
-The id that represents the user or group.  Use Get-TppIdentity to get the id.
+The id that represents the user or group.  You can use Get-TppIdentity or Get-TppPermission to get the id.
 
 .PARAMETER Permission
-Get effective permissions for the specific user or group on the object.
-If only an object guid is provided with this switch, all user and group permssions will be provided.
-
-.PARAMETER Force
+TppPermission object.  You can create a new object or get existing object from Get-TppPermission.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -24,67 +21,27 @@ Session object created from New-TppSession method.  The value defaults to the sc
 Guid
 
 .OUTPUTS
-List parameter set returns a PSCustomObject with the properties Guid and Permissions
-
-Local and external parameter sets returns a PSCustomObject with the following properties:
-    Guid
-    PrefixedUniversalId
-    EffectivePermissions (if Effective switch is used)
-    ExplicitPermissions (if ExplicitImplicit switch is used)
-    ImplicitPermissions (if ExplicitImplicit switch is used)
-    Attribute (if Attribute provided)
+None
 
 .EXAMPLE
-Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission
-Guid                             PrefixedUniversalId
-----                                   -----------
-{1234abcd-g6g6-h7h7-faaf-f50cd6610cba} {AD+mydomain.com:1234567890olikujyhtgrfedwsqa, AD+mydomain.com:azsxdcfvgbhnjmlk09877654321}
+Set-TppPermission -Guid '1234abcd-g6g6-h7h7-faaf-f50cd6610cba' -PrefixedUniversalId 'AD+mydomain.com:azsxdcfvgbhnjmlk09877654321' -Permission $TppPermObject
 
-Get users/groups permissioned to a policy folder
-
-.EXAMPLE
-Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Attribute 'Given Name','Surname'
-Guid                             PrefixedUniversalId                              Attribute
-----------                             -------------------                              ---------
-{1234abcd-g6g6-h7h7-faaf-f50cd6610cba} AD+mydomain.com:1234567890olikujyhtgrfedwsqa {@{Name=Given Name; Value=Greg}, @{Name=Surname; Value=Brownstein}}
-{1234abcd-g6g6-h7h7-faaf-f50cd6610cba} AD+mydomain.com:azsxdcfvgbhnjmlk09877654321 {@{Name=Given Name; Value=Greg}, @{Name=Surname; Value=Brownstein}}
-
-Get users/groups permissioned to a policy folder including identity attributes for those users/groups
-
-.EXAMPLE
-Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Effective
-Guid           : {1234abcd-g6g6-h7h7-faaf-f50cd6610cba}
-PrefixedUniversalId  : AD+mydomain.com:1234567890olikujyhtgrfedwsqa
-EffectivePermissions : @{IsAssociateAllowed=False; IsCreateAllowed=True; IsDeleteAllowed=True; IsManagePermissionsAllowed=True; IsPolicyWriteAllowed=True;
-                       IsPrivateKeyReadAllowed=True; IsPrivateKeyWriteAllowed=True; IsReadAllowed=True; IsRenameAllowed=True; IsRevokeAllowed=False; IsViewAllowed=True;
-                       IsWriteAllowed=True}
-
-Guid           : {1234abcd-g6g6-h7h7-faaf-f50cd6610cba}
-PrefixedUniversalId  : AD+mydomain.com:azsxdcfvgbhnjmlk09877654321
-EffectivePermissions : @{IsAssociateAllowed=False; IsCreateAllowed=False; IsDeleteAllowed=False; IsManagePermissionsAllowed=False; IsPolicyWriteAllowed=True;
-                       IsPrivateKeyReadAllowed=False; IsPrivateKeyWriteAllowed=False; IsReadAllowed=True; IsRenameAllowed=False; IsRevokeAllowed=True; IsViewAllowed=False;
-                       IsWriteAllowed=True}
-
-Get effective permissions for users/groups on a specific policy folder
+Permission a user on an object
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Get-TppPermission/
+http://venafitppps.readthedocs.io/en/latest/functions/Set-TppPermission/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppPermission.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Set-TppPermission.ps1
 
 .LINK
-https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____1
+https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Permissions-object-guid-principal.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____6
 
 .LINK
-https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid-external.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____2
+https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-PUT-Permissions-object-guid-principal.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____7
 
-.LINK
-https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid-local.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____3
-
-.LINK
-https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid-principal.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____5
-
+.NOTES
+Confirmation impact is set to Medium, set ConfirmPreference accordingly.
 #>
 function Set-TppPermission {
 
@@ -136,10 +93,20 @@ function Set-TppPermission {
         }
 
         $GUID.ForEach{
+            if ( -not (Test-TppObject -Guid $_ -ExistOnly) ) {
+                Write-Error ("Guid {0} does not exist" -f $_)
+                Continue
+            }
+
             $params.UriLeaf = "Permissions/Object/{$_}"
 
             $PrefixedUniversalId.ForEach{
                 $thisId = $_
+
+                if ( -not (Test-TppIdentity -PrefixedUniversalId $PrefixedUniversalId -ExistOnly) ) {
+                    Write-Error "Id $thisId does not exist"
+                    Continue
+                }
 
                 if ( $thisId.StartsWith('local:') ) {
                     # format of local is local:universalId
@@ -158,19 +125,26 @@ function Set-TppPermission {
                     Write-Verbose ('Response status code: {0}' -f $response.StatusCode)
 
                     switch ($response.StatusCode) {
-                        'Conflict' {
+
+                        {$_ -in 'Created', '201'} {
+                            # success
+                        }
+
+                        {$_ -in 'Conflict', '409'} {
                             # user/group already has permissions defined on this object
                             # need to use a put method instead
-                            if ( $PSBoundParameters.ContainsKey('Force') ) {
-                                Write-Verbose "Existing user/group found, updating existing permissions"
-                                $params.Method = 'Put'
-                                $response = Invoke-TppRestMethod @params
-                            } else {
-                                throw ('User/group {0} already exists.  To overwrite permissions for an existing user/group, use Force.' -f $thisId)
+                            Write-Verbose "Existing user/group found, updating existing permissions"
+                            $params.Method = 'Put'
+                            $response = Invoke-TppRestMethod @params
+                            if ( $response.StatusCode -notin 'OK', '200' ) {
+                                Write-Error ('Failed to update permission with error {0}' -f $response.StatusDescription)
                             }
                         }
+
+                        default {
+                            Write-Error ('Failed to create permission with error {0}, URL {1}' -f $response.StatusDescription, $response.ResponseUri)
+                        }
                     }
-                    # $response
                 }
             }
         }
