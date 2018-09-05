@@ -5,7 +5,7 @@ Create a new object
 .DESCRIPTION
 Create a new object
 
-.PARAMETER DN
+.PARAMETER Path
 DN path to the new object.
 
 .PARAMETER Class
@@ -36,7 +36,8 @@ function New-TppObject {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [string] $DN,
+        [Alias('DN')]
+        [string] $Path,
 
         [Parameter(Mandatory)]
         [ValidateSet('Device', 'CAPI', 'Policy')]
@@ -54,13 +55,13 @@ function New-TppObject {
     # $TppSession.Validate()
 
     # ensure the object doesn't already exist
-    if ( Test-TppObject -DN $DN -ExistOnly ) {
-        throw ("{0} already exists" -f $DN)
+    if ( Test-TppObject -Path $Path -ExistOnly ) {
+        throw ("{0} already exists" -f $Path)
     }
 
     # ensure the parent folder exists
-    if ( -not (Test-TppObject -DN (Split-Path $DN -Parent) -ExistOnly) ) {
-        throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path $DN -Parent))
+    if ( -not (Test-TppObject -Path (Split-Path $Path -Parent) -ExistOnly) ) {
+        throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path $Path -Parent))
     }
 
     $params = @{
@@ -68,7 +69,7 @@ function New-TppObject {
         Method     = 'Post'
         UriLeaf    = 'config/create'
         Body       = @{
-            ObjectDN          = $DN
+            ObjectDN          = $Path
             Class             = $Class
             NameAttributeList = $Attribute
         }

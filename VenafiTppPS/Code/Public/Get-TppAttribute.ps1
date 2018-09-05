@@ -7,7 +7,7 @@ Retrieves object attributes.  You can either retrieve all attributes or individu
 By default, the attributes returned are not the effective policy, but that can be requested with the
 EffectivePolicy switch.
 
-.PARAMETER DN
+.PARAMETER Path
 Path to the object to retrieve configuration attributes.  Just providing DN will return all attributes.
 
 .PARAMETER AttributeName
@@ -31,15 +31,15 @@ PSCustomObject with properties DN and Config.
         IsCustomField
 
 .EXAMPLE
-Get-TppAttribute -DN '\VED\Policy\My Folder\myapp.company.com'
+Get-TppAttribute -Path '\VED\Policy\My Folder\myapp.company.com'
 Retrieve all configurations for a certificate
 
 .EXAMPLE
-Get-TppAttribute -DN '\VED\Policy\My Folder\myapp.company.com' -EffectivePolicy
+Get-TppAttribute -Path '\VED\Policy\My Folder\myapp.company.com' -EffectivePolicy
 Retrieve all effective configurations for a certificate
 
 .EXAMPLE
-Get-TppAttribute -DN '\VED\Policy\My Folder\myapp.company.com' -AttributeName 'driver name'
+Get-TppAttribute -Path '\VED\Policy\My Folder\myapp.company.com' -AttributeName 'driver name'
 Retrieve all the value for attribute driver name from certificate myapp.company.com
 
 .LINK
@@ -71,7 +71,8 @@ function Get-TppAttribute {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String[]] $DN,
+        [Alias('DN')]
+        [String[]] $Path,
 
         [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy')]
         [Parameter(ParameterSetName = 'NonEffectivePolicy')]
@@ -110,7 +111,7 @@ function Get-TppAttribute {
 
     process {
 
-        foreach ( $thisDN in $DN ) {
+        foreach ( $thisDN in $Path ) {
 
             $baseParams.Body['ObjectDN'] = $thisDN
 

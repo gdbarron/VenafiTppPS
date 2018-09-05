@@ -22,10 +22,10 @@ Session object created from New-TppSession method.  The value defaults to the sc
 Guid
 
 .OUTPUTS
-List parameter set returns a PSCustomObject with the properties ObjectGuid and Permissions
+List parameter set returns a PSCustomObject with the properties Guid and Permissions
 
 Local and external parameter sets returns a PSCustomObject with the following properties:
-    ObjectGuid
+    Guid
     PrefixedUniversalId
     EffectivePermissions (if Effective switch is used)
     ExplicitPermissions (if ExplicitImplicit switch is used)
@@ -34,7 +34,7 @@ Local and external parameter sets returns a PSCustomObject with the following pr
 
 .EXAMPLE
 Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission
-ObjectGuid                             PrefixedUniversalId
+Guid                             PrefixedUniversalId
 ----                                   -----------
 {1234abcd-g6g6-h7h7-faaf-f50cd6610cba} {AD+mydomain.com:1234567890olikujyhtgrfedwsqa, AD+mydomain.com:azsxdcfvgbhnjmlk09877654321}
 
@@ -42,7 +42,7 @@ Get users/groups permissioned to a policy folder
 
 .EXAMPLE
 Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Attribute 'Given Name','Surname'
-ObjectGuid                             PrefixedUniversalId                              Attribute
+Guid                             PrefixedUniversalId                              Attribute
 ----------                             -------------------                              ---------
 {1234abcd-g6g6-h7h7-faaf-f50cd6610cba} AD+mydomain.com:1234567890olikujyhtgrfedwsqa {@{Name=Given Name; Value=Greg}, @{Name=Surname; Value=Brownstein}}
 {1234abcd-g6g6-h7h7-faaf-f50cd6610cba} AD+mydomain.com:azsxdcfvgbhnjmlk09877654321 {@{Name=Given Name; Value=Greg}, @{Name=Surname; Value=Brownstein}}
@@ -51,13 +51,13 @@ Get users/groups permissioned to a policy folder including identity attributes f
 
 .EXAMPLE
 Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Effective
-ObjectGuid           : {1234abcd-g6g6-h7h7-faaf-f50cd6610cba}
+Guid           : {1234abcd-g6g6-h7h7-faaf-f50cd6610cba}
 PrefixedUniversalId  : AD+mydomain.com:1234567890olikujyhtgrfedwsqa
 EffectivePermissions : @{IsAssociateAllowed=False; IsCreateAllowed=True; IsDeleteAllowed=True; IsManagePermissionsAllowed=True; IsPolicyWriteAllowed=True;
                        IsPrivateKeyReadAllowed=True; IsPrivateKeyWriteAllowed=True; IsReadAllowed=True; IsRenameAllowed=True; IsRevokeAllowed=False; IsViewAllowed=True;
                        IsWriteAllowed=True}
 
-ObjectGuid           : {1234abcd-g6g6-h7h7-faaf-f50cd6610cba}
+Guid           : {1234abcd-g6g6-h7h7-faaf-f50cd6610cba}
 PrefixedUniversalId  : AD+mydomain.com:azsxdcfvgbhnjmlk09877654321
 EffectivePermissions : @{IsAssociateAllowed=False; IsCreateAllowed=False; IsDeleteAllowed=False; IsManagePermissionsAllowed=False; IsPolicyWriteAllowed=True;
                        IsPrivateKeyReadAllowed=False; IsPrivateKeyWriteAllowed=False; IsReadAllowed=True; IsRenameAllowed=False; IsRevokeAllowed=True; IsViewAllowed=False;
@@ -88,16 +88,16 @@ function Set-TppPermission {
 
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [ValidateNotNullOrEmpty()]
-        [PSCustomObject[]] $InputObject,
+        # [Parameter(Mandatory, ValueFromPipeline)]
+        # [ValidateNotNullOrEmpty()]
+        # [PSCustomObject[]] $InputObject,
 
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [Alias('ObjectGuid')]
         [guid[]] $Guid,
 
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory)]
         [ValidateScript( {
                 $_ -match '(AD|LDAP)+\S+:\w{32}$' -or $_ -match 'local:\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
             })]
@@ -106,6 +106,12 @@ function Set-TppPermission {
 
         [Parameter(Mandatory)]
         [TppPermission] $Permission,
+
+        [Parameter()]
+        [switch] $UpdateExisting,
+
+        [Parameter()]
+        [switch] $Force,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -125,7 +131,11 @@ function Set-TppPermission {
 
     process {
 
-        $PSBoundParameters.ContainsKey('InputObject')
+        # TODO: accept object with guid and universal id, eg. from get-tpppermission
+        if ( $PSBoundParameters.ContainsKey('InputObject') ) {
+
+        }
+
         $GUID.ForEach{
             $thisGuid = "{$_}"
             $params.UriLeaf = "Permissions/Object/$thisGuid"
@@ -144,15 +154,22 @@ function Set-TppPermission {
                     $params.UriLeaf += "/$type/$name/$id"
                 }
 
+                if ( -not $PSBoundParameters.ContainsKey('Force') ) {
+                    # confirm perm addition/update
+                    Write-Information
+                }
+
                 $response = Invoke-TppRestMethod @params
                 Write-Verbose $response.StatusCode
                 switch ($response.StatusCode) {
                     'Conflict' {
                         # user/group already has permissions defined on this object
                         # need to use a put method instead
-                        Write-Warning "Existing user/group found, updating existing permissions"
-                        $params.Method = 'Put'
-                        $response = Invoke-TppRestMethod @params
+                        if ( $PSBoundParameters.ContainsKey('UpdateExisting') ) {
+                            Write-Warning "Existing user/group found, updating existing permissions"
+                            $params.Method = 'Put'
+                            $response = Invoke-TppRestMethod @params
+                        }
                     }
                 }
                 $response

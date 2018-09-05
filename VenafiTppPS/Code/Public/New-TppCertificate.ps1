@@ -5,8 +5,8 @@ Enrolls or provisions a new certificate
 .DESCRIPTION
 Enrolls or provisions a new certificate
 
-.PARAMETER PolicyDN
-The folder DN for the new certificate. If the value is missing, use the system default
+.PARAMETER Path
+The folder DN path for the new certificate. If the value is missing, use the system default
 
 .PARAMETER Name
 Either the Name or Subject parameter is required. Both the Name and Subject parameters can appear in the same Certificates/Request call. If the Subject parameter has a value, The friendly name for the certificate object in Trust Protection Platform. If the value is missing, the Name is the Subject DN
@@ -61,7 +61,8 @@ function New-TppCertificate {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $PolicyDN,
+        [Alias('PolicyDN')]
+        [String] $Path,
 
         [Parameter()]
         [String] $Name,
@@ -103,7 +104,7 @@ function New-TppCertificate {
             Method     = 'Post'
             UriLeaf    = 'certificates/request'
             Body       = @{
-                PolicyDN = $PolicyDN
+                PolicyDN = $Path
                 CADN     = $CertificateAuthorityDN
             }
         }

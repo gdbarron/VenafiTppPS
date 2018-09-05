@@ -235,6 +235,7 @@ function Get-TppCertificateDetail {
                     throw "'$_' is not a valid DN path"
                 }
             })]
+        [Alias('DN')]
         [String] $Path,
 
         [Parameter(ParameterSetName = 'ByPath')]

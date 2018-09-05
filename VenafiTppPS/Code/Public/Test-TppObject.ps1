@@ -5,7 +5,7 @@ Test if an object exists
 .DESCRIPTION
 Provided with either a DN path or GUID, find out if an object exists.
 
-.PARAMETER DN
+.PARAMETER Path
 DN path to object.  Provide either this or Guid.  This is the default if both are provided.
 
 .PARAMETER Guid
@@ -55,7 +55,8 @@ function Test-TppObject {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [string[]] $DN,
+        [Alias('DN')]
+        [string[]] $Path,
 
         [Parameter(Mandatory, ParameterSetName = 'GUID', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
@@ -73,15 +74,25 @@ function Test-TppObject {
 
         $params = @{
             TppSession = $TppSession
-            Method = 'Post'
-            UriLeaf = 'config/IsValid'
-            Body = @{}
+            Method     = 'Post'
+            UriLeaf    = 'config/IsValid'
+            Body       = @{}
         }
     }
 
     process {
 
-        foreach ( $thisValue in $PsBoundParameters[$PsCmdlet.ParameterSetName] ) {
+        Switch ($PsCmdlet.ParameterSetName)	{
+            'DN' {
+                $paramSetValue = $Path
+            }
+
+            'GUID' {
+                $paramSetValue = $Guid
+            }
+        }
+
+        foreach ( $thisValue in $paramSetValue ) {
 
             if ( $PsCmdlet.ParameterSetName -eq 'GUID') {
                 $thisValue = "{$thisValue}"
