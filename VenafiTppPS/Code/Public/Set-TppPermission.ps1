@@ -80,7 +80,7 @@ function Set-TppPermission {
             TppSession    = $TppSession
             Method        = 'Post'
             UriLeaf       = 'placeholder'
-            Body          = $Permission.Splat()
+            Body          = $Permission.ToHashtable()
             UseWebRequest = $true
         }
     }
