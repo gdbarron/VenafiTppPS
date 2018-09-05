@@ -137,8 +137,7 @@ function Set-TppPermission {
         }
 
         $GUID.ForEach{
-            $thisGuid = "{$_}"
-            $params.UriLeaf = "Permissions/Object/$thisGuid"
+            $params.UriLeaf = "Permissions/Object/{$_}"
 
             $PrefixedUniversalId.ForEach{
                 $thisId = $_
@@ -156,23 +155,27 @@ function Set-TppPermission {
 
                 if ( -not $PSBoundParameters.ContainsKey('Force') ) {
                     # confirm perm addition/update
-                    Write-Information
+                    # Write-Information
                 }
 
                 $response = Invoke-TppRestMethod @params
-                Write-Verbose $response.StatusCode
+
+                Write-Verbose ('Response status code: {0}' -f $response.StatusCode)
+
                 switch ($response.StatusCode) {
                     'Conflict' {
                         # user/group already has permissions defined on this object
                         # need to use a put method instead
                         if ( $PSBoundParameters.ContainsKey('UpdateExisting') ) {
-                            Write-Warning "Existing user/group found, updating existing permissions"
+                            Write-Verbose "Existing user/group found, updating existing permissions"
                             $params.Method = 'Put'
                             $response = Invoke-TppRestMethod @params
+                        } else {
+                            throw ('User/group {0} already exists.  To overwrite permissions for an existing user/group, use UpdateExisting.' -f $thisId)
                         }
                     }
                 }
-                $response
+                # $response
             }
         }
     }
