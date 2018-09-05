@@ -1,15 +1,15 @@
 <#
 .SYNOPSIS
-Get attribute values for TPP objects
+Get attribute values for TPP identity objects
 
 .DESCRIPTION
-Get attribute values for TPP identity objects
+Get attribute values for TPP identity objects.
 
 .PARAMETER PrefixedUniversalId
 The id that represents the user or group.  Use Get-TppIdentity to get the id.
 
 .PARAMETER Attribute
-Retrieve identity attribute values for the users and groups.  Attributes include Group Membership, Name, Internet Email Address, Given Name, Surname.
+Retrieve identity attribute values for the users and groups.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -51,7 +51,7 @@ function Get-TppIdentityAttribute {
         [string[]] $PrefixedUniversalId,
 
         [Parameter(Mandatory)]
-        [ValidateSet('Group Membership', 'Name', 'Internet Email Address', 'Given Name', 'Surname')]
+        # [ValidateSet('Group Membership', 'Name', 'Internet Email Address', 'Given Name', 'Surname')]
         [string[]] $Attribute,
 
         [Parameter()]
