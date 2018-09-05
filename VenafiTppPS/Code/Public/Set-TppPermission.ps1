@@ -15,6 +15,8 @@ The id that represents the user or group.  Use Get-TppIdentity to get the id.
 Get effective permissions for the specific user or group on the object.
 If only an object guid is provided with this switch, all user and group permssions will be provided.
 
+.PARAMETER Force
+
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
@@ -86,7 +88,7 @@ https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function Set-TppPermission {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
     param (
         # [Parameter(Mandatory, ValueFromPipeline)]
         # [ValidateNotNullOrEmpty()]
@@ -106,9 +108,6 @@ function Set-TppPermission {
 
         [Parameter(Mandatory)]
         [TppPermission] $Permission,
-
-        [Parameter()]
-        [switch] $UpdateExisting,
 
         [Parameter()]
         [switch] $Force,
@@ -153,29 +152,26 @@ function Set-TppPermission {
                     $params.UriLeaf += "/$type/$name/$id"
                 }
 
-                if ( -not $PSBoundParameters.ContainsKey('Force') ) {
-                    # confirm perm addition/update
-                    # Write-Information
-                }
+                if ( $PSCmdlet.ShouldProcess($thisId) ) {
+                    $response = Invoke-TppRestMethod @params
 
-                $response = Invoke-TppRestMethod @params
+                    Write-Verbose ('Response status code: {0}' -f $response.StatusCode)
 
-                Write-Verbose ('Response status code: {0}' -f $response.StatusCode)
-
-                switch ($response.StatusCode) {
-                    'Conflict' {
-                        # user/group already has permissions defined on this object
-                        # need to use a put method instead
-                        if ( $PSBoundParameters.ContainsKey('UpdateExisting') ) {
-                            Write-Verbose "Existing user/group found, updating existing permissions"
-                            $params.Method = 'Put'
-                            $response = Invoke-TppRestMethod @params
-                        } else {
-                            throw ('User/group {0} already exists.  To overwrite permissions for an existing user/group, use UpdateExisting.' -f $thisId)
+                    switch ($response.StatusCode) {
+                        'Conflict' {
+                            # user/group already has permissions defined on this object
+                            # need to use a put method instead
+                            if ( $PSBoundParameters.ContainsKey('Force') ) {
+                                Write-Verbose "Existing user/group found, updating existing permissions"
+                                $params.Method = 'Put'
+                                $response = Invoke-TppRestMethod @params
+                            } else {
+                                throw ('User/group {0} already exists.  To overwrite permissions for an existing user/group, use Force.' -f $thisId)
+                            }
                         }
                     }
+                    # $response
                 }
-                # $response
             }
         }
     }
