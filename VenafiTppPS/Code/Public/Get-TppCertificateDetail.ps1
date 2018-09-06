@@ -235,6 +235,7 @@ function Get-TppCertificateDetail {
                     throw "'$_' is not a valid DN path"
                 }
             })]
+        [Alias('DN')]
         [String] $Path,
 
         [Parameter(ParameterSetName = 'ByPath')]
@@ -428,9 +429,13 @@ function Get-TppCertificateDetail {
         [ValidateSet('Blank', 'Success', 'Failure')]
         [String[]] $ValidationState,
 
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'NoPath')]
+        [switch] $Full,
+
         [Parameter(Mandatory, ParameterSetName = 'Full', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [String[]] $Guid,
+        [guid[]] $Guid,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -579,13 +584,17 @@ function Get-TppCertificateDetail {
                 $response = Invoke-TppRestMethod @params
 
                 if ( $response ) {
-                    $response.Certificates
+                    if ( $PSBoundParameters.ContainsKey('Full') ) {
+                        $response.Certificates | Get-TppCertificateDetail
+                    } else {
+                        $response.Certificates
+                    }
                 }
             }
 
             'Full' {
                 $GUID.ForEach{
-                    $params.UriLeaf = [System.Web.HttpUtility]::HtmlEncode("certificates/$_")
+                    $params.UriLeaf = [System.Web.HttpUtility]::HtmlEncode("certificates/{$_}")
                     Invoke-TppRestMethod @params
                 }
             }

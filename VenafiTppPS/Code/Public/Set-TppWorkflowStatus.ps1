@@ -5,7 +5,7 @@ Get details about workflow tickets
 .DESCRIPTION
 Get details about workflow tickets via a certificate DN or a ticket GUID directly
 
-.PARAMETER DN
+.PARAMETER Path
 Path to the certificate
 
 .PARAMETER Guid
@@ -31,7 +31,7 @@ PSCustomObject with the following properties:
     Updated: The date/time that the ticket was last updated.
 
 .EXAMPLE
-Get-TppWorkflowDetail -DN '\VED\myapp.company.com'
+Get-TppWorkflowDetail -Path '\VED\myapp.company.com'
 Get details for 1 certificate
 
 .EXAMPLE
@@ -65,8 +65,8 @@ function Set-TppWorkflowStatus {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [Alias('DN')]
-        [String[]] $CertificateDN,
+        [Alias('DN', 'CertificateDN')]
+        [String[]] $Path,
 
         [Parameter(Mandatory, ParameterSetName = 'Guid', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
@@ -113,7 +113,7 @@ function Set-TppWorkflowStatus {
 
         Switch ($PsCmdlet.ParameterSetName)	{
             'DN' {
-                $Guid = foreach ($thisDn in $DN) {
+                $Guid = foreach ($thisDn in $Path) {
                     $thisDn | Get-TppWorkflowDetail
                 }
             }
