@@ -6,8 +6,8 @@ Create a new CAPI application object
 ## SYNTAX
 
 ```
-New-TppCapiApplication -DN <String> -FriendlyName <String> [-Disable] -CertificateDN <String>
- [-Description <String>] -CredentialDN <String> [-WinRmPort <Int32>] [-UpdateIis] -WebSiteName <String>
+New-TppCapiApplication -Path <String> -FriendlyName <String> [-Disable] -CertificatePath <String>
+ [-Description <String>] -CredentialPath <String> [-WinRmPort <Int32>] [-UpdateIis] -WebSiteName <String>
  [-BindingIpAddress <String>] [-BindingPort <Int32>] [-BindingHostName <String>] [-CreateBinding <Boolean>]
  [-TppSession <TppSession>] [<CommonParameters>]
 ```
@@ -26,13 +26,13 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -DN
+### -Path
 DN path to the new object.
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: DN
 
 Required: True
 Position: Named
@@ -72,13 +72,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -CertificateDN
+### -CertificatePath
 Path to the associated certificate
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: CertificateDN
 
 Required: True
 Position: Named
@@ -102,13 +102,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -CredentialDN
+### -CredentialPath
 Path to the associated credential which has rights to access the connected device
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: CredentialDN
 
 Required: True
 Position: Named

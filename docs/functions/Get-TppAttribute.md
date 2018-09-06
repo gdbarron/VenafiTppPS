@@ -7,12 +7,12 @@ Get attributes for a given object
 
 ### NonEffectivePolicy
 ```
-Get-TppAttribute -DN <String[]> [-AttributeName <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppAttribute -Path <String[]> [-AttributeName <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### EffectivePolicy
 ```
-Get-TppAttribute -DN <String[]> -AttributeName <String[]> [-EffectivePolicy] [-TppSession <TppSession>]
+Get-TppAttribute -Path <String[]> -AttributeName <String[]> [-EffectivePolicy] [-TppSession <TppSession>]
  [<CommonParameters>]
 ```
 
@@ -26,35 +26,35 @@ EffectivePolicy switch.
 
 ### EXAMPLE 1
 ```
-Get-TppAttribute -DN '\VED\Policy\My Folder\myapp.company.com'
+Get-TppAttribute -Path '\VED\Policy\My Folder\myapp.company.com'
 ```
 
 Retrieve all configurations for a certificate
 
 ### EXAMPLE 2
 ```
-Get-TppAttribute -DN '\VED\Policy\My Folder\myapp.company.com' -EffectivePolicy
+Get-TppAttribute -Path '\VED\Policy\My Folder\myapp.company.com' -EffectivePolicy
 ```
 
 Retrieve all effective configurations for a certificate
 
 ### EXAMPLE 3
 ```
-Get-TppAttribute -DN '\VED\Policy\My Folder\myapp.company.com' -AttributeName 'driver name'
+Get-TppAttribute -Path '\VED\Policy\My Folder\myapp.company.com' -AttributeName 'driver name'
 ```
 
 Retrieve all the value for attribute driver name from certificate myapp.company.com
 
 ## PARAMETERS
 
-### -DN
+### -Path
 Path to the object to retrieve configuration attributes. 
 Just providing DN will return all attributes.
 
 ```yaml
 Type: String[]
 Parameter Sets: (All)
-Aliases:
+Aliases: DN
 
 Required: True
 Position: Named

@@ -6,9 +6,8 @@ Enrolls or provisions a new certificate
 ## SYNTAX
 
 ```
-New-TppCertificate [-PolicyDN] <String> [[-Name] <String>] [[-Subject] <String>]
- [-CertificateAuthorityDN] <String> [[-ManagementType] <String>] [[-TppSession] <TppSession>]
- [<CommonParameters>]
+New-TppCertificate [-Path] <String> [[-Name] <String>] [[-Subject] <String>] [-CertificateAuthorityDN] <String>
+ [[-ManagementType] <String>] [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -23,14 +22,14 @@ Enrolls or provisions a new certificate
 
 ## PARAMETERS
 
-### -PolicyDN
-The folder DN for the new certificate.
+### -Path
+The folder DN path for the new certificate.
 If the value is missing, use the system default
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: PolicyDN
 
 Required: True
 Position: 1

@@ -16,7 +16,8 @@ Get-TppCertificateDetail -Path <String> [-Recursive] [-Limit <Int32>] [-Country 
  [-ExpireBefore <DateTime>] [-Enabled <Boolean>] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>]
  [-CreateDate <DateTime>] [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <String[]>]
  [-PendingWorkflow] [-Stage <Int32[]>] [-StageGreaterThan <Int32>] [-StageLessThan <Int32>]
- [-ValidationEnabled <Boolean>] [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
+ [-ValidationEnabled <Boolean>] [-ValidationState <String[]>] [-Full] [-TppSession <TppSession>]
+ [<CommonParameters>]
 ```
 
 ### NoPath
@@ -30,12 +31,12 @@ Get-TppCertificateDetail [-Limit <Int32>] [-Country <String>] [-CommonName <Stri
  [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>] [-CreateDate <DateTime>] [-CreatedAfter <DateTime>]
  [-CreatedBefore <DateTime>] [-ManagementType <String[]>] [-PendingWorkflow] [-Stage <Int32[]>]
  [-StageGreaterThan <Int32>] [-StageLessThan <Int32>] [-ValidationEnabled <Boolean>]
- [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
+ [-ValidationState <String[]>] [-Full] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### Full
 ```
-Get-TppCertificateDetail -Guid <String[]> [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppCertificateDetail -Guid <Guid[]> [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -87,7 +88,7 @@ Starting path to search from
 ```yaml
 Type: String
 Parameter Sets: ByPath
-Aliases:
+Aliases: DN
 
 Required: True
 Position: Named
@@ -697,11 +698,26 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Full
+{{Fill Full Description}}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: ByPath, NoPath
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Guid
 Guid representing a unique certificate in Venafi.
 
 ```yaml
-Type: String[]
+Type: Guid[]
 Parameter Sets: Full
 Aliases:
 

@@ -6,7 +6,7 @@ Adds a value to an attribute
 ## SYNTAX
 
 ```
-Set-TppAttribute [-DN] <String[]> [-AttributeName] <String> [-Value] <String[]> [-NoClobber]
+Set-TppAttribute [-Path] <String[]> [-AttributeName] <String> [-Value] <String[]> [-NoClobber]
  [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
@@ -20,7 +20,7 @@ To ensure you only have one value for an attribute, use the Overwrite switch.
 
 ### EXAMPLE 1
 ```
-Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName 'My custom field Label' -Value 'new custom value'
+Set-TppAttribute -Path '\VED\Policy\My Folder\app.company.com -AttributeName 'My custom field Label' -Value 'new custom value'
 ```
 
 Set value on custom field. 
@@ -28,20 +28,20 @@ This will add to any existing value.
 
 ### EXAMPLE 2
 ```
-Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName 'Consumers' -Value '\VED\Policy\myappobject.company.com' -Overwrite
+Set-TppAttribute -Path '\VED\Policy\My Folder\app.company.com -AttributeName 'Consumers' -Value '\VED\Policy\myappobject.company.com' -Overwrite
 ```
 
 Set value on a certificate by overwriting any existing values
 
 ## PARAMETERS
 
-### -DN
-{{Fill DN Description}}
+### -Path
+{{Fill Path Description}}
 
 ```yaml
 Type: String[]
 Parameter Sets: (All)
-Aliases:
+Aliases: DN
 
 Required: True
 Position: 1

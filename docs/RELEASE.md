@@ -1,5 +1,9 @@
-- add Get-TppIdentityAttribute
-- update Get-TppPermission
-    - add Explicit/Implicit permissions in addition to Effective
-    - utilize Prefixed Universal ID
-    - add ability to retrieve identity attribute values
+- Add TppPermission class
+- Add Set-TppPermission, supports add and update
+- Update all parameters of name DN to Path
+- Add Full switch to Get-TppCertificateDetail to get additional details and validation info with default parameter set
+- Get-TppIdentityAttribute, remove attribute name limitation (validation) as specified in documentation; all attributes the directory contains should be accessible.
+- Get-TppIdentityAttribute, make attribute name optional and provide basic details, eg. FullName, PrefixedUniversal, etc, by default
+- Get-TppPermission, permission properties now return TppPermission type
+- Add Test-TppIdentity
+- Rename Test-TppObjectExists.ps1 to Test-TppObject.ps1 to match function name
