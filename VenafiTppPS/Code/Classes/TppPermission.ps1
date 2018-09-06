@@ -16,7 +16,7 @@ class TppPermission {
     [HashTable] ToHashtable() {
 
         $hash = @{}
-        $propNames = $this | gm | where {$_.MemberType -eq 'Property'} | select -ExpandProperty Name
+        $propNames = $this | Get-Member | Where-Object {$_.MemberType -eq 'Property'} | Select-Object -ExpandProperty Name
 
         foreach ($prop in $propNames) {
             if ($this.GetType().GetProperty($prop)) {
@@ -24,7 +24,7 @@ class TppPermission {
             }
         }
 
-        $hash
+        return $hash
     }
 }
 
