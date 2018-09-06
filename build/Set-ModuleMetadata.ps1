@@ -20,7 +20,10 @@
 
 Param(
     [Parameter(Mandatory)]
-    [string] $ModuleName
+    [string] $ModuleName,
+    
+    [Parameter(Mandatory)]
+    [string] $GitHubPat
 )
 
 $ErrorActionPreference = "Stop"
@@ -184,7 +187,7 @@ try {
     if ( $env:BUILD_REASON -eq 'PullRequest') {
         Write-Output "Bypassing git push given this build is for pull request validation"
     } else {
-        git push https://$($env:GitHubPAT)@github.com/gdbarron/VenafiTppPS.git ('HEAD:{0}' -f $branch)
+        git push https://$($GitHubPat)@github.com/gdbarron/VenafiTppPS.git ('HEAD:{0}' -f $branch)
         Write-Output ("Updated {0} branch source" -f $branch)
     }
 
