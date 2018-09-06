@@ -24,7 +24,7 @@ GUID = 'c753bf91-13c0-4ae0-9e43-dbf40b22c3be'
 Author = 'Greg Brownstein'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'Greg Brownstein'
 
 # Copyright statement for this module
 Copyright = '(c) 2018 Greg Brownstein. All rights reserved.'
