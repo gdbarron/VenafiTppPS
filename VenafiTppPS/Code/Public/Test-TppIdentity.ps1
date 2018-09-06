@@ -1,50 +1,47 @@
 <#
 .SYNOPSIS
-Test if an object exists
+Test if an identity exists
 
 .DESCRIPTION
-Provided with either a DN path or GUID, find out if an object exists.
+Provided with a prefixed universal id, find out if an identity exists.
 
-.PARAMETER Path
-DN path to object.  Provide either this or Guid.  This is the default if both are provided.
-
-.PARAMETER Guid
-Guid which represents a unqiue object.  Provide either this or Path.
+.PARAMETER PrefixedUniversalId
+The id that represents the user or group.
 
 .PARAMETER ExistOnly
-Only return boolean instead of Object and Exists list.  Helpful when validating just 1 object.
+Only return boolean instead of Identity and Exists list.  Helpful when validating just 1 identity.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-Path or Guid.
+PrefixedUniversalId
 
 .OUTPUTS
-PSCustomObject will be returned with properties 'Object', a System.String, and 'Exists', a System.Boolean.
+PSCustomObject will be returned with properties 'Identity', a System.String, and 'Exists', a System.Boolean.
 
 .EXAMPLE
-$multDNs | Test-TppObject
-Object                    Exists
---------                  -----
-\VED\Policy\My folder1    True
-\VED\Policy\My folder2    False
+'local:78uhjny657890okjhhh', 'AD+mydomain.com:azsxdcfvgbhnjmlk09877654321' | Test-TppIdentity
+Identity                                       Exists
+--------                                       -----
+local:78uhjny657890okjhhh                      True
+AD+mydomain.com:azsxdcfvgbhnjmlk09877654321    False
 
-Test for existence by Path
+Test multiple identities
 
 .EXAMPLE
-Test-TppObject -Path '\VED\Policy\My folder' -ExistOnly
+Test-TppIdentity -PrefixedUniversalId 'AD+mydomain.com:azsxdcfvgbhnjmlk09877654321' -ExistOnly
 
-Retrieve existence for only one object
-
-.LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/
+Retrieve existence for only one identity, returns boolean
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Test-TppObject.ps1
+http://venafitppps.readthedocs.io/en/latest/functions/Test-TppIdentity/
 
 .LINK
-https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-isvalid.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____24
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Test-TppIdentity.ps1
+
+.LINK
+https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Validate.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____9
 
 #>
 function Test-TppIdentity {
