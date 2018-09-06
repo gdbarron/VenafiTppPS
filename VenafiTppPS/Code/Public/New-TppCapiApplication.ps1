@@ -5,16 +5,16 @@ Create a new CAPI application object
 .DESCRIPTION
 Create a new CAPI application object
 
-.PARAMETER DN
+.PARAMETER Path
 DN path to the new object.
 
 .PARAMETER FriendlyName
 CAPI Settings\Friendly Name
 
-.PARAMETER CertificateDN
+.PARAMETER CertificatePath
 Path to the associated certificate
 
-.PARAMETER CredentialDN
+.PARAMETER CredentialPath
 Path to the associated credential which has rights to access the connected device
 
 .PARAMETER Disable
@@ -62,7 +62,8 @@ function New-TppCapiApplication {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [string] $DN,
+        [Alias('DN')]
+        [string] $Path,
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -80,7 +81,8 @@ function New-TppCapiApplication {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $CertificateDN,
+        [Alias('CertificateDN')]
+        [String] $CertificatePath,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
@@ -95,7 +97,8 @@ function New-TppCapiApplication {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $CredentialDN,
+        [Alias('CredentialDN')]
+        [String] $CredentialPath,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
@@ -137,13 +140,13 @@ function New-TppCapiApplication {
 
     $TppSession.Validate()
 
-    if ( -not (Test-TppObject -DN $CertificateDN -ExistOnly) ) {
-        throw ("The certificate {0} does not exist" -f $CertificateDN)
+    if ( -not (Test-TppObject -Path $CertificatePath -ExistOnly) ) {
+        throw ("The certificate {0} does not exist" -f $CertificatePath)
     }
 
     # ensure the credential exists and is actually of type credential
-    $credentialName = (Split-Path $CredentialDN -Leaf)
-    $credentialObject = Get-TppObject -DN (Split-Path $CredentialDN -Parent) -Pattern $credentialName
+    $credentialName = (Split-Path $CredentialPath -Leaf)
+    $credentialObject = Get-TppObject -Path (Split-Path $CredentialPath -Parent) -Pattern $credentialName
 
     if ( -not $credentialObject ) {
         throw "Credential object not found"
@@ -156,7 +159,7 @@ function New-TppCapiApplication {
 
     # start the new capi app work here
     $params = @{
-        DN        = $DN
+        DN        = $Path
         Class     = 'CAPI'
         Attribute = @(
             @{
@@ -169,11 +172,11 @@ function New-TppCapiApplication {
             },
             @{
                 Name  = 'Credential'
-                Value = $CredentialDN
+                Value = $CredentialPath
             },
             @{
                 Name  = 'Certificate'
-                Value = $CertificateDN
+                Value = $CertificatePath
             }
         )
     }
@@ -234,7 +237,7 @@ function New-TppCapiApplication {
         # update Consumers attribute on cert with DN of this new app
         # required to make the "cross connection" between objects
         $certUpdateParams = @{
-            DN            = $CertificateDN
+            DN            = $CertificatePath
             AttributeName = 'Consumers'
             Value         = $capiObject.DN
         }

@@ -30,11 +30,11 @@ PSCustomObject with the following properties:
     Error = Error message in case of failure
 
 .EXAMPLE
-Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName 'My custom field Label' -Value 'new custom value'
+Set-TppAttribute -Path '\VED\Policy\My Folder\app.company.com -AttributeName 'My custom field Label' -Value 'new custom value'
 Set value on custom field.  This will add to any existing value.
 
 .EXAMPLE
-Set-TppAttribute -DN '\VED\Policy\My Folder\app.company.com -AttributeName 'Consumers' -Value '\VED\Policy\myappobject.company.com' -Overwrite
+Set-TppAttribute -Path '\VED\Policy\My Folder\app.company.com -AttributeName 'Consumers' -Value '\VED\Policy\myappobject.company.com' -Overwrite
 Set value on a certificate by overwriting any existing values
 
 .LINK
@@ -59,7 +59,8 @@ function Set-TppAttribute {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String[]] $DN,
+            [Alias('DN')]
+        [String[]] $Path,
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -97,7 +98,7 @@ function Set-TppAttribute {
 
     process {
 
-        foreach ($thisDn in $DN) {
+        foreach ($thisDn in $Path) {
 
             $realAttributeName = $AttributeName
             $field = $TppSession.CustomField | Where-Object {$_.Label -eq $AttributeName}

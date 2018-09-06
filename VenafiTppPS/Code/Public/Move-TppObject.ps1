@@ -5,10 +5,10 @@ Move an object of any type
 .DESCRIPTION
 Move an object of any type
 
-.PARAMETER SourceDN
+.PARAMETER SourcePath
 Full path to an object in TPP
 
-.PARAMETER TargetDN
+.PARAMETER TargetPath
 New path
 
 .PARAMETER TppSession
@@ -48,7 +48,8 @@ function Move-TppObject {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $SourceDN,
+        [Alias('SourceDN')]
+        [String] $SourcePath,
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -59,7 +60,8 @@ function Move-TppObject {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $TargetDN,
+        [Alias('TargetDN')]
+        [String] $TargetPath,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -68,13 +70,13 @@ function Move-TppObject {
     $TppSession.Validate()
 
     # ensure the object to rename already exists
-    if ( -not (Test-TppObject -DN $DN -ExistOnly) ) {
-        throw ("Source DN '{0}' does not exist" -f $DN)
+    if ( -not (Test-TppObject -Path $SourcePath -ExistOnly) ) {
+        throw ("Source path '{0}' does not exist" -f $SourcePath)
     }
 
     # ensure the new object doesn't already exist
-    if ( Test-TppObject -DN $TargetDN -ExistOnly ) {
-        throw ("Target DN '{0}' already exists" -f $TargetDN)
+    if ( Test-TppObject -Path $TargetPath -ExistOnly ) {
+        throw ("Target path '{0}' already exists" -f $TargetPath)
     }
 
     $params = @{
@@ -82,8 +84,8 @@ function Move-TppObject {
         Method     = 'Post'
         UriLeaf    = 'config/RenameObject'
         Body       = @{
-            ObjectDN    = $SourceDN
-            NewObjectDN = $TargetDN
+            ObjectDN    = $SourcePath
+            NewObjectDN = $TargetPath
         }
     }
 

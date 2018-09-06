@@ -5,7 +5,7 @@ Rename an object of any type
 .DESCRIPTION
 Rename an object of any type
 
-.PARAMETER DN
+.PARAMETER Path
 Full path to an object in TPP
 
 .PARAMETER NewName
@@ -20,7 +20,7 @@ none
 .OUTPUTS
 
 .EXAMPLE
-Rename-TppObject -DN '\VED\Policy\My Devices\OldDeviceName' -NewName 'NewDeviceName'
+Rename-TppObject -Path '\VED\Policy\My Devices\OldDeviceName' -NewName 'NewDeviceName'
 Rename device
 
 .LINK
@@ -48,7 +48,8 @@ function Rename-TppObject {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $SourceDN,
+        [Alias('SourceDN')]
+        [String] $Path,
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -61,13 +62,13 @@ function Rename-TppObject {
     $TppSession.Validate()
 
     # ensure the object to rename already exists
-    if ( -not (Test-TppObject -DN $DN -ExistOnly) ) {
-        throw ("{0} does not exist" -f $DN)
+    if ( -not (Test-TppObject -Path $Path -ExistOnly) ) {
+        throw ("{0} does not exist" -f $Path)
     }
 
     # ensure the new object doesn't already exist
-    $newDN = "{0}\{1}" -f (Split-Path $DN -Parent), $NewName
-    if ( Test-TppObject -DN $newDN -ExistOnly ) {
+    $newDN = "{0}\{1}" -f (Split-Path $Path -Parent), $NewName
+    if ( Test-TppObject -Path $newDN -ExistOnly ) {
         throw ("{0} already exists" -f $newDN)
     }
 
@@ -76,7 +77,7 @@ function Rename-TppObject {
         Method     = 'Post'
         UriLeaf    = 'config/RenameObject'
         Body       = @{
-            ObjectDN    = $DN
+            ObjectDN    = $Path
             NewObjectDN = $newDN
         }
     }
