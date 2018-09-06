@@ -6,7 +6,7 @@ Add a new policy folder
 ## SYNTAX
 
 ```
-New-TppPolicy [-PolicyDN] <String> [[-Description] <String>] [[-TppSession] <TppSession>] [<CommonParameters>]
+New-TppPolicy [-Path] <String> [[-Description] <String>] [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -21,13 +21,13 @@ New-TppPolicy -PolicyDN '\VED\Policy\Existing Policy Folder\New Policy Folder' -
 
 ## PARAMETERS
 
-### -PolicyDN
+### -Path
 DN path to the new policy
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: PolicyDN
 
 Required: True
 Position: 1

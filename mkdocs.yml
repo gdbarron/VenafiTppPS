@@ -27,5 +27,8 @@ pages:
     - Restore-TppCertificate: functions/Restore-TppCertificate.md
     - Revoke-TppCertificate: functions/Revoke-TppCertificate.md
     - Set-TppAttribute: functions/Set-TppAttribute.md
+    - Set-TppPermission: functions/Set-TppPermission.md
     - Set-TppWorkflowStatus: functions/Set-TppWorkflowStatus.md
+    - Test-TppIdentity: functions/Test-TppIdentity.md
+    - Test-TppObject: functions/Test-TppObject.md
 

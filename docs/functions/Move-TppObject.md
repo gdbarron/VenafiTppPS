@@ -6,7 +6,7 @@ Move an object of any type
 ## SYNTAX
 
 ```
-Move-TppObject [-SourceDN] <String> [-TargetDN] <String> [[-TppSession] <TppSession>] [<CommonParameters>]
+Move-TppObject [-SourcePath] <String> [-TargetPath] <String> [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -23,13 +23,13 @@ Moves mycert.company.com to a new Policy folder
 
 ## PARAMETERS
 
-### -SourceDN
+### -SourcePath
 Full path to an object in TPP
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: SourceDN
 
 Required: True
 Position: 1
@@ -38,13 +38,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -TargetDN
+### -TargetPath
 New path
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: TargetDN
 
 Required: True
 Position: 2

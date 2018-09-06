@@ -7,8 +7,8 @@ Get details about workflow tickets
 
 ### DN
 ```
-Set-TppWorkflowStatus -CertificateDN <String[]> -Status <String> [-Explanation <String>]
- [-ScheduledStart <DateTime>] [-ScheduledStop <DateTime>] [-TppSession <TppSession>] [<CommonParameters>]
+Set-TppWorkflowStatus -Path <String[]> -Status <String> [-Explanation <String>] [-ScheduledStart <DateTime>]
+ [-ScheduledStop <DateTime>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### Guid
@@ -24,7 +24,7 @@ Get details about workflow tickets via a certificate DN or a ticket GUID directl
 
 ### EXAMPLE 1
 ```
-Get-TppWorkflowDetail -DN '\VED\myapp.company.com'
+Get-TppWorkflowDetail -Path '\VED\myapp.company.com'
 ```
 
 Get details for 1 certificate
@@ -38,13 +38,13 @@ Get ticket details for multiple certificates
 
 ## PARAMETERS
 
-### -CertificateDN
-{{Fill CertificateDN Description}}
+### -Path
+Path to the certificate
 
 ```yaml
 Type: String[]
 Parameter Sets: DN
-Aliases: DN
+Aliases: DN, CertificateDN
 
 Required: True
 Position: Named
