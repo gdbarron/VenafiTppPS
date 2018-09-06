@@ -1,30 +1,41 @@
 # Get-TppIdentityAttribute
 
 ## SYNOPSIS
-Get attribute values for TPP objects
+Get attribute values for TPP identity objects
 
 ## SYNTAX
 
 ```
-Get-TppIdentityAttribute [-PrefixedUniversalId] <String[]> [-Attribute] <String[]> [[-TppSession] <TppSession>]
- [<CommonParameters>]
+Get-TppIdentityAttribute [-PrefixedUniversalId] <String[]> [[-Attribute] <String[]>]
+ [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Get attribute values for TPP identity objects
+Get attribute values for TPP identity objects.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:1234567890olikujyhtgrfedwsqa' -Attribute 'surname'
+Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:1234567890olikujyhtgrfedwsqa' | format-list
+```
+
+PrefixedUniversalId : AD+mydomain.com:1234567890olikujyhtgrfedwsqa
+Attribute           : @{FullName=CN=greg,OU=Users,DC=mydomain,DC=com; IsContainer=False; IsGroup=False; Name=greg; Prefix=AD+mydomain.com;
+                      PrefixedName=AD+mydomain.com:greg; PrefixedUniversal=AD+mydomain.com:1234567890olikujyhtgrfedwsqa; Universal=1234567890olikujyhtgrfedwsqa}
+
+Get basic attributes
+
+### EXAMPLE 2
+```
+Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:1234567890olikujyhtgrfedwsqa' -Attribute 'Surname'
 ```
 
 PrefixedUniversalId                              Attribute
 -------------------                              ---------
-AD+mydomain.com:1234567890olikujyhtgrfedwsqa {@{Name=surname; Value=Brownstein}}
+AD+mydomain.com:1234567890olikujyhtgrfedwsqa     @{Surname=Brownstein}
 
-Get Surname attribute for specific user
+Get specific attribute for user
 
 ## PARAMETERS
 
@@ -45,15 +56,14 @@ Accept wildcard characters: False
 ```
 
 ### -Attribute
-Retrieve identity attribute values for the users and groups. 
-Attributes include Group Membership, Name, Internet Email Address, Given Name, Surname.
+Retrieve identity attribute values for the users and groups.
 
 ```yaml
 Type: String[]
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: 2
 Default value: None
 Accept pipeline input: False
@@ -95,4 +105,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppIdentityAttribute.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppIdentityAttribute.ps1)
 
 [https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Readattribute.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____7](https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Readattribute.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____7)
+
+[https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Validate.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____9](https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Validate.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____9)
 

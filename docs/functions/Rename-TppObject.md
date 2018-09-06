@@ -6,7 +6,7 @@ Rename an object of any type
 ## SYNTAX
 
 ```
-Rename-TppObject [-SourceDN] <String> [-NewName] <String> [[-TppSession] <TppSession>] [<CommonParameters>]
+Rename-TppObject [-Path] <String> [-NewName] <String> [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -16,20 +16,20 @@ Rename an object of any type
 
 ### EXAMPLE 1
 ```
-Rename-TppObject -DN '\VED\Policy\My Devices\OldDeviceName' -NewName 'NewDeviceName'
+Rename-TppObject -Path '\VED\Policy\My Devices\OldDeviceName' -NewName 'NewDeviceName'
 ```
 
 Rename device
 
 ## PARAMETERS
 
-### -SourceDN
-{{Fill SourceDN Description}}
+### -Path
+Full path to an object in TPP
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: SourceDN
 
 Required: True
 Position: 1
