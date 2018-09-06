@@ -1,15 +1,15 @@
 <#
 .SYNOPSIS
-Get attribute values for TPP objects
+Get attribute values for TPP identity objects
 
 .DESCRIPTION
-Get attribute values for TPP identity objects
+Get attribute values for TPP identity objects.
 
 .PARAMETER PrefixedUniversalId
 The id that represents the user or group.  Use Get-TppIdentity to get the id.
 
 .PARAMETER Attribute
-Retrieve identity attribute values for the users and groups.  Attributes include Group Membership, Name, Internet Email Address, Given Name, Surname.
+Retrieve identity attribute values for the users and groups.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -21,12 +21,20 @@ PrefixedUniversalId
 PSCustomObject with the properties PrefixedUniversalId and Attribute
 
 .EXAMPLE
-Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:1234567890olikujyhtgrfedwsqa' -Attribute 'surname'
+Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:1234567890olikujyhtgrfedwsqa' | format-list
+PrefixedUniversalId : AD+mydomain.com:1234567890olikujyhtgrfedwsqa
+Attribute           : @{FullName=CN=greg,OU=Users,DC=mydomain,DC=com; IsContainer=False; IsGroup=False; Name=greg; Prefix=AD+mydomain.com;
+                      PrefixedName=AD+mydomain.com:greg; PrefixedUniversal=AD+mydomain.com:1234567890olikujyhtgrfedwsqa; Universal=1234567890olikujyhtgrfedwsqa}
+
+Get basic attributes
+
+.EXAMPLE
+Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:1234567890olikujyhtgrfedwsqa' -Attribute 'Surname'
 PrefixedUniversalId                              Attribute
 -------------------                              ---------
-AD+mydomain.com:1234567890olikujyhtgrfedwsqa {@{Name=surname; Value=Brownstein}}
+AD+mydomain.com:1234567890olikujyhtgrfedwsqa     @{Surname=Brownstein}
 
-Get Surname attribute for specific user
+Get specific attribute for user
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppIdentityAttribute/
@@ -36,6 +44,9 @@ https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppId
 
 .LINK
 https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Readattribute.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____7
+
+.LINK
+https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Validate.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____9
 
 #>
 function Get-TppIdentityAttribute {
@@ -50,8 +61,7 @@ function Get-TppIdentityAttribute {
         [Alias('PrefixedUniversal')]
         [string[]] $PrefixedUniversalId,
 
-        [Parameter(Mandatory)]
-        [ValidateSet('Group Membership', 'Name', 'Internet Email Address', 'Given Name', 'Surname')]
+        [Parameter()]
         [string[]] $Attribute,
 
         [Parameter()]
@@ -64,13 +74,17 @@ function Get-TppIdentityAttribute {
         $params = @{
             TppSession = $TppSession
             Method     = 'Post'
-            UriLeaf    = 'Identity/ReadAttribute'
+            UriLeaf    = 'Identity/Validate'
             Body       = @{
-                'ID'            = @{
+                'ID' = @{
                     PrefixedUniversal = 'placeholder'
                 }
-                'AttributeName' = 'placeholder'
             }
+        }
+
+        if ( $PSBoundParameters.ContainsKey('Attribute') ) {
+            $params.UriLeaf = 'Identity/ReadAttribute'
+            $params.Body.Add('AttributeName', 'placeholder')
         }
     }
 
@@ -80,18 +94,30 @@ function Get-TppIdentityAttribute {
 
             $thisId = $_
 
-            $attribsOut = $Attribute.ForEach{
-                $params.Body.AttributeName = $_
-                $params.Body.ID.PrefixedUniversal = $thisId
+            if ( -not (Test-TppIdentity -PrefixedUniversalId $thisId -ExistOnly) ) {
+                Write-Error "Id $thisId does not exist"
+                Continue
+            }
 
-                $response = Invoke-TppRestMethod @params
+            $params.Body.ID.PrefixedUniversal = $thisId
 
-                if ( $response.Attributes ) {
-                    [PSCustomObject] @{
-                        Name  = $_
-                        Value = $response.Attributes[0]
-                    }
+            if ( $PSBoundParameters.ContainsKey('Attribute') ) {
+
+                $attribHash = @{}
+
+                $Attribute.ForEach{
+                    $params.Body.AttributeName = $_
+
+                    $response = Invoke-TppRestMethod @params
+
+                    $attribHash.Add($_, $response.Attributes[0])
                 }
+
+                $attribsOut = [PSCustomObject] $attribHash
+
+            } else {
+                $response = Invoke-TppRestMethod @params
+                $attribsOut = $response.Id
             }
 
             [PSCustomObject] @{

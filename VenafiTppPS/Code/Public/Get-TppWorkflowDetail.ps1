@@ -5,7 +5,7 @@ Get details about workflow tickets
 .DESCRIPTION
 Get details about workflow tickets via a certificate DN or a ticket GUID directly
 
-.PARAMETER DN
+.PARAMETER Path
 Path to the certificate
 
 .PARAMETER Guid
@@ -32,7 +32,7 @@ PSCustomObject with the following properties:
     Updated: The date/time that the ticket was last updated.
 
 .EXAMPLE
-Get-TppWorkflowDetail -DN '\VED\myapp.company.com'
+Get-TppWorkflowDetail -Path '\VED\myapp.company.com'
 Get details for 1 certificate
 
 .EXAMPLE
@@ -54,10 +54,10 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function Get-TppWorkflowDetail {
 
-    [CmdletBinding(DefaultParameterSetName = 'DN')]
+    [CmdletBinding(DefaultParameterSetName = 'Path')]
     param (
 
-        [Parameter(Mandatory, ParameterSetName = 'DN', ValueFromPipeline)]
+        [Parameter(Mandatory, ParameterSetName = 'Path', ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -66,8 +66,8 @@ function Get-TppWorkflowDetail {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [Alias('DN')]
-        [String[]] $CertificateDN,
+        [Alias('DN', 'CertificateDN')]
+        [String[]] $Path,
 
         [Parameter(Mandatory, ParameterSetName = 'GUID')]
         [ValidateNotNullOrEmpty()]
@@ -86,9 +86,9 @@ function Get-TppWorkflowDetail {
         Write-Verbose $PsCmdlet.ParameterSetName
 
         Switch ($PsCmdlet.ParameterSetName)	{
-            'DN' {
+            'Path' {
                 # DN was provided, go get the existing ticket guids
-                $GuidToProcess = foreach ($thisDn in $CertificateDN) {
+                $GuidToProcess = foreach ($thisDn in $Path) {
 
                     $params = @{
                         TppSession = $TppSession

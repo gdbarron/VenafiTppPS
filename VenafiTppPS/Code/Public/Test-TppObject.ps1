@@ -5,32 +5,37 @@ Test if an object exists
 .DESCRIPTION
 Provided with either a DN path or GUID, find out if an object exists.
 
-.PARAMETER DN
+.PARAMETER Path
 DN path to object.  Provide either this or Guid.  This is the default if both are provided.
 
 .PARAMETER Guid
-Guid which represents a unqiue object  Provide either this or DN.
+Guid which represents a unqiue object.  Provide either this or Path.
 
 .PARAMETER ExistOnly
-Only return true/false instead of Object DN/Guid and existence true/false.  Helpful when just validating 1 object.
+Only return boolean instead of Object and Exists list.  Helpful when validating just 1 object.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-DN or Guid.  The default is DN, but both are of type string.
+Path or Guid.
 
 .OUTPUTS
 PSCustomObject will be returned with properties 'Object', a System.String, and 'Exists', a System.Boolean.
 
 .EXAMPLE
-$multDNs | Test-TppObjectExist
+$multDNs | Test-TppObject
 Object                    Exists
 --------                  -----
 \VED\Policy\My folder1    True
 \VED\Policy\My folder2    False
 
-Test for existence by DN
+Test for existence by Path
+
+.EXAMPLE
+Test-TppObject -Path '\VED\Policy\My folder' -ExistOnly
+
+Retrieve existence for only one object
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/
@@ -55,7 +60,8 @@ function Test-TppObject {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [string[]] $DN,
+        [Alias('DN')]
+        [string[]] $Path,
 
         [Parameter(Mandatory, ParameterSetName = 'GUID', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
@@ -73,22 +79,38 @@ function Test-TppObject {
 
         $params = @{
             TppSession = $TppSession
-            Method = 'Post'
-            UriLeaf = 'config/IsValid'
-            Body = @{}
+            Method     = 'Post'
+            UriLeaf    = 'config/IsValid'
+            Body       = @{}
         }
     }
 
     process {
 
-        foreach ( $thisValue in $PsBoundParameters[$PsCmdlet.ParameterSetName] ) {
-
-            if ( $PsCmdlet.ParameterSetName -eq 'GUID') {
-                $thisValue = "{$thisValue}"
+        Switch ($PsCmdlet.ParameterSetName)	{
+            'DN' {
+                $paramSetValue = $Path
             }
 
-            $params.Body = @{
-                ("Object{0}" -f $PsCmdlet.ParameterSetName) = $thisValue
+            'GUID' {
+                $paramSetValue = $Guid
+            }
+        }
+
+        foreach ( $thisValue in $paramSetValue ) {
+
+            Switch ($PsCmdlet.ParameterSetName)	{
+                'DN' {
+                    $params.Body = @{
+                        'ObjectDN' = $thisValue
+                    }
+                }
+
+                'GUID' {
+                    $params.Body = @{
+                        'ObjectGUID' = "{$thisValue}"
+                    }
+                }
             }
 
             $response = Invoke-TppRestMethod @params

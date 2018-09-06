@@ -5,7 +5,7 @@ Add a new policy folder
 .DESCRIPTION
 Add a new policy folder
 
-.PARAMETER PolicyDN
+.PARAMETER Path
 DN path to the new policy
 
 .PARAMETER Description
@@ -51,7 +51,8 @@ function New-TppPolicy {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [string] $PolicyDN,
+        [Alias('PolicyDN')]
+        [string] $Path,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
@@ -64,7 +65,7 @@ function New-TppPolicy {
     $TppSession.Validate()
 
     $params = @{
-        DN    = $PolicyDN
+        DN    = $Path
         Class = 'Policy'
     }
 
