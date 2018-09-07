@@ -7,12 +7,12 @@ Get attributes for a given object
 
 ### NonEffectivePolicy
 ```
-Get-TppAttribute -Path <String[]> [-AttributeName <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppAttribute -Path <String[]> [-Attribute <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### EffectivePolicy
 ```
-Get-TppAttribute -Path <String[]> -AttributeName <String[]> [-EffectivePolicy] [-TppSession <TppSession>]
+Get-TppAttribute -Path <String[]> -Attribute <String[]> [-EffectivePolicy] [-TppSession <TppSession>]
  [<CommonParameters>]
 ```
 
@@ -59,17 +59,17 @@ Aliases: DN
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: True (ByPropertyName)
+Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
-### -AttributeName
-Only retrieve the value/values for this attribute
+### -Attribute
+{{Fill Attribute Description}}
 
 ```yaml
 Type: String[]
 Parameter Sets: NonEffectivePolicy
-Aliases:
+Aliases: AttributeName
 
 Required: False
 Position: Named
@@ -81,7 +81,7 @@ Accept wildcard characters: False
 ```yaml
 Type: String[]
 Parameter Sets: EffectivePolicy
-Aliases:
+Aliases: AttributeName
 
 Required: True
 Position: Named
