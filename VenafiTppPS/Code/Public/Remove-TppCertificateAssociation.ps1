@@ -142,7 +142,7 @@ function Remove-TppCertificateAssociation {
 
             try {
                 if ( $PSCmdlet.ShouldProcess($thisCertPath, $shouldProcessAction) ) {
-                    $response = Invoke-TppRestMethod @params
+                    $null = Invoke-TppRestMethod @params
                 }
             } catch {
                 $myError = $_.ToString() | ConvertFrom-Json
