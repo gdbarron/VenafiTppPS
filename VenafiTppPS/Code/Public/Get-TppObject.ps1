@@ -5,8 +5,11 @@ Find objects by DN path, class, or pattern
 .DESCRIPTION
 Find objects by DN path, class, or pattern.
 
+.PARAMETER Path
+The path to start our search.
+
 .PARAMETER Class
-Single class name to search.  To provide a list, use Classes.
+1 or more classes to search for
 
 .PARAMETER Pattern
 A pattern to match against object attribute values:
@@ -16,18 +19,11 @@ A pattern to match against object attribute values:
 - To list DNs with similar names, prepend an asterisk. For example, *est.MyCompany.net, counts Test.MyCompany.net and West.MyCompany.net.
 You can also use both literals and wildcards in a pattern.
 
-.PARAMETER AttributeName
+.PARAMETER Attribute
 A list of attribute names to limit the search against.  Only valid when searching by pattern.
-
-.PARAMETER Path
-The path to start our search.  If not provided, the root, \VED, is used.
 
 .PARAMETER Recursive
 Searches the subordinates of the object specified in Path.
-Not supported when searching Classes or by Pattern.
-
-.PARAMETER Folder
-Treat path as root folder for search instead of the end of the path as an item wtihin the parent.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -47,36 +43,36 @@ PSCustomObject with the following properties:
     TypeName: the class name of the object.
 
 .EXAMPLE
-Get-TppObject -Recursive
-Get all objects.  The default path is \VED and recursive option will search all subfolders.
-
-.EXAMPLE
 Get-TppObject -Path '\VED\Policy'
-Get the Policy item with the VED folder
+Get all objects in the root of a specific folder
 
 .EXAMPLE
-Get-TppObject -Path '\VED\Policy' -Folder
-Get items within the policy folder
+Get-TppObject -Path '\VED\Policy\My Folder' -Recursive
+Get all objects in a folder and subfolders
+
+.EXAMPLE
+Get-TppObject -Path '\VED\Policy' -Pattern 'test'
+Get items in a specific folder filtering the path
 
 .EXAMPLE
 Get-TppObject -Class 'iis6'
 Get all objects of the type iis6
 
 .EXAMPLE
+Get-TppObject -Class 'iis6' -Pattern 'test*'
+Get all objects of the type iis6 filtering the path
+
+.EXAMPLE
 Get-TppObject -Class 'iis6', 'capi'
 Get all objects of the type iis6 or capi
 
 .EXAMPLE
-Get-TppObject -Path '\VED\Policy\My Policy Folder' -Recursive
-Get all objects in 'My Policy Folder' and subfolders
+Get-TppObject -Pattern 'test*'
+Find all objects matching the pattern
 
 .EXAMPLE
-Get-TppObject -Path '\VED\Policy\My Policy Folder' -Pattern 'MyDevice'
-Get all objects in 'My Policy Folder' that match the name MyDevice.  Only search the folder "My Policy Folder", not subfolders.
-
-.EXAMPLE
-Get-TppObject -Pattern 'MyDevice' -Recursive
-Get all objects that match the name MyDevice.  As starting DN isn't provided, this will search all.
+Get-TppObject -Pattern 'test*' -Attribute 'Consumers'
+Find all objects where the specific attribute matches the pattern
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/
@@ -95,44 +91,35 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function Get-TppObject {
-    [CmdletBinding(DefaultParameterSetName = 'FindByDN')]
+    [CmdletBinding()]
     param (
 
-        [Parameter(ParameterSetName = 'FindByDN')]
-        [Parameter(ParameterSetName = 'FindByClass')]
+        [Parameter(Mandatory, ParameterSetName = 'FindByPath')]
+        [Parameter(Mandatory, ParameterSetName = 'FindByClassAndPath')]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( {
-                if ( $_ | Test-TppDnPath ) {
-                    $true
-                } else {
-                    throw "'$_' is not a valid DN path"
-                }
-            })]
         [Alias('DN')]
-        [String] $Path = '\VED',
+        [String] $Path,
 
         [Parameter(Mandatory, ParameterSetName = 'FindByClass')]
+        [Parameter(Mandatory, ParameterSetName = 'FindByClassAndPath')]
         [ValidateNotNullOrEmpty()]
         [String[]] $Class,
 
         [Parameter(Mandatory, ParameterSetName = 'FindByPattern')]
-        [Parameter(ParameterSetName = 'FindByDN')]
+        [Parameter(ParameterSetName = 'FindByPath')]
         [Parameter(ParameterSetName = 'FindByClass')]
+        [Parameter(ParameterSetName = 'FindByClassAndPath')]
         [ValidateNotNullOrEmpty()]
         [String] $Pattern,
 
         [Parameter(ParameterSetName = 'FindByPattern')]
         [ValidateNotNullOrEmpty()]
-        [String[]] $AttributeName,
+        [Alias('AttributeName')]
+        [String[]] $Attribute,
 
-        [Parameter(ParameterSetName = 'FindByDN')]
-        [Parameter(ParameterSetName = 'FindByClass')]
+        [Parameter(ParameterSetName = 'FindByPath')]
+        [Parameter(ParameterSetName = 'FindByClassAndPath')]
         [switch] $Recursive,
-
-        [Parameter(ParameterSetName = 'FindByDN')]
-        [Parameter(ParameterSetName = 'FindByClass')]
-        [Parameter(ParameterSetName = 'FindByPattern')]
-        [switch] $Folder,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -152,69 +139,58 @@ function Get-TppObject {
     Switch ($PsCmdlet.ParameterSetName)	{
         'FindByPattern' {
             $params.UriLeaf = 'config/find'
-            $params.Body = @{Pattern = $Pattern}
         }
 
-        'FindByDN' {
+        'FindByPath' {
             $params.UriLeaf = 'config/enumerate'
         }
 
-        'FindByClass' {
+        {$_ -in 'FindByClass', 'FindByClassAndPath'} {
             $params.UriLeaf = 'config/FindObjectsOfClass'
-            if ( $Class.Count -eq 1 ) {
-                $params.Body = @{Class = $Class[0]}
-            } else {
-                $params.Body = @{Classes = $Class}
-            }
         }
     }
-
-    $byFolder = $false
 
     # add filters
-    switch ($PSBoundParameters.Keys) {
-        'Pattern' {
-            $params.Body.Add( 'Pattern', $Pattern )
-            $byFolder = $true
-        }
-
-        'AttributeName' {
-            $params.Body.Add( 'AttributeNames', $AttributeName )
-        }
-
-        'Recursive' {
-            $params.Body.Add( 'Recursive', 'true' )
-            $byFolder = $true
-        }
-
-        'Folder' {
-            $byFolder = $true
-        }
+    if ( $PSBoundParameters.ContainsKey('Pattern') ) {
+        $params.Body.Add( 'Pattern', $Pattern )
     }
 
-    # \ved is top level so need to get subitems
-    if ( $Path -eq '\VED' ) {
-        $byFolder = $true
+    if ( $PSBoundParameters.ContainsKey('Attribute') ) {
+        $params.Body.Add( 'AttributeNames', $Attribute )
     }
 
-    if ( $byFolder ) {
-        $params.Body.ObjectDN = $Path
-        $objectName = $null
+    if ( $PSBoundParameters.ContainsKey('Recursive') ) {
+        $params.Body.Add( 'Recursive', 'true' )
+    }
+
+    if ( $PSBoundParameters.ContainsKey('Path') ) {
+        $params.Body.Add( 'ObjectDN', $Path )
+    }
+
+    if ( $PSBoundParameters.ContainsKey('Class') ) {
+        # the rest api doesn't have the ability to search for multiple classes and path at the same time
+        # loop through classes to get around this
+        $params.Body.Add('Class', '')
+        $Class.ForEach{
+            $thisClass = $_
+            $params.Body.Class = $thisClass
+
+            $response = Invoke-TppRestMethod @params
+
+            if ( $response.Result -eq [ConfigResult]::Success ) {
+                $response.Objects
+            } else {
+                Write-Error ('Retrieval of class {0} failed with error {1}' -f $thisClass, $response.Error)
+                Continue
+            }
+        }
     } else {
-        $params.Body.Add( 'ObjectDN', (Split-Path $Path -Parent) )
-        $objectName = Split-Path $Path -Leaf
-    }
+        $response = Invoke-TppRestMethod @params
 
-    $response = Invoke-TppRestMethod @params
-
-    if ( $response.Result -eq [ConfigResult]::Success ) {
-        if ( $objectName ) {
-            $response.Objects.Where{$_.Name -eq $objectName}
-        } else {
+        if ( $response.Result -eq [ConfigResult]::Success ) {
             $response.Objects
+        } else {
+            Write-Error $response.Error
         }
-    } else {
-        throw $response.Error
     }
-
 }
