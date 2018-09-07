@@ -12,7 +12,7 @@
 RootModule = 'VenafiTppPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.5.1'
+ModuleVersion = '0.5.2'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -73,10 +73,10 @@ FunctionsToExport = 'Get-TppAttribute', 'Get-TppCertificateDetail', 'Get-TppCust
                'Get-TppIdentity', 'Get-TppIdentityAttribute', 'Get-TppLog', 
                'Get-TppObject', 'Get-TppPermission', 'Get-TppWorkflowDetail', 
                'Move-TppObject', 'New-TppCapiApplication', 'New-TppCertificate', 
-               'New-TppPolicy', 'New-TppSession', 'Rename-TppObject', 
-               'Restore-TppCertificate', 'Revoke-TppCertificate', 'Set-TppAttribute', 
-               'Set-TppPermission', 'Set-TppWorkflowStatus', 'Test-TppIdentity', 
-               'Test-TppObject'
+               'New-TppPolicy', 'New-TppSession', 'Remove-TppCertificateAssociation', 
+               'Rename-TppObject', 'Restore-TppCertificate', 'Revoke-TppCertificate', 
+               'Set-TppAttribute', 'Set-TppPermission', 'Set-TppWorkflowStatus', 
+               'Test-TppIdentity', 'Test-TppObject'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
@@ -114,7 +114,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '- refactor Get-TppObject'
+        ReleaseNotes = '- add Remove-TppCertificateAssociation'
 
         # Prerelease string of this module
         # Prerelease = ''

@@ -23,6 +23,7 @@ pages:
     - New-TppCertificate: functions/New-TppCertificate.md
     - New-TppPolicy: functions/New-TppPolicy.md
     - New-TppSession: functions/New-TppSession.md
+    - Remove-TppCertificateAssociation: functions/Remove-TppCertificateAssociation.md
     - Rename-TppObject: functions/Rename-TppObject.md
     - Restore-TppCertificate: functions/Restore-TppCertificate.md
     - Revoke-TppCertificate: functions/Revoke-TppCertificate.md
