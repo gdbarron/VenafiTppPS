@@ -1,1 +1,1 @@
-- refactor Get-TppObject
+- add Remove-TppCertificateAssociation
