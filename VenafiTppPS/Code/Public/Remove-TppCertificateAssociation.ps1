@@ -3,7 +3,8 @@
 Remove certificate associations
 
 .DESCRIPTION
-Disassociates one or more Application objects and corresponding device objects from an existing certificate
+Disassociates one or more Application objects from an existing certificate.
+Optionally, you can remove the application objects and corresponding orphaned device objects that no longer have any applications
 
 .PARAMETER Path
 DN path of one or more certificates to process
