@@ -5,22 +5,25 @@ Find objects by DN path, class, or pattern
 
 ## SYNTAX
 
-### FindByDN (Default)
+### FindByClassAndPath
 ```
-Get-TppObject [-Path <String>] [-Pattern <String>] [-Recursive] [-Folder] [-TppSession <TppSession>]
+Get-TppObject -Path <String> -Class <String[]> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>]
  [<CommonParameters>]
+```
+
+### FindByPath
+```
+Get-TppObject -Path <String> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### FindByClass
 ```
-Get-TppObject [-Path <String>] -Class <String[]> [-Pattern <String>] [-Recursive] [-Folder]
- [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppObject -Class <String[]> [-Pattern <String>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### FindByPattern
 ```
-Get-TppObject -Pattern <String> [-AttributeName <String[]>] [-Folder] [-TppSession <TppSession>]
- [<CommonParameters>]
+Get-TppObject -Pattern <String> [-Attribute <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,25 +33,24 @@ Find objects by DN path, class, or pattern.
 
 ### EXAMPLE 1
 ```
-Get-TppObject -Recursive
-```
-
-Get all objects. 
-The default path is \VED and recursive option will search all subfolders.
-
-### EXAMPLE 2
-```
 Get-TppObject -Path '\VED\Policy'
 ```
 
-Get the Policy item with the VED folder
+Get all objects in the root of a specific folder
+
+### EXAMPLE 2
+```
+Get-TppObject -Path '\VED\Policy\My Folder' -Recursive
+```
+
+Get all objects in a folder and subfolders
 
 ### EXAMPLE 3
 ```
-Get-TppObject -Path '\VED\Policy' -Folder
+Get-TppObject -Path '\VED\Policy' -Pattern 'test'
 ```
 
-Get items within the policy folder
+Get items in a specific folder filtering the path
 
 ### EXAMPLE 4
 ```
@@ -59,59 +61,55 @@ Get all objects of the type iis6
 
 ### EXAMPLE 5
 ```
+Get-TppObject -Class 'iis6' -Pattern 'test*'
+```
+
+Get all objects of the type iis6 filtering the path
+
+### EXAMPLE 6
+```
 Get-TppObject -Class 'iis6', 'capi'
 ```
 
 Get all objects of the type iis6 or capi
 
-### EXAMPLE 6
-```
-Get-TppObject -Path '\VED\Policy\My Policy Folder' -Recursive
-```
-
-Get all objects in 'My Policy Folder' and subfolders
-
 ### EXAMPLE 7
 ```
-Get-TppObject -Path '\VED\Policy\My Policy Folder' -Pattern 'MyDevice'
+Get-TppObject -Pattern 'test*'
 ```
 
-Get all objects in 'My Policy Folder' that match the name MyDevice. 
-Only search the folder "My Policy Folder", not subfolders.
+Find all objects matching the pattern
 
 ### EXAMPLE 8
 ```
-Get-TppObject -Pattern 'MyDevice' -Recursive
+Get-TppObject -Pattern 'test*' -Attribute 'Consumers'
 ```
 
-Get all objects that match the name MyDevice. 
-As starting DN isn't provided, this will search all.
+Find all objects where the specific attribute matches the pattern
 
 ## PARAMETERS
 
 ### -Path
-The path to start our search. 
-If not provided, the root, \VED, is used.
+The path to start our search.
 
 ```yaml
 Type: String
-Parameter Sets: FindByDN, FindByClass
+Parameter Sets: FindByClassAndPath, FindByPath
 Aliases: DN
 
-Required: False
+Required: True
 Position: Named
-Default value: \VED
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Class
-Single class name to search. 
-To provide a list, use Classes.
+1 or more classes to search for
 
 ```yaml
 Type: String[]
-Parameter Sets: FindByClass
+Parameter Sets: FindByClassAndPath, FindByClass
 Aliases:
 
 Required: True
@@ -134,7 +132,7 @@ You can also use both literals and wildcards in a pattern.
 
 ```yaml
 Type: String
-Parameter Sets: FindByDN, FindByClass
+Parameter Sets: FindByClassAndPath, FindByPath, FindByClass
 Aliases:
 
 Required: False
@@ -156,14 +154,14 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -AttributeName
+### -Attribute
 A list of attribute names to limit the search against. 
 Only valid when searching by pattern.
 
 ```yaml
 Type: String[]
 Parameter Sets: FindByPattern
-Aliases:
+Aliases: AttributeName
 
 Required: False
 Position: Named
@@ -174,26 +172,10 @@ Accept wildcard characters: False
 
 ### -Recursive
 Searches the subordinates of the object specified in Path.
-Not supported when searching Classes or by Pattern.
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: FindByDN, FindByClass
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Folder
-Treat path as root folder for search instead of the end of the path as an item wtihin the parent.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
+Parameter Sets: FindByClassAndPath, FindByPath
 Aliases:
 
 Required: False
