@@ -61,8 +61,8 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 function Get-TppAttribute {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy', ValueFromPipelineByPropertyName)]
-        [Parameter(Mandatory, ParameterSetName = 'NonEffectivePolicy', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy', ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'NonEffectivePolicy', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -77,7 +77,8 @@ function Get-TppAttribute {
         [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy')]
         [Parameter(ParameterSetName = 'NonEffectivePolicy')]
         [ValidateNotNullOrEmpty()]
-        [String[]] $AttributeName,
+        [Alias('AttributeName')]
+        [String[]] $Attribute,
 
         [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy')]
         [Switch] $EffectivePolicy,
@@ -89,8 +90,8 @@ function Get-TppAttribute {
     begin {
         $TppSession.Validate()
 
-        if ( $AttributeName ) {
-            if ( $EffectivePolicy ) {
+        if ( $PSBoundParameters.ContainsKey('Attribute') ) {
+            if ( $PSBoundParameters.ContainsKey('EffectivePolicy') ) {
                 $uriLeaf = 'config/ReadEffectivePolicy'
             } else {
                 $uriLeaf = 'config/read'
@@ -98,6 +99,12 @@ function Get-TppAttribute {
         } else {
             $uriLeaf = 'config/readall'
         }
+        # if ( $AttributeName ) {
+        #     if ( $EffectivePolicy ) {
+        #         $uriLeaf = 'config/ReadEffectivePolicy'
+        #     } else {
+        #         $uriLeaf = 'config/read'
+        #     }
 
         $baseParams = @{
             TppSession = $TppSession
@@ -116,7 +123,7 @@ function Get-TppAttribute {
             $baseParams.Body['ObjectDN'] = $thisDN
 
             # if specifying attribute name(s), it's a different rest api
-            if ( $AttributeName ) {
+            if ( $PSBoundParameters.ContainsKey('Attribute') ) {
 
                 $configValues = @()
 
@@ -125,7 +132,9 @@ function Get-TppAttribute {
 
                 # get the attribute values one by one as there is no
                 # api which allows passing a list
-                foreach ( $thisAttribute in $AttributeName ) {
+                $Attribute.ForEach{
+
+                    $thisAttribute = $_
 
                     $params = $baseParams.Clone()
                     $params.Body += @{
