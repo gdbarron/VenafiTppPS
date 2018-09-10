@@ -35,7 +35,7 @@ New-TppPolicy -PolicyDN '\VED\Policy\Existing Policy Folder\New Policy Folder' -
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppPolicy/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/New-TppPolicy.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppPolicy.ps1
 
 #>
 function New-TppPolicy {
