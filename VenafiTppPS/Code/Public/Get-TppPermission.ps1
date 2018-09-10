@@ -49,11 +49,6 @@ Get users/groups permissioned to a policy folder
 
 .EXAMPLE
 Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Attribute 'Given Name','Surname'
-Guid                             PrefixedUniversalId                              Attribute
-----------                             -------------------                              ---------
-{1234abcd-g6g6-h7h7-faaf-f50cd6610cba} AD+mydomain.com:1234567890olikujyhtgrfedwsqa {@{Name=Given Name; Value=Greg}, @{Name=Surname; Value=Brownstein}}
-{1234abcd-g6g6-h7h7-faaf-f50cd6610cba} AD+mydomain.com:azsxdcfvgbhnjmlk09877654321 {@{Name=Given Name; Value=Greg}, @{Name=Surname; Value=Brownstein}}
-
 Get users/groups permissioned to a policy folder including identity attributes for those users/groups
 
 .EXAMPLE
@@ -76,7 +71,7 @@ Get effective permissions for users/groups on a specific policy folder
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppPermission/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppPermission.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppPermission.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____1

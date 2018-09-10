@@ -30,7 +30,7 @@ http://venafitppps.readthedocs.io/en/latest/functions/Rename-TppObject/
 http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Rename-TppObject.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Rename-TppObject.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-renameobject.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____36
