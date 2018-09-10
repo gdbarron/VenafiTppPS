@@ -31,7 +31,7 @@ Invoke-TppCertificateRenewal -CertificateDN '\VED\Policy\My folder\app.mycompany
 http://venafitppps.readthedocs.io/en/latest/functions/Restore-TppCertificate/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Restore-TppCertificate.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Restore-TppCertificate.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-renew.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____9
