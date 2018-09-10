@@ -78,7 +78,7 @@ Find all objects where the specific attribute matches the pattern
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppObject.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppObject.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-find.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____17

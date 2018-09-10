@@ -24,7 +24,7 @@ Get the most recent 10 log items
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppLog/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppLog.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppLog.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Log.php?tocpath=REST%20API%20reference%7CLog%20programming%20interfaces%7C_____1

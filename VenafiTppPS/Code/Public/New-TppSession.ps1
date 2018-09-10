@@ -58,7 +58,7 @@ Connect to the TPP server and return the session object
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppSession/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/New-TppSession.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppSession.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Authorize.php?TocPath=REST%20API%20reference|Authentication%20and%20API%20key%20programming%20interfaces|_____1

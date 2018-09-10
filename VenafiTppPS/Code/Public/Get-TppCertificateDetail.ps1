@@ -210,7 +210,7 @@ Get detailed certificate info on the first 5 certificates expiring before a cert
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppCertificateDetail/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppCertificateDetail.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppCertificateDetail.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Certificates.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____3

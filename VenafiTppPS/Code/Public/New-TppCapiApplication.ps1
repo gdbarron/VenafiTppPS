@@ -32,10 +32,10 @@ none
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppCapiApplication/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/New-TppCapiApplication.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppCapiApplication.ps1
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Set-TppAttribute.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Set-TppAttribute.ps1
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/
