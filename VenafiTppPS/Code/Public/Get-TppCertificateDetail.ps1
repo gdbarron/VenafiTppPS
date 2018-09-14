@@ -587,7 +587,7 @@ function Get-TppCertificateDetail {
                     if ( $PSBoundParameters.ContainsKey('Full') ) {
                         $response.Certificates | Get-TppCertificateDetail
                     } else {
-                        $response.Certificates
+                        $out = $response.Certificates
                     }
                 }
             }
@@ -595,10 +595,14 @@ function Get-TppCertificateDetail {
             'Full' {
                 $GUID.ForEach{
                     $params.UriLeaf = [System.Web.HttpUtility]::HtmlEncode("certificates/{$_}")
-                    Invoke-TppRestMethod @params
+                    $out = Invoke-TppRestMethod @params
                 }
             }
         }
-
+        $selectProps = @{
+            Property        = @{n = 'Path'; e = {$_.DN}}, @{n = 'Guid'; e = {[guid]$_.guid}}, '*'
+            ExcludeProperty = 'DN', 'GUID'
+        }
+        $out | Select-Object @selectProps
     }
 }
