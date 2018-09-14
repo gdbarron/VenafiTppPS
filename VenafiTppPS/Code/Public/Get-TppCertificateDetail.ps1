@@ -593,9 +593,9 @@ function Get-TppCertificateDetail {
             }
 
             'Full' {
-                $GUID.ForEach{
+                $out = $GUID.ForEach{
                     $params.UriLeaf = [System.Web.HttpUtility]::HtmlEncode("certificates/{$_}")
-                    $out = Invoke-TppRestMethod @params
+                    Invoke-TppRestMethod @params
                 }
             }
         }
