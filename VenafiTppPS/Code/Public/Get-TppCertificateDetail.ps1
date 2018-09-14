@@ -160,15 +160,17 @@ Guid
 
 .OUTPUTS
 ByPath and NoPath parameter sets returns a PSCustomObject with the following properties:
-    CreatedOn
-    DN
+    Path
     Guid
+    CreatedOn
     Name
     ParentDn
     SchemaClass
     _links
 
 Guid returns a PSCustomObject with the following properties:
+    Path
+    Guid
     CertificateAuthorityDN
     CertificateDetails
     Consumers
@@ -176,8 +178,6 @@ Guid returns a PSCustomObject with the following properties:
     CreatedOn
     CustomFields
     Description
-    DN
-    Guid
     ManagementType
     Name
     ParentDn

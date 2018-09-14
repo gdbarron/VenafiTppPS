@@ -34,7 +34,7 @@ None
 .OUTPUTS
 PSCustomObject with the following properties:
     AbsoluteGUID: The left-to-right concatenation of all of the GUIDs for all of the objects in the DN.
-    DN: The Distinguished Name (DN) of the object.
+    Path: The Distinguished Name (DN) of the object.
     GUID: The GUID that identifies the object.
     ID: The object identifier.
     Name: The Common Name (CN) of the object.
