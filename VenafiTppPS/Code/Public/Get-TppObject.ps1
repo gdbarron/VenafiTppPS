@@ -171,7 +171,7 @@ function Get-TppObject {
         # the rest api doesn't have the ability to search for multiple classes and path at the same time
         # loop through classes to get around this
         $params.Body.Add('Class', '')
-        $Class.ForEach{
+        $out = $Class.ForEach{
             $thisClass = $_
             $params.Body.Class = $thisClass
 
@@ -188,9 +188,24 @@ function Get-TppObject {
         $response = Invoke-TppRestMethod @params
 
         if ( $response.Result -eq [ConfigResult]::Success ) {
-            $response.Objects
+            $out = $response.Objects
         } else {
             Write-Error $response.Error
         }
     }
+
+    $out | Select-Object Name, TypeName,
+    @{
+        n = 'Path'
+        e = {
+            $_.DN
+        }
+    },
+    @{
+        n = 'Guid'
+        e = {
+            [guid] $_.GUID
+        }
+    },
+    Parent, AbsoluteGUID, Id, Revision
 }
