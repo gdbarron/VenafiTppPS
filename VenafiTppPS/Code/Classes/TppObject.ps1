@@ -3,7 +3,6 @@ class TppObject {
     [string] $Name
     [string] $TypeName
     [string] $Path
-    [string] $ParentPath
     [guid] $Guid
 
     [HashTable] ToHashtable() {
@@ -42,14 +41,12 @@ class TppObject {
         $this.TypeName = $TypeName
         $this.Path = $Path
         $this.Guid = $Guid
-        $this.ParentPath = $this.GetParentPath($Path)
     }
 
     TppObject ([string] $Path) {
         $info = ConvertTo-TppGuid -Path $Path -IncludeType
         $this.Path = $Path
         $this.Name = Split-Path $Path -Leaf
-        $this.ParentPath = $this.GetParentPath($Path)
         $this.Guid = $info.Guid
         $this.TypeName = $info.TypeName
     }
@@ -59,14 +56,13 @@ class TppObject {
         $this.Guid = $Guid
         $this.Name = Split-Path $info.Path -Leaf
         $this.Path = $info.Path
-        $this.ParentPath = $this.GetParentPath($info.Path)
         $this.TypeName = $info.TypeName
     }
 
-    hidden [string] GetParentPath ([string] $Path) {
-        $leafName = Split-Path $Path -Leaf
+    [string] ParentPath() {
+        $leafName = Split-Path $this.Path -Leaf
         # split-path -parent doesn't work on this path so use this workaround
-        return $Path.Replace(("\{0}" -f $leafName), "")
+        return $this.Path.Replace(("\{0}" -f $leafName), "")
     }
 
 }
