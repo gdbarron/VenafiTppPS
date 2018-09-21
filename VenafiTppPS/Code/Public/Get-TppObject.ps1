@@ -92,6 +92,7 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function Get-TppObject {
     [CmdletBinding()]
+    [OutputType( [TppObject] )]
     param (
 
         [Parameter(Mandatory, ParameterSetName = 'FindByPath')]
@@ -179,33 +180,30 @@ function Get-TppObject {
 
             if ( $response.Result -eq [ConfigResult]::Success ) {
                 $response.Objects
-            } else {
+            }
+            else {
                 Write-Error ('Retrieval of class {0} failed with error {1}' -f $thisClass, $response.Error)
                 Continue
             }
         }
-    } else {
+    }
+    else {
         $response = Invoke-TppRestMethod @params
 
         if ( $response.Result -eq [ConfigResult]::Success ) {
             $out = $response.Objects
-        } else {
+        }
+        else {
             Write-Error $response.Error
         }
     }
 
-    $out | Select-Object Name, TypeName,
-    @{
-        n = 'Path'
-        e = {
-            $_.DN
+    $out.ForEach{
+        [TppObject] @{
+            Name     = $_.Name
+            TypeName = $_.TypeName
+            Path     = $_.DN
+            Guid     = $_.Guid
         }
-    },
-    @{
-        n = 'Guid'
-        e = {
-            [guid] $_.GUID
-        }
-    },
-    Parent, AbsoluteGUID, Id, Revision
+    }
 }

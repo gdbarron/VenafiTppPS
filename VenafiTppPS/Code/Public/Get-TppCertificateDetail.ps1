@@ -231,7 +231,8 @@ function Get-TppCertificateDetail {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -388,7 +389,8 @@ function Get-TppCertificateDetail {
                 $enumValues = Get-EnumValues -EnumName 'CertificateStage'
                 if ( $_ -in $enumValues.Values ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
                 }
             })]
@@ -401,7 +403,8 @@ function Get-TppCertificateDetail {
                 $enumValues = Get-EnumValues -EnumName 'CertificateStage'
                 if ( $_ -in $enumValues.Values ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
                 }
             })]
@@ -414,7 +417,8 @@ function Get-TppCertificateDetail {
                 $enumValues = Get-EnumValues -EnumName 'CertificateStage'
                 if ( $_ -in $enumValues.Values ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
                 }
             })]
@@ -459,7 +463,8 @@ function Get-TppCertificateDetail {
                     'Path' {
                         if ( $PSBoundParameters['Recursive'] ) {
                             $params.Body.Add( 'ParentDnRecursive', $Path )
-                        } else {
+                        }
+                        else {
                             $params.Body.Add( 'ParentDn', $Path )
                         }
                     }
@@ -586,8 +591,16 @@ function Get-TppCertificateDetail {
                 if ( $response ) {
                     if ( $PSBoundParameters.ContainsKey('Full') ) {
                         $response.Certificates | Get-TppCertificateDetail
-                    } else {
-                        $out = $response.Certificates
+                    }
+                    else {
+                        $response.Certificates.ForEach{
+                            [TppObject] @{
+                                Name     = $_.Name
+                                TypeName = $_.SchemaClass
+                                Path     = $_.DN
+                                Guid     = [guid] $_.Guid
+                            }
+                        }
                     }
                 }
             }
@@ -597,12 +610,32 @@ function Get-TppCertificateDetail {
                     $params.UriLeaf = [System.Web.HttpUtility]::HtmlEncode("certificates/{$_}")
                     Invoke-TppRestMethod @params
                 }
+
+                $selectProps = @{
+                    Property        = 
+                    @{
+                        n = 'Name'
+                        e = {$_.Name}
+                    },
+                    @{
+                        n = 'TypeName'
+                        e = {$_.SchemaClass}
+                    },
+                    @{
+                        n = 'Path'
+                        e = {$_.DN}
+                    }, @{
+                        n = 'Guid'
+                        e = {[guid]$_.guid}
+                    }, @{
+                        n = 'ParentPath'
+                        e = {$_.ParentDN}
+                    },
+                    '*'
+                    ExcludeProperty = 'DN', 'GUID', 'ParentDn', 'SchemaClass', 'Name'
+                }
+                $out | Select-Object @selectProps
             }
         }
-        $selectProps = @{
-            Property        = @{n = 'Path'; e = {$_.DN}}, @{n = 'Guid'; e = {[guid]$_.guid}}, '*'
-            ExcludeProperty = 'DN', 'GUID'
-        }
-        $out | Select-Object @selectProps
     }
 }
