@@ -66,14 +66,15 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function Revoke-TppCertificate {
-    [CmdletBinding(DefaultParameterSetName = 'CertificateDN')]
+    [CmdletBinding(DefaultParameterSetName = 'CertificateDN', SupportsShouldProcess, ConfirmImpact = 'High')]
     param (
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, ParameterSetName = 'CertificateDN')]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -123,6 +124,7 @@ function Revoke-TppCertificate {
                 $certValueToRevoke = @{
                     CertificateDN = $CertificateDN
                 }
+                $valueToRevoke = $CertificateDN
             }
 
             'Thumbprint' {
@@ -130,6 +132,7 @@ function Revoke-TppCertificate {
                 $certValueToRevoke = @{
                     Thumbprint = $Thumbprint
                 }
+                $valueToRevoke = $Thumbprint
             }
         }
 
@@ -153,7 +156,9 @@ function Revoke-TppCertificate {
             }
         }
 
-        $response = Invoke-TppRestMethod @params
+        if ( $PSCmdlet.ShouldProcess($valueToRevoke, 'Revoke certificate') ) {
+            $response = Invoke-TppRestMethod @params
+        }
 
         if ( $Wait ) {
             while (-not $response.Revoked) {
