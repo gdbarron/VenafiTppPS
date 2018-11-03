@@ -102,7 +102,7 @@ function Get-TppAttribute {
     begin {
 
         $TppSession.Validate()
-        
+
         if ( $PSBoundParameters.ContainsKey('Attribute') ) {
             if ( $PSBoundParameters.ContainsKey('EffectivePolicy') ) {
                 $uriLeaf = 'config/ReadEffectivePolicy'
@@ -114,7 +114,7 @@ function Get-TppAttribute {
         else {
             $uriLeaf = 'config/readall'
         }
-        
+
         $baseParams = @{
             TppSession = $TppSession
             Method     = 'Post'
@@ -124,9 +124,9 @@ function Get-TppAttribute {
             }
         }
     }
-    
+
     process {
-        
+
         switch ($PSCmdlet.ParameterSetName) {
             {$_ -in 'Path', 'EffectiveByPath'} {
                 $pathToProcess = $Path
@@ -138,7 +138,7 @@ function Get-TppAttribute {
         }
 
         foreach ($thisPath in $pathToProcess) {
-            
+
             $baseParams.Body['ObjectDN'] = $thisPath
 
             # if specifying attribute name(s), it's a different rest api
@@ -146,8 +146,8 @@ function Get-TppAttribute {
 
                 # get the attribute values one by one as there is no
                 # api which allows passing a list
-                [PSCustomObject] $configValues = foreach ($thisAttribute in $Attribute) {
-                
+                $configValues = foreach ($thisAttribute in $Attribute) {
+
                     $params = $baseParams.Clone()
                     $params.Body += @{
                         AttributeName = $thisAttribute
@@ -156,7 +156,7 @@ function Get-TppAttribute {
                     $response = Invoke-TppRestMethod @params
 
                     if ( $response ) {
-                        @{
+                        [PSCustomObject] @{
                             Name  = $thisAttribute
                             Value = $response.Values
                         }
@@ -177,6 +177,8 @@ function Get-TppAttribute {
             }
 
             if ( $configValues ) {
+
+                $configValues = @($configValues)
 
                 # convert custom field guids to names
                 $updatedConfigValues = foreach ($thisConfigValue in $configValues) {
