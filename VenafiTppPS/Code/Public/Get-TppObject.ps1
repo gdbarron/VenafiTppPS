@@ -32,15 +32,7 @@ Session object created from New-TppSession method.  The value defaults to the sc
 None
 
 .OUTPUTS
-PSCustomObject with the following properties:
-    AbsoluteGUID: The left-to-right concatenation of all of the GUIDs for all of the objects in the DN.
-    Path: The Distinguished Name (DN) of the object.
-    GUID: The GUID that identifies the object.
-    ID: The object identifier.
-    Name: The Common Name (CN) of the object.
-    Parent: The parent DN of the object.
-    Revision: The revision of the object.
-    TypeName: the class name of the object.
+TppObject
 
 .EXAMPLE
 Get-TppObject -Path '\VED\Policy'
