@@ -27,3 +27,6 @@ Export-ModuleMember -Function $publicFiles.Basename
 
 $Script:TppSession = New-Object 'TppSession'
 Export-ModuleMember -variable TppSession
+
+Set-Alias 'ConvertTo-TppDN' 'ConvertTo-TppPath'
+Export-ModuleMember -Alias *
