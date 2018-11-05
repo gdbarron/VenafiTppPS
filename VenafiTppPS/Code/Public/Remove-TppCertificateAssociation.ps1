@@ -6,6 +6,9 @@ Remove certificate associations
 Dissociates one or more Application objects from an existing certificate.
 Optionally, you can remove the application objects and corresponding orphaned device objects that no longer have any applications
 
+.PARAMETER InputObject
+TppObject which represents a unique object
+
 .PARAMETER Path
 Path to the certificate
 
@@ -23,7 +26,7 @@ Remove all associated application objects
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-Path
+InputObject, Path
 
 .OUTPUTS
 None
@@ -140,30 +143,29 @@ function Remove-TppCertificateAssociation {
 
         Switch -Wildcard ($PsCmdlet.ParameterSetName)	{
             'RemoveOne*' {
-                $params.Body.Add( 'ApplicationDN', $ApplicationPath )
+                $params.Body.Add( 'ApplicationDN', @($ApplicationPath) )
             }
 
             'RemoveAll*' {
-                $associatedApps = ($Path | Get-TppAttribute -Attribute "Consumers" -EffectivePolicy).Attribute.Value
-                $params.Body.Add( 'ApplicationDN', $associatedApps )
+                $associatedApps = $Path | Get-TppAttribute -Attribute "Consumers" -EffectivePolicy | Select-Object -ExpandProperty Value
+                if ( $associatedApps ) {
+                    $params.Body.Add( 'ApplicationDN', @($associatedApps) )
+                } else {
+                    # no associations to process, no need to continue
+                    Write-Warning "No associations for path '$Path'"
+                    Return
+                }
             }
         }
 
-        # make sure we have apps to process.  there might not be any if removeall was used
-        if ( -not $params.Body.ApplicationDN ) {
-            continue
+        try {
+            if ( $PSCmdlet.ShouldProcess($Path, $shouldProcessAction) ) {
+                $null = Invoke-TppRestMethod @params
+            }
         }
-
-        # try {
-        if ( $PSCmdlet.ShouldProcess($Path, $shouldProcessAction) ) {
-            $null = Invoke-TppRestMethod @params
+        catch {
+            $myError = $_.ToString() | ConvertFrom-Json
+            Write-Error ('Error removing associations from certificate {0}: {1}' -f $Path, $myError.Error)
         }
-        # }
-        # catch {
-        #     $myError = $_.ToString() | ConvertFrom-Json
-        #     Write-Error ('Error removing associations from certificate {0}: {1}' -f $Path, $myError.Error)
-        #     Continue
-        # }
-        # }
     }
 }

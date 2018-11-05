@@ -8,6 +8,9 @@ All associations must be removed for the certificate to be removed.
 You must either be a Master Admin or have Delete permission to the Certificate object
 and to the Application and Device objects if they are to be deleted automatically with -Force
 
+.PARAMETER InputObject
+TppObject which represents a unique object
+
 .PARAMETER Path
 Path to the certificate to remove
 
@@ -94,7 +97,7 @@ function Remove-TppCertificate {
         }
 
         # ensure either there are no associations or the force flag was provided
-        $associatedApps = ($Guid | Get-TppAttribute -Attribute "Consumers" -EffectivePolicy).Attribute.Value
+        $associatedApps = $Guid | Get-TppAttribute -Attribute "Consumers" -EffectivePolicy | Select-Object -ExpandProperty Value
 
         if ( $associatedApps ) {
             if ( $Force ) {
@@ -102,14 +105,14 @@ function Remove-TppCertificate {
             }
             else {
                 Write-Error ("Path '{0}' has associations and cannot be removed.  Provide -Force to override." -f $Path)
-                continue
+                Return
             }
         }
 
         $params.UriLeaf = "Certificates/$Guid"
 
         if ( $PSCmdlet.ShouldProcess($Path, 'Remove certificate and all associations') ) {
-            Remove-TppCertificateAssocation -Path $Path -RemoveAll
+            Remove-TppCertificateAssociation -Path $Path -All
             Invoke-TppRestMethod @params
         }
     }
