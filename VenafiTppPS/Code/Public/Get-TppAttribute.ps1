@@ -7,6 +7,9 @@ Retrieves object attributes.  You can either retrieve all attributes or individu
 By default, the attributes returned are not the effective policy, but that can be requested with the
 EffectivePolicy switch.
 
+.PARAMETER InputObject
+TppObject which represents a unique object
+
 .PARAMETER Path
 Path to the object to retrieve configuration attributes.  Just providing DN will return all attributes.
 
@@ -23,15 +26,10 @@ Get the effective policy of the attribute
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-Path, Guid
+InputObject, Path, Guid
 
 .OUTPUTS
-PSCustomObject with properties DN and Config.
-    DN, path provided to the function
-    Attribute, PSCustomObject with the following properties:
-        Name
-        Values
-        IsCustomField
+PSCustomObject with properties Name, Value, IsCustomField, and CustomName
 
 .EXAMPLE
 Get-TppAttribute -Path '\VED\Policy\My Folder\myapp.company.com'
@@ -62,11 +60,15 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function Get-TppAttribute {
-    [CmdletBinding(DefaultParameterSetName = 'Path')]
+    [CmdletBinding(DefaultParameterSetName = 'ByObject')]
     param (
 
-        [Parameter(Mandatory, ParameterSetName = 'EffectiveByPath', ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [Parameter(Mandatory, ParameterSetName = 'Path', ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByObject', ValueFromPipeline)]
+        [Parameter(Mandatory, ParameterSetName = 'ByObject', ValueFromPipeline)]
+        [TppObject] $InputObject,
+
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByPath', ValueFromPipeline)]
+        [Parameter(Mandatory, ParameterSetName = 'ByPath', ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -79,18 +81,21 @@ function Get-TppAttribute {
         [Alias('DN')]
         [String[]] $Path,
 
-        [Parameter(Mandatory, ParameterSetName = 'EffectiveByGuid', ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [Parameter(Mandatory, ParameterSetName = 'Guid', ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByGuid', ValueFromPipeline)]
+        [Parameter(Mandatory, ParameterSetName = 'ByGuid', ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [guid[]] $Guid,
 
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByObject')]
+        [Parameter(ParameterSetName = 'ByObject')]
         [Parameter(Mandatory, ParameterSetName = 'EffectiveByPath')]
-        [Parameter(ParameterSetName = 'Path')]
+        [Parameter(ParameterSetName = 'ByPath')]
         [Parameter(Mandatory, ParameterSetName = 'EffectiveByGuid')]
-        [Parameter(ParameterSetName = 'Guid')]
+        [Parameter(ParameterSetName = 'ByGuid')]
         [ValidateNotNullOrEmpty()]
         [String[]] $Attribute,
 
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByObject')]
         [Parameter(Mandatory, ParameterSetName = 'EffectiveByPath')]
         [Parameter(Mandatory, ParameterSetName = 'EffectiveByGuid')]
         [Switch] $EffectivePolicy,
@@ -127,12 +132,16 @@ function Get-TppAttribute {
 
     process {
 
-        switch ($PSCmdlet.ParameterSetName) {
-            {$_ -in 'Path', 'EffectiveByPath'} {
+        switch -Wildcard ($PSCmdlet.ParameterSetName) {
+            '*Object' {
+                $pathToProcess = $InputObject.Path
+            }
+
+            '*Path' {
                 $pathToProcess = $Path
             }
 
-            {$_ -in 'Guid', 'EffectiveByGuid'} {
+            '*Guid' {
                 $pathToProcess = $Guid | ConvertTo-TppPath
             }
         }
@@ -181,7 +190,7 @@ function Get-TppAttribute {
                 $configValues = @($configValues)
 
                 # convert custom field guids to names
-                $updatedConfigValues = foreach ($thisConfigValue in $configValues) {
+                foreach ($thisConfigValue in $configValues) {
 
                     $customField = $TppSession.CustomField | Where-Object {$_.Guid -eq $thisConfigValue.Name}
                     $thisConfigValue | Add-Member @{
@@ -195,10 +204,10 @@ function Get-TppAttribute {
                     $thisConfigValue
                 }
 
-                [PSCustomObject] @{
-                    Path      = $thisPath
-                    Attribute = $updatedConfigValues
-                }
+                # [PSCustomObject] @{
+                #     Path      = $thisPath
+                #     Attribute = $updatedConfigValues
+                # }
             }
         }
     }
