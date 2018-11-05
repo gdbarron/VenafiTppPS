@@ -69,14 +69,14 @@ ScriptsToProcess = 'classes\TppSession.ps1', 'classes\TppPermission.ps1', 'class
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Get-TppAttribute', 'Get-TppCertificateDetail', 'Get-TppCustomField', 
-               'Get-TppIdentity', 'Get-TppIdentityAttribute', 'Get-TppLog', 
-               'Get-TppObject', 'Get-TppPermission', 'Get-TppWorkflowDetail', 
-               'Move-TppObject', 'New-TppCapiApplication', 'New-TppCertificate', 
-               'New-TppPolicy', 'New-TppSession', 'Remove-TppCertificateAssociation', 
-               'Rename-TppObject', 'Restore-TppCertificate', 'Revoke-TppCertificate', 
-               'Set-TppAttribute', 'Set-TppPermission', 'Set-TppWorkflowStatus', 
-               'Test-TppIdentity', 'Test-TppObject'
+FunctionsToExport = 'Get-TppAttribute', 'Get-TppCertificateDetail', 'Get-TppCustomField',
+               'Get-TppIdentity', 'Get-TppIdentityAttribute', 'Get-TppLog',
+               'Get-TppObject', 'Get-TppPermission', 'Get-TppWorkflowDetail',
+               'Move-TppObject', 'New-TppCapiApplication', 'New-TppCertificate',
+               'New-TppPolicy', 'New-TppSession', 'Remove-TppCertificateAssociation',
+               'Rename-TppObject', 'Restore-TppCertificate', 'Revoke-TppCertificate',
+               'Set-TppAttribute', 'Set-TppPermission', 'Set-TppWorkflowStatus',
+               'Test-TppIdentity', 'Test-TppObject', 'Remove-TppCertificate'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
