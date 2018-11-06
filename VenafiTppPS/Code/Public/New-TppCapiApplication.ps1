@@ -41,7 +41,7 @@ https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Set-
 http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/
+http://venafitppps.readthedocs.io/en/latest/functions/Find-TppObject/
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-create.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____9
@@ -146,7 +146,7 @@ function New-TppCapiApplication {
 
     # ensure the credential exists and is actually of type credential
     $credentialName = (Split-Path $CredentialPath -Leaf)
-    $credentialObject = Get-TppObject -Path (Split-Path $CredentialPath -Parent) -Pattern $credentialName
+    $credentialObject = Find-TppObject -Path (Split-Path $CredentialPath -Parent) -Pattern $credentialName
 
     if ( -not $credentialObject ) {
         throw "Credential object not found"
