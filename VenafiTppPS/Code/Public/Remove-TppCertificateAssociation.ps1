@@ -3,40 +3,44 @@
 Remove certificate associations
 
 .DESCRIPTION
-Disassociates one or more Application objects from an existing certificate.
+Dissociates one or more Application objects from an existing certificate.
 Optionally, you can remove the application objects and corresponding orphaned device objects that no longer have any applications
 
+.PARAMETER InputObject
+TppObject which represents a unique object
+
 .PARAMETER Path
-DN path of one or more certificates to process
+Path to the certificate
 
 .PARAMETER ApplicationPath
-One or more application objects, specified by their distinguished names, that uniquely identify them in the Venafi platform
+List of application object paths to dissociate
 
 .PARAMETER OrphanCleanup
-Delete the Application object. Only delete the corresponding Device DN when it has no child objects. Otherwise retain only the Device DN and its children. Use this option to completely remove the application object and corresponding device objects.
+Delete the Application object after dissociating it. Only delete the corresponding Device DN when it has no child objects.
+Otherwise retain the Device DN and its children.
 
-.PARAMETER RemoveAll
+.PARAMETER All
 Remove all associated application objects
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-Path
+InputObject, Path
 
 .OUTPUTS
 None
 
 .EXAMPLE
-Remove-TppCertificateAssocation -Path '\ved\policy\my folder' -ApplicationPath '\ved\policy\my capi'
+Remove-TppCertificateAssocation -Path '\ved\policy\my cert' -ApplicationPath '\ved\policy\my capi'
 Remove a single application object association
 
 .EXAMPLE
-Remove-TppCertificateAssocation -Path '\ved\policy\my folder' -ApplicationPath '\ved\policy\my capi' -OrphanCleanup
+Remove-TppCertificateAssocation -Path '\ved\policy\my cert' -ApplicationPath '\ved\policy\my capi' -OrphanCleanup
 Disassociate and delete the application object
 
 .EXAMPLE
-Remove-TppCertificateAssocation -Path '\ved\policy\my folder' -RemoveAll
+Remove-TppCertificateAssocation -Path '\ved\policy\my cert' -RemoveAll
 Remove all certificate associations
 
 .LINK
@@ -59,25 +63,33 @@ function Remove-TppCertificateAssociation {
 
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
     param (
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName = 'RemoveOne')]
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName = 'RemoveAll')]
+
+        [Parameter(Mandatory, ParameterSetName = 'RemoveOneByObject', ValueFromPipeline)]
+        [Parameter(Mandatory, ParameterSetName = 'RemoveAllByObject', ValueFromPipeline)]
+        [TppObject] $InputObject,
+
+        [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'RemoveOneByPath')]
+        [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'RemoveAllByPath')]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
         [Alias('DN', 'CertificateDN')]
         [String] $Path,
 
-        [Parameter(Mandatory, ParameterSetName = 'RemoveOne')]
+        [Parameter(Mandatory, ParameterSetName = 'RemoveOneByObject')]
+        [Parameter(Mandatory, ParameterSetName = 'RemoveOneByPath')]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -86,8 +98,10 @@ function Remove-TppCertificateAssociation {
         [Parameter()]
         [switch] $OrphanCleanup,
 
-        [Parameter(Mandatory, ParameterSetName = 'RemoveAll')]
-        [switch] $RemoveAll,
+        [Parameter(Mandatory, ParameterSetName = 'RemoveAllByObject')]
+        [Parameter(Mandatory, ParameterSetName = 'RemoveAllByPath')]
+        [Alias('RemoveAll')]
+        [switch] $All,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -106,49 +120,52 @@ function Remove-TppCertificateAssociation {
 
     process {
 
-        $Path.ForEach{
-            $thisCertPath = $_
-            $shouldProcessAction = "Remove associations"
+        if ( $PSBoundParameters.ContainsKey('InputObject') ) {
+            $path = $InputObject.Path
+        }
 
-            if ( -not ($thisCertPath | Test-TppObject -ExistOnly) ) {
-                Write-Error ("Certificate path {0} does not exist" -f $thisCertPath)
-                Continue
+        # foreach ( $Path in $Path ) {
+        $shouldProcessAction = "Remove associations"
+
+        if ( -not ($Path | Test-TppObject -ExistOnly) ) {
+            Write-Error ("Certificate path {0} does not exist" -f $Path)
+            Continue
+        }
+
+        $params.Body = @{
+            'CertificateDN' = $Path
+        }
+
+        if ( $PSBoundParameters.ContainsKey('OrphanCleanup') ) {
+            $params.Body.Add( 'DeleteOrphans', $true )
+            $shouldProcessAction += ' AND ORPHANS'
+        }
+
+        Switch -Wildcard ($PsCmdlet.ParameterSetName)	{
+            'RemoveOne*' {
+                $params.Body.Add( 'ApplicationDN', @($ApplicationPath) )
             }
 
-            $params.Body = @{
-                'CertificateDN' = $thisCertPath
-            }
-
-            if ( $PSBoundParameters.ContainsKey('OrphanCleanup') ) {
-                $params.Body.Add( 'DeleteOrphans', $true )
-                $shouldProcessAction += ' AND ORPHANS'
-            }
-
-            Switch ($PsCmdlet.ParameterSetName)	{
-                'RemoveOne' {
-                    $params.Body.Add( 'ApplicationDN', $ApplicationPath )
-                }
-
-                'RemoveAll' {
-                    $associatedApps = ($thisCertPath | Get-TppAttribute -Attribute "Consumers" -EffectivePolicy).Config.Value
+            'RemoveAll*' {
+                $associatedApps = $Path | Get-TppAttribute -Attribute "Consumers" -EffectivePolicy | Select-Object -ExpandProperty Value
+                if ( $associatedApps ) {
                     $params.Body.Add( 'ApplicationDN', @($associatedApps) )
+                } else {
+                    # no associations to process, no need to continue
+                    Write-Warning "No associations for path '$Path'"
+                    Return
                 }
             }
+        }
 
-            # make sure we have apps to process.  there might not be any if removeall was used
-            if ( -not $params.Body.ApplicationDN ) {
-                continue
+        try {
+            if ( $PSCmdlet.ShouldProcess($Path, $shouldProcessAction) ) {
+                $null = Invoke-TppRestMethod @params
             }
-
-            try {
-                if ( $PSCmdlet.ShouldProcess($thisCertPath, $shouldProcessAction) ) {
-                    $null = Invoke-TppRestMethod @params
-                }
-            } catch {
-                $myError = $_.ToString() | ConvertFrom-Json
-                Write-Error ('Error removing associations from certificate {0}: {1}' -f $thisCertPath, $myError.Error)
-                Continue
-            }
+        }
+        catch {
+            $myError = $_.ToString() | ConvertFrom-Json
+            Write-Error ('Error removing associations from certificate {0}: {1}' -f $Path, $myError.Error)
         }
     }
 }

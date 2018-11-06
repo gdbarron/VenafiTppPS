@@ -8,16 +8,16 @@ Author: Greg Brownstein
 
 $folders = @('Enums', 'Classes', 'Public', 'Private')
 
-$folders | % {
+foreach ( $folder in $folders) {
 
-    $files = Get-ChildItem -Path $PSScriptRoot\$_\*.ps1 -Recurse
-    # $files = Get-ChildItem -Path $PSScriptRoot\$_\*.ps1 -Recurse -ErrorAction SilentlyContinue
+    $files = Get-ChildItem -Path $PSScriptRoot\$folder\*.ps1 -Recurse
 
     Foreach ( $thisFile in $files ) {
         Try {
             . $thisFile.fullname
-        } Catch {
-            Write-Error ("Failed to import function {0}: {1}" -f $thisFile.fullname, $_)
+        }
+        Catch {
+            Write-Error ("Failed to import function {0}: {1}" -f $thisFile.fullname, $folder)
         }
     }
 }
@@ -26,6 +26,8 @@ $publicFiles = Get-ChildItem -Path $PSScriptRoot\public\*.ps1 -Recurse -ErrorAct
 Export-ModuleMember -Function $publicFiles.Basename
 
 $Script:TppSession = New-Object 'TppSession'
-# $script:VenafiUrl = $null
-# Export-ModuleMember -variable VenafiUrl
 Export-ModuleMember -variable TppSession
+
+Set-Alias -Name 'ConvertTo-TppDN' -Value 'ConvertTo-TppPath'
+Set-Alias -Name 'Get-TppObject' -Value 'Find-TppObject'
+Export-ModuleMember -Alias *
