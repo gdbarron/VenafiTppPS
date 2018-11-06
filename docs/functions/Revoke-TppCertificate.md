@@ -8,13 +8,13 @@ Revoke a certificate
 ### CertificateDN (Default)
 ```
 Revoke-TppCertificate -CertificateDN <String[]> [-Reason <Int32>] [-Comments <String>] [-Disable] [-Wait]
- [-TppSession <TppSession>] [<CommonParameters>]
+ [-TppSession <TppSession>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### Thumbprint
 ```
 Revoke-TppCertificate -Thumbprint <String[]> [-Reason <Int32>] [-Comments <String>] [-Disable] [-Wait]
- [-TppSession <TppSession>] [<CommonParameters>]
+ [-TppSession <TppSession>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -162,6 +162,37 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -WhatIf
+Shows what would happen if the cmdlet runs.
+The cmdlet is not run.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Confirm
+Prompts you for confirmation before running the cmdlet.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
 For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
@@ -182,7 +213,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Revoke-TppCertificate/](http://venafitppps.readthedocs.io/en/latest/functions/Revoke-TppCertificate/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Revoke-TppCertificate.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Revoke-TppCertificate.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Revoke-TppCertificate.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Revoke-TppCertificate.ps1)
 
 [https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-revoke.php?tocpath=REST%20API%20reference%7CCertificates%20module%20programming%20interfaces%7C_____15](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-revoke.php?tocpath=REST%20API%20reference%7CCertificates%20module%20programming%20interfaces%7C_____15)
 

@@ -5,14 +5,37 @@ Get attributes for a given object
 
 ## SYNTAX
 
-### NonEffectivePolicy
+### ByObject (Default)
+```
+Get-TppAttribute -InputObject <TppObject> [-Attribute <String[]>] [-TppSession <TppSession>]
+ [<CommonParameters>]
+```
+
+### EffectiveByObject
+```
+Get-TppAttribute -InputObject <TppObject> -Attribute <String[]> [-EffectivePolicy] [-TppSession <TppSession>]
+ [<CommonParameters>]
+```
+
+### ByPath
 ```
 Get-TppAttribute -Path <String[]> [-Attribute <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
-### EffectivePolicy
+### EffectiveByPath
 ```
 Get-TppAttribute -Path <String[]> -Attribute <String[]> [-EffectivePolicy] [-TppSession <TppSession>]
+ [<CommonParameters>]
+```
+
+### ByGuid
+```
+Get-TppAttribute -Guid <Guid[]> [-Attribute <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
+```
+
+### EffectiveByGuid
+```
+Get-TppAttribute -Guid <Guid[]> -Attribute <String[]> [-EffectivePolicy] [-TppSession <TppSession>]
  [<CommonParameters>]
 ```
 
@@ -47,19 +70,50 @@ Retrieve all the value for attribute driver name from certificate myapp.company.
 
 ## PARAMETERS
 
+### -InputObject
+TppObject which represents a unique object
+
+```yaml
+Type: TppObject
+Parameter Sets: ByObject, EffectiveByObject
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
 ### -Path
 Path to the object to retrieve configuration attributes. 
 Just providing DN will return all attributes.
 
 ```yaml
 Type: String[]
-Parameter Sets: (All)
+Parameter Sets: ByPath, EffectiveByPath
 Aliases: DN
 
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: True (ByPropertyName, ByValue)
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -Guid
+Object Guid. 
+Just providing Guid will return all attributes.
+
+```yaml
+Type: Guid[]
+Parameter Sets: ByGuid, EffectiveByGuid
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -68,8 +122,8 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String[]
-Parameter Sets: NonEffectivePolicy
-Aliases: AttributeName
+Parameter Sets: ByObject, ByPath, ByGuid
+Aliases:
 
 Required: False
 Position: Named
@@ -80,8 +134,8 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String[]
-Parameter Sets: EffectivePolicy
-Aliases: AttributeName
+Parameter Sets: EffectiveByObject, EffectiveByPath, EffectiveByGuid
+Aliases:
 
 Required: True
 Position: Named
@@ -95,7 +149,7 @@ Get the effective policy of the attribute
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: EffectivePolicy
+Parameter Sets: EffectiveByObject, EffectiveByPath, EffectiveByGuid
 Aliases:
 
 Required: True
@@ -127,22 +181,17 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### DN by property name
+### InputObject, Path, Guid
 ## OUTPUTS
 
-### PSCustomObject with properties DN and Config.
-###     DN, path provided to the function
-###     Attribute, PSCustomObject with the following properties:
-###         Name
-###         Values
-###         IsCustomField
+### PSCustomObject with properties Name, Value, IsCustomField, and CustomName
 ## NOTES
 
 ## RELATED LINKS
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Get-TppAttribute/](http://venafitppps.readthedocs.io/en/latest/functions/Get-TppAttribute/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppAttribute.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppAttribute.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppAttribute.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppAttribute.ps1)
 
 [https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-read.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____26](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-read.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____26)
 

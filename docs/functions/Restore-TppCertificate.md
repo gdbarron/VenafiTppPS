@@ -78,7 +78,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Restore-TppCertificate/](http://venafitppps.readthedocs.io/en/latest/functions/Restore-TppCertificate/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Restore-TppCertificate.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Restore-TppCertificate.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Restore-TppCertificate.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Restore-TppCertificate.ps1)
 
 [https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-renew.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____9](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-renew.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____9)
 
