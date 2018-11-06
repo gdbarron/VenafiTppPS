@@ -1,88 +1,88 @@
-# Get-TppObject
+# Find-TppObject
 
 ## SYNOPSIS
-Find objects by DN path, class, or pattern
+Find objects by path, class, or pattern
 
 ## SYNTAX
 
 ### FindByClassAndPath
 ```
-Get-TppObject -Path <String> -Class <String[]> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>]
+Find-TppObject -Path <String> -Class <String[]> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>]
  [<CommonParameters>]
 ```
 
 ### FindByPath
 ```
-Get-TppObject -Path <String> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>] [<CommonParameters>]
+Find-TppObject -Path <String> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### FindByClass
 ```
-Get-TppObject -Class <String[]> [-Pattern <String>] [-TppSession <TppSession>] [<CommonParameters>]
+Find-TppObject -Class <String[]> [-Pattern <String>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### FindByPattern
 ```
-Get-TppObject -Pattern <String> [-Attribute <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
+Find-TppObject -Pattern <String> [-Attribute <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Find objects by DN path, class, or pattern.
+Find objects by path, class, or pattern.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Get-TppObject -Path '\VED\Policy'
+Find-TppObject -Path '\VED\Policy'
 ```
 
 Get all objects in the root of a specific folder
 
 ### EXAMPLE 2
 ```
-Get-TppObject -Path '\VED\Policy\My Folder' -Recursive
+Find-TppObject -Path '\VED\Policy\My Folder' -Recursive
 ```
 
 Get all objects in a folder and subfolders
 
 ### EXAMPLE 3
 ```
-Get-TppObject -Path '\VED\Policy' -Pattern 'test'
+Find-TppObject -Path '\VED\Policy' -Pattern 'test'
 ```
 
 Get items in a specific folder filtering the path
 
 ### EXAMPLE 4
 ```
-Get-TppObject -Class 'iis6'
+Find-TppObject -Class 'iis6'
 ```
 
 Get all objects of the type iis6
 
 ### EXAMPLE 5
 ```
-Get-TppObject -Class 'iis6' -Pattern 'test*'
+Find-TppObject -Class 'iis6' -Pattern 'test*'
 ```
 
 Get all objects of the type iis6 filtering the path
 
 ### EXAMPLE 6
 ```
-Get-TppObject -Class 'iis6', 'capi'
+Find-TppObject -Class 'iis6', 'capi'
 ```
 
 Get all objects of the type iis6 or capi
 
 ### EXAMPLE 7
 ```
-Get-TppObject -Pattern 'test*'
+Find-TppObject -Pattern 'test*'
 ```
 
 Find all objects matching the pattern
 
 ### EXAMPLE 8
 ```
-Get-TppObject -Pattern 'test*' -Attribute 'Consumers'
+Find-TppObject -Pattern 'test*' -Attribute 'Consumers'
 ```
 
 Find all objects where the specific attribute matches the pattern
@@ -210,22 +210,14 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ### None
 ## OUTPUTS
 
-### PSCustomObject with the following properties:
-###     AbsoluteGUID: The left-to-right concatenation of all of the GUIDs for all of the objects in the DN.
-###     DN: The Distinguished Name (DN) of the object.
-###     GUID: The GUID that identifies the object.
-###     ID: The object identifier.
-###     Name: The Common Name (CN) of the object.
-###     Parent: The parent DN of the object.
-###     Revision: The revision of the object.
-###     TypeName: the class name of the object.
+### TppObject
 ## NOTES
 
 ## RELATED LINKS
 
-[http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/)
+[http://venafitppps.readthedocs.io/en/latest/functions/Find-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/Find-TppObject/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppObject.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppObject.ps1)
 
 [https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-find.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____17](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-find.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____17)
 
