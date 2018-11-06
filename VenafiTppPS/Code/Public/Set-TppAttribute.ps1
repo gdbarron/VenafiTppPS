@@ -48,18 +48,19 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function Set-TppAttribute {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-            [Alias('DN')]
+        [Alias('DN')]
         [String[]] $Path,
 
         [Parameter(Mandatory)]
@@ -85,13 +86,14 @@ function Set-TppAttribute {
             Method     = 'Post'
         }
 
-        if ($Overwrite) {
-            $params += @{
-                UriLeaf = 'config/Write'
-            }
-        } else {
+        if ($NoClobber) {
             $params += @{
                 UriLeaf = 'config/AddValue'
+            }
+        }
+        else {
+            $params += @{
+                UriLeaf = 'config/Write'
             }
         }
     }
@@ -120,6 +122,25 @@ function Set-TppAttribute {
                     $params.Body += @{
                         Value = $thisValue
                     }
+
+                    if ( $PSCmdlet.ShouldProcess($thisDn, 'Add attribute values') ) {
+                        $response = Invoke-TppRestMethod @params
+
+                        [PSCustomObject] @{
+                            DN      = $thisDn
+                            Success = $response.Result -eq [ConfigResult]::Success
+                            Error   = $response.Error
+                        }
+                    }
+                }
+            }
+            else {
+                $params.Body += @{
+                    Values = $Value
+                }
+
+                if ( $PSCmdlet.ShouldProcess($thisDn, 'Overwrite attribute values') ) {
+
                     $response = Invoke-TppRestMethod @params
 
                     [PSCustomObject] @{
@@ -128,19 +149,7 @@ function Set-TppAttribute {
                         Error   = $response.Error
                     }
                 }
-            } else {
-                $params.Body += @{
-                    Values = $Value
-                }
-                $response = Invoke-TppRestMethod @params
-
-                [PSCustomObject] @{
-                    DN      = $thisDn
-                    Success = $response.Result -eq [ConfigResult]::Success
-                    Error   = $response.Error
-                }
             }
-
         }
     }
 }

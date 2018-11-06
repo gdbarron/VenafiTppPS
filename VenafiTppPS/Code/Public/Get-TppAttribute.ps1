@@ -7,8 +7,14 @@ Retrieves object attributes.  You can either retrieve all attributes or individu
 By default, the attributes returned are not the effective policy, but that can be requested with the
 EffectivePolicy switch.
 
+.PARAMETER InputObject
+TppObject which represents a unique object
+
 .PARAMETER Path
 Path to the object to retrieve configuration attributes.  Just providing DN will return all attributes.
+
+.PARAMETER Guid
+Object Guid.  Just providing Guid will return all attributes.
 
 .PARAMETER AttributeName
 Only retrieve the value/values for this attribute
@@ -20,15 +26,10 @@ Get the effective policy of the attribute
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-DN by property name
+InputObject, Path, Guid
 
 .OUTPUTS
-PSCustomObject with properties DN and Config.
-    DN, path provided to the function
-    Attribute, PSCustomObject with the following properties:
-        Name
-        Values
-        IsCustomField
+PSCustomObject with properties Name, Value, IsCustomField, and CustomName
 
 .EXAMPLE
 Get-TppAttribute -Path '\VED\Policy\My Folder\myapp.company.com'
@@ -59,28 +60,44 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function Get-TppAttribute {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'ByObject')]
     param (
-        [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy', ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [Parameter(Mandatory, ParameterSetName = 'NonEffectivePolicy', ValueFromPipeline, ValueFromPipelineByPropertyName)]
+
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByObject', ValueFromPipeline)]
+        [Parameter(Mandatory, ParameterSetName = 'ByObject', ValueFromPipeline)]
+        [TppObject] $InputObject,
+
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByPath', ValueFromPipeline)]
+        [Parameter(Mandatory, ParameterSetName = 'ByPath', ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
         [Alias('DN')]
         [String[]] $Path,
 
-        [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy')]
-        [Parameter(ParameterSetName = 'NonEffectivePolicy')]
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByGuid', ValueFromPipeline)]
+        [Parameter(Mandatory, ParameterSetName = 'ByGuid', ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
-        [Alias('AttributeName')]
+        [guid[]] $Guid,
+
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByObject')]
+        [Parameter(ParameterSetName = 'ByObject')]
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByPath')]
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByGuid')]
+        [Parameter(ParameterSetName = 'ByGuid')]
+        [ValidateNotNullOrEmpty()]
         [String[]] $Attribute,
 
-        [Parameter(Mandatory, ParameterSetName = 'EffectivePolicy')]
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByObject')]
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByPath')]
+        [Parameter(Mandatory, ParameterSetName = 'EffectiveByGuid')]
         [Switch] $EffectivePolicy,
 
         [Parameter()]
@@ -88,23 +105,20 @@ function Get-TppAttribute {
     )
 
     begin {
+
         $TppSession.Validate()
 
         if ( $PSBoundParameters.ContainsKey('Attribute') ) {
             if ( $PSBoundParameters.ContainsKey('EffectivePolicy') ) {
                 $uriLeaf = 'config/ReadEffectivePolicy'
-            } else {
+            }
+            else {
                 $uriLeaf = 'config/read'
             }
-        } else {
+        }
+        else {
             $uriLeaf = 'config/readall'
         }
-        # if ( $AttributeName ) {
-        #     if ( $EffectivePolicy ) {
-        #         $uriLeaf = 'config/ReadEffectivePolicy'
-        #     } else {
-        #         $uriLeaf = 'config/read'
-        #     }
 
         $baseParams = @{
             TppSession = $TppSession
@@ -118,23 +132,30 @@ function Get-TppAttribute {
 
     process {
 
-        foreach ( $thisDN in $Path ) {
+        switch -Wildcard ($PSCmdlet.ParameterSetName) {
+            '*Object' {
+                $pathToProcess = $InputObject.Path
+            }
 
-            $baseParams.Body['ObjectDN'] = $thisDN
+            '*Path' {
+                $pathToProcess = $Path
+            }
+
+            '*Guid' {
+                $pathToProcess = $Guid | ConvertTo-TppPath
+            }
+        }
+
+        foreach ($thisPath in $pathToProcess) {
+
+            $baseParams.Body['ObjectDN'] = $thisPath
 
             # if specifying attribute name(s), it's a different rest api
             if ( $PSBoundParameters.ContainsKey('Attribute') ) {
 
-                $configValues = @()
-
-                # TODO: convert to ArrayList
-                # $configValues = [System.Collections.ArrayList] @()
-
                 # get the attribute values one by one as there is no
                 # api which allows passing a list
-                $Attribute.ForEach{
-
-                    $thisAttribute = $_
+                $configValues = foreach ($thisAttribute in $Attribute) {
 
                     $params = $baseParams.Clone()
                     $params.Body += @{
@@ -144,50 +165,54 @@ function Get-TppAttribute {
                     $response = Invoke-TppRestMethod @params
 
                     if ( $response ) {
-                        $configValues += [PSCustomObject] @{
+                        [PSCustomObject] @{
                             Name  = $thisAttribute
                             Value = $response.Values
                         }
-                        # $null = $configValues.Add(
-                        #     [PSCustomObject] @{
-                        #         Name  = $thisAttribute
-                        #         Value = $response.Values
-                        #     }
-                        # )
-                        # $null = $configValues.Add($response.Values)
                     }
-                } # attribute
-            } else {
+                }
+            }
+            else {
                 $response = Invoke-TppRestMethod @baseParams
                 if ( $response ) {
-                    $configValues = $response.NameValues
+                    $configValues = $response.NameValues | Select-Object Name,
+                    @{
+                        n = 'Value'
+                        e = {
+                            $_.Values
+                        }
+                    }
                 }
-            } # DN
+            }
 
             if ( $configValues ) {
 
-                # convert custom field guids to names
-                $updatedConfigValues = $configValues.ForEach{
+                $configValues = @($configValues)
 
-                    $thisConfigValue = $_
-                    $thisConfigValue | Add-Member @{
-                        IsCustomField = $false
-                    }
+                # convert custom field guids to names
+                foreach ($thisConfigValue in $configValues) {
 
                     $customField = $TppSession.CustomField | Where-Object {$_.Guid -eq $thisConfigValue.Name}
+                    $thisConfigValue | Add-Member @{
+                        'IsCustomField' = $null -ne $customField
+                        'CustomName'    = $null
+                    }
                     if ( $customField ) {
-                        $thisConfigValue.Name = $customField.Label
-                        $thisConfigValue.IsCustomField = $true
+                        $thisConfigValue.CustomName = $customField.Label
                     }
 
                     $thisConfigValue
                 }
 
-                [PSCustomObject] @{
-                    DN     = $thisDN
-                    Config = $updatedConfigValues
-                }
+                # [PSCustomObject] @{
+                #     Path      = $thisPath
+                #     Attribute = $updatedConfigValues
+                # }
             }
         }
+    }
+
+    end {
+
     }
 }
