@@ -30,7 +30,7 @@ Determine who has rights for TPP objects and what those rights are
 
 ### EXAMPLE 1
 ```
-Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission
+Find-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission
 ```
 
 Guid                             PrefixedUniversalId
@@ -41,13 +41,14 @@ Get users/groups permissioned to a policy folder
 
 ### EXAMPLE 2
 ```
-Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Attribute 'Given Name','Surname'
+Find-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Attribute 'Given Name','Surname'
 ```
+
 Get users/groups permissioned to a policy folder including identity attributes for those users/groups
 
 ### EXAMPLE 3
 ```
-Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Effective
+Find-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Effective
 ```
 
 Guid           : {1234abcd-g6g6-h7h7-faaf-f50cd6610cba}
@@ -184,7 +185,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Get-TppPermission/](http://venafitppps.readthedocs.io/en/latest/functions/Get-TppPermission/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppPermission.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Public/Get-TppPermission.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppPermission.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppPermission.ps1)
 
 [https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____1](https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____1)
 
