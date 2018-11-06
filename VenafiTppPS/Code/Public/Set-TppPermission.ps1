@@ -119,7 +119,7 @@ function Set-TppPermission {
                     $params.UriLeaf += "/$type/$name/$id"
                 }
 
-                if ( $PSCmdlet.ShouldProcess($thisId) ) {
+                if ( $PSCmdlet.ShouldProcess($thisId, 'Set permission') ) {
                     $response = Invoke-TppRestMethod @params
 
                     Write-Verbose ('Response status code: {0}' -f $response.StatusCode)

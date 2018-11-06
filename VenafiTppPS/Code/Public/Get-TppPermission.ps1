@@ -40,7 +40,7 @@ Local and external parameter sets returns a PSCustomObject with the following pr
     Attribute (if Attribute provided)
 
 .EXAMPLE
-Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission
+Find-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission
 Guid                             PrefixedUniversalId
 ----                                   -----------
 {1234abcd-g6g6-h7h7-faaf-f50cd6610cba} {AD+mydomain.com:1234567890olikujyhtgrfedwsqa, AD+mydomain.com:azsxdcfvgbhnjmlk09877654321}
@@ -48,11 +48,11 @@ Guid                             PrefixedUniversalId
 Get users/groups permissioned to a policy folder
 
 .EXAMPLE
-Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Attribute 'Given Name','Surname'
+Find-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Attribute 'Given Name','Surname'
 Get users/groups permissioned to a policy folder including identity attributes for those users/groups
 
 .EXAMPLE
-Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Effective
+Find-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Effective
 Guid           : {1234abcd-g6g6-h7h7-faaf-f50cd6610cba}
 PrefixedUniversalId  : AD+mydomain.com:1234567890olikujyhtgrfedwsqa
 EffectivePermissions : @{IsAssociateAllowed=False; IsCreateAllowed=True; IsDeleteAllowed=True; IsManagePermissionsAllowed=True; IsPolicyWriteAllowed=True;
