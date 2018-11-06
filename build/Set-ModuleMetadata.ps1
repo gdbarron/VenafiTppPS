@@ -21,7 +21,7 @@
 Param(
     [Parameter(Mandatory)]
     [string] $ModuleName,
-    
+
     [Parameter(Mandatory)]
     [string] $GitHubPat
 )
@@ -119,12 +119,12 @@ try {
 
 
 ############### UPDATE DOCS #################
-$modulePath = $manifestPath.Replace('.psd1', '.psm1')
+# $modulePath = $manifestPath.Replace('.psd1', '.psm1')
 
-"Loading Module from $modulePath to update docs"
+"Loading Module from $manifestPath to update docs"
 Remove-Module $ModuleName -Force -ea SilentlyContinue -Verbose
 # platyPS + AppVeyor requires the module to be loaded in Global scope
-Import-Module $modulePath -force -Verbose
+Import-Module $manifestPath -force -Verbose
 
 #Build YAMLText starting with the header
 $YMLtext = (Get-Content "$projectRoot\header-mkdocs.yml") -join "`n"
