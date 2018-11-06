@@ -22,7 +22,10 @@ ConvertTo-TppGuid -Guid 'xyxyxyxy-xyxy-xyxy-xyxy-xyxyxyxyxyxy'
 
 #>
 function ConvertTo-TppGuid {
+
     [CmdletBinding()]
+    [OutputType( [System.Guid] )]
+
     param (
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
@@ -67,12 +70,12 @@ function ConvertTo-TppGuid {
         if ( $response.Result -eq [ConfigResult]::Success ) {
             if ( $PSBoundParameters.ContainsKey('IncludeType') ) {
                 [PSCustomObject] @{
-                    Guid     = [guid] $response.Guid
+                    Guid     = [Guid] $response.Guid
                     TypeName = $response.ClassName
                 }
             }
             else {
-                [guid] $response.Guid
+                [Guid] $response.Guid
             }
         }
         else {
