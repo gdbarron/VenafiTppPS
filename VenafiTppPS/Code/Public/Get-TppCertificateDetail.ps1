@@ -6,8 +6,14 @@ Get basic or detailed certificate information
 Get certificate info based on a variety of attributes.
 Additional details can be had by passing the guid.
 
+.PARAMETER InputObject
+TppObject which represents a unique object
+
 .PARAMETER Path
 Starting path to search from
+
+.PARAMETER Guid
+Guid representing a unique certificate in Venafi.
 
 .PARAMETER Recursive
 Search recursively starting from the search path.
@@ -149,9 +155,6 @@ Include only certificates with validation enabled or disabled
 .PARAMETER ValidationState
 Find certificates with a validation state of Blank, Success, or Failure
 
-.PARAMETER Guid
-Guid representing a unique certificate in Venafi.
-
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
@@ -159,7 +162,7 @@ Session object created from New-TppSession method.  The value defaults to the sc
 Guid
 
 .OUTPUTS
-ByPath and NoPath parameter sets returns a PSCustomObject with the following properties:
+ByPath returns TppObject.and NoPath parameter sets returns a PSCustomObject with the following properties:
     Path
     Guid
     CreatedOn
@@ -226,7 +229,11 @@ function Get-TppCertificateDetail {
 
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ParameterSetName = 'ByPath')]
+
+        [Parameter(Mandatory, ParameterSetName = 'ByObject', ValueFromPipeline)]
+        [TppObject] $InputObject,
+
+        [Parameter(Mandatory, ParameterSetName = 'ByPath', ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -239,207 +246,9 @@ function Get-TppCertificateDetail {
         [Alias('DN')]
         [String] $Path,
 
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Switch] $Recursive,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [int] $Limit = 0,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('C')]
-        [String] $Country,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('CN')]
-        [String] $CommonName,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [String] $Issuer,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [String[]] $KeyAlgorithm,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Int[]] $KeySize,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Int] $KeySizeGreaterThan,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Int] $KeySizeLessThan,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('L')]
-        [String[]] $Locale,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('O')]
-        [String[]] $Organization,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('OU')]
-        [String[]] $OrganizationUnit,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('S')]
-        [String[]] $State,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [String] $SanDns,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [String] $SanEmail,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [String] $SanIP,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [String] $SanUpn,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [String] $SanUri,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [String] $SerialNumber,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [String] $SignatureAlgorithm,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [String] $Thumbprint,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('ValidFrom')]
-        [DateTime] $IssueDate,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('ValidTo')]
-        [DateTime] $ExpireDate,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('ValidToGreater')]
-        [DateTime] $ExpireAfter,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('ValidToLess')]
-        [DateTime] $ExpireBefore,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [bool] $Enabled,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [bool] $InError,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [bool] $NetworkValidationEnabled,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [datetime] $CreateDate,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('CreatedOnGreater')]
-        [datetime] $CreatedAfter,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('CreatedOnLess')]
-        [datetime] $CreatedBefore,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [ValidateSet('Unassigned', 'Monitoring', 'Enrollment', 'Provisioning')]
-        [String[]] $ManagementType,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Switch] $PendingWorkflow,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [ValidateScript( {
-                $enumValues = Get-EnumValues -EnumName 'CertificateStage'
-                if ( $_ -in $enumValues.Values ) {
-                    $true
-                }
-                else {
-                    throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
-                }
-            })]
-        [int[]] $Stage,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('StageGreater')]
-        [ValidateScript( {
-                $enumValues = Get-EnumValues -EnumName 'CertificateStage'
-                if ( $_ -in $enumValues.Values ) {
-                    $true
-                }
-                else {
-                    throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
-                }
-            })]
-        [int] $StageGreaterThan,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [Alias('StageLess')]
-        [ValidateScript( {
-                $enumValues = Get-EnumValues -EnumName 'CertificateStage'
-                if ( $_ -in $enumValues.Values ) {
-                    $true
-                }
-                else {
-                    throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
-                }
-            })]
-        [int] $StageLessThan,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [bool] $ValidationEnabled,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [ValidateSet('Blank', 'Success', 'Failure')]
-        [String[]] $ValidationState,
-
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'NoPath')]
-        [switch] $Full,
-
-        [Parameter(Mandatory, ParameterSetName = 'Full', ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'ByGuid', ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
-        [guid[]] $Guid,
+        [guid] $Guid,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -448,194 +257,57 @@ function Get-TppCertificateDetail {
     begin {
         $TppSession.Validate()
 
-        Switch ($PsCmdlet.ParameterSetName)	{
-            {$_ -in 'NoPath', 'ByPath'} {
-                $params = @{
-                    TppSession = $TppSession
-                    Method     = 'Get'
-                    UriLeaf    = 'certificates'
-                    Body       = @{
-                        'Limit' = $Limit
-                    }
-                }
-
-                switch ($PSBoundParameters.Keys) {
-                    'Path' {
-                        if ( $PSBoundParameters['Recursive'] ) {
-                            $params.Body.Add( 'ParentDnRecursive', $Path )
-                        }
-                        else {
-                            $params.Body.Add( 'ParentDn', $Path )
-                        }
-                    }
-                    'Country' {
-                        $params.Body.Add( 'C', $Country )
-                    }
-                    'CommonName' {
-                        $params.Body.Add( 'CN', $CommonName )
-                    }
-                    'Issuer' {
-                        $params.Body.Add( 'Issuer', $Issuer )
-                    }
-                    'KeyAlgorithm' {
-                        $params.Body.Add( 'KeyAlgorithm', $KeyAlgorithm -join ',' )
-                    }
-                    'KeySize' {
-                        $params.Body.Add( 'KeySize', $KeySize -join ',' )
-                    }
-                    'KeySizeGreaterThan' {
-                        $params.Body.Add( 'KeySizeGreater', $KeySizeGreaterThan )
-                    }
-                    'KeySizeLessThan' {
-                        $params.Body.Add( 'KeySizeLess', $KeySizeLessThan )
-                    }
-                    'Locale' {
-                        $params.Body.Add( 'L', $Locale -join ',' )
-                    }
-                    'Organization' {
-                        $params.Body.Add( 'O', $Organization -join ',' )
-                    }
-                    'OrganizationUnit' {
-                        $params.Body.Add( 'OU', $OrganizationUnit -join ',' )
-                    }
-                    'State' {
-                        $params.Body.Add( 'S', $State -join ',' )
-                    }
-                    'SanDns' {
-                        $params.Body.Add( 'SAN-DNS', $SanDns )
-                    }
-                    'SanEmail' {
-                        $params.Body.Add( 'SAN-Email', $SanEmail )
-                    }
-                    'SanIP' {
-                        $params.Body.Add( 'SAN-IP', $SanIP )
-                    }
-                    'SanUpn' {
-                        $params.Body.Add( 'SAN-UPN', $SanUpn )
-                    }
-                    'SanUri' {
-                        $params.Body.Add( 'SAN-URI', $SanUri )
-                    }
-                    'SerialNumber' {
-                        $params.Body.Add( 'Serial', $SerialNumber )
-                    }
-                    'SignatureAlgorithm' {
-                        $params.Body.Add( 'SignatureAlgorithm', $SignatureAlgorithm -join ',' )
-                    }
-                    'Thumbprint' {
-                        $params.Body.Add( 'Thumbprint', $Thumbprint )
-                    }
-                    'IssueDate' {
-                        $params.Body.Add( 'ValidFrom', $IssueDate.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
-                    }
-                    'ExpireDate' {
-                        $params.Body.Add( 'ValidTo', $ExpireDate.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
-                    }
-                    'ExpireAfter' {
-                        $params.Body.Add( 'ValidToGreater', $ExpireAfter.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") )
-                    }
-                    'ExpireBefore' {
-                        $params.Body.Add( 'ValidToLess', $ExpireBefore.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") )
-                    }
-                    'Enabled' {
-                        $params.Body.Add( 'Disabled', [int] (-not $Enabled) )
-                    }
-                    'InError' {
-                        $params.Body.Add( 'InError', [int] $InError )
-                    }
-                    'NetworkValidationEnabled' {
-                        $params.Body.Add( 'NetworkValidationDisabled', [int] (-not $NetworkValidationEnabled) )
-                    }
-                    'ManagementType' {
-                        $params.Body.Add( 'ManagementType', $ManagementType -join ',' )
-                    }
-                    'PendingWorkflow' {
-                        $params.Body.Add( 'PendingWorkflow', '')
-                    }
-                    'Stage' {
-                        $params.Body.Add( 'Stage', $Stage -join ',' )
-                    }
-                    'StageGreaterThan' {
-                        $params.Body.Add( 'StageGreater', $StageGreaterThan )
-                    }
-                    'StageLessThan' {
-                        $params.Body.Add( 'StageLess', $StageLessThan )
-                    }
-                    'ValidationEnabled' {
-                        $params.Body.Add( 'ValidationDisabled', [int] (-not $ValidationEnabled) )
-                    }
-                    'ValidationState' {
-                        $params.Body.Add( 'ValidationState', $ValidationState -join ',' )
-                    }
-                }
-            }
-
-            'Full' {
-                $params = @{
-                    TppSession = $TppSession
-                    Method     = 'Get'
-                    UriLeaf    = 'placeholder'
-                }
-            }
+        $params = @{
+            TppSession = $TppSession
+            Method     = 'Get'
+            UriLeaf    = 'placeholder'
         }
-
     }
 
     process {
 
-        Switch ($PsCmdlet.ParameterSetName)	{
-            {$_ -in 'NoPath', 'ByPath'} {
-
-                $response = Invoke-TppRestMethod @params
-
-                if ( $response ) {
-                    if ( $PSBoundParameters.ContainsKey('Full') ) {
-                        $response.Certificates | Get-TppCertificateDetail
-                    }
-                    else {
-                        $response.Certificates.ForEach{
-                            [TppObject] @{
-                                Name     = $_.Name
-                                TypeName = $_.SchemaClass
-                                Path     = $_.DN
-                                Guid     = [guid] $_.Guid
-                            }
-                        }
-                    }
-                }
-            }
-
-            'Full' {
-                $out = $GUID.ForEach{
-                    $params.UriLeaf = [System.Web.HttpUtility]::HtmlEncode("certificates/{$_}")
-                    Invoke-TppRestMethod @params
-                }
-
-                $selectProps = @{
-                    Property        = 
-                    @{
-                        n = 'Name'
-                        e = {$_.Name}
-                    },
-                    @{
-                        n = 'TypeName'
-                        e = {$_.SchemaClass}
-                    },
-                    @{
-                        n = 'Path'
-                        e = {$_.DN}
-                    }, @{
-                        n = 'Guid'
-                        e = {[guid]$_.guid}
-                    }, @{
-                        n = 'ParentPath'
-                        e = {$_.ParentDN}
-                    },
-                    '*'
-                    ExcludeProperty = 'DN', 'GUID', 'ParentDn', 'SchemaClass', 'Name'
-                }
-                $out | Select-Object @selectProps
-            }
+        if ( $PSBoundParameters.ContainsKey('InputObject') ) {
+            $guid = $InputObject.Guid
         }
+        elseif ( $PSBoundParameters.ContainsKey('Path') ) {
+            $guid = $Path | ConvertTo-TppGuid
+        }
+        else {
+            # guid provided, we're good
+        }
+
+        # Switch ($PsCmdlet.ParameterSetName)	{
+        #     'Full' {
+        # $out = $GUID.ForEach{
+        $params.UriLeaf = [System.Web.HttpUtility]::HtmlEncode("certificates/{$Guid}")
+        $response = Invoke-TppRestMethod @params
+        # }
+
+        $selectProps = @{
+            Property        =
+            @{
+                n = 'Name'
+                e = {$_.Name}
+            },
+            @{
+                n = 'TypeName'
+                e = {$_.SchemaClass}
+            },
+            @{
+                n = 'Path'
+                e = {$_.DN}
+            }, @{
+                n = 'Guid'
+                e = {[guid]$_.guid}
+            }, @{
+                n = 'ParentPath'
+                e = {$_.ParentDN}
+            },
+            '*'
+            ExcludeProperty = 'DN', 'GUID', 'ParentDn', 'SchemaClass', 'Name'
+        }
+        $response | Select-Object @selectProps
+        #     }
+        # }
     }
 }
