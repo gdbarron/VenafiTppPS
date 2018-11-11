@@ -16,7 +16,7 @@ Class name of the new object.
 See https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/Schema_Reference/r-SDK-CNattributesWhere.php for more info.
 
 .PARAMETER Attribute
-Hashtable with initial values for the new object.
+List of Hashtables with initial values for the new object.
 These will be specific to the object class being created.
 
 .PARAMETER TppSession
