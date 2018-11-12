@@ -7,7 +7,7 @@ Find objects by path, class, or pattern
 
 ### FindByClassAndPath
 ```
-Find-TppObject -Path <String> -Class <String[]> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>]
+Find-TppObject -Path <String> [-Pattern <String>] [-Recursive] -Class <String[]> [-TppSession <TppSession>]
  [<CommonParameters>]
 ```
 
@@ -16,14 +16,19 @@ Find-TppObject -Path <String> -Class <String[]> [-Pattern <String>] [-Recursive]
 Find-TppObject -Path <String> [-Pattern <String>] [-Recursive] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
+### FindByAttribute
+```
+Find-TppObject -Pattern <String> -Attribute <String[]> [-TppSession <TppSession>] [<CommonParameters>]
+```
+
 ### FindByClass
 ```
-Find-TppObject -Class <String[]> [-Pattern <String>] [-TppSession <TppSession>] [<CommonParameters>]
+Find-TppObject [-Pattern <String>] -Class <String[]> [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### FindByPattern
 ```
-Find-TppObject -Pattern <String> [-Attribute <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
+Find-TppObject -Pattern <String> [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -78,7 +83,8 @@ Get all objects of the type iis6 or capi
 Find-TppObject -Pattern 'test*'
 ```
 
-Find all objects matching the pattern
+Find objects with the specific name. 
+All objects will be searched.
 
 ### EXAMPLE 8
 ```
@@ -104,24 +110,11 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Class
-1 or more classes to search for
-
-```yaml
-Type: String[]
-Parameter Sets: FindByClassAndPath, FindByClass
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Pattern
-A pattern to match against object attribute values:
+Filter against object paths.
+If the Attribute parameter is provided, this will filter against an object's attribute values instead of the path.
 
+Follow the below rules:
 - To list DNs that include an asterisk (*) or question mark (?), prepend two backslashes (\\\\).
 For example, \\\\*.MyCompany.net treats the asterisk as a literal character and returns only certificates with DNs that match *.MyCompany.net.
 - To list DNs with a wildcard character, append a question mark (?).
@@ -144,26 +137,10 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String
-Parameter Sets: FindByPattern
+Parameter Sets: FindByAttribute, FindByPattern
 Aliases:
 
 Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Attribute
-A list of attribute names to limit the search against. 
-Only valid when searching by pattern.
-
-```yaml
-Type: String[]
-Parameter Sets: FindByPattern
-Aliases: AttributeName
-
-Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -181,6 +158,37 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Class
+1 or more classes to search for
+
+```yaml
+Type: String[]
+Parameter Sets: FindByClassAndPath, FindByClass
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Attribute
+A list of attribute names to limit the search against. 
+Only valid when searching by pattern.
+
+```yaml
+Type: String[]
+Parameter Sets: FindByAttribute
+Aliases: AttributeName
+
+Required: True
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
