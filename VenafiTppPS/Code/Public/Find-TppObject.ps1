@@ -12,8 +12,10 @@ The path to start our search.
 1 or more classes to search for
 
 .PARAMETER Pattern
-A pattern to match against object attribute values:
+Filter against object paths.
+If the Attribute parameter is provided, this will filter against an object's attribute values instead of the path.
 
+Follow the below rules:
 - To list DNs that include an asterisk (*) or question mark (?), prepend two backslashes (\\). For example, \\*.MyCompany.net treats the asterisk as a literal character and returns only certificates with DNs that match *.MyCompany.net.
 - To list DNs with a wildcard character, append a question mark (?). For example, "test_?.mycompany.net" counts test_1.MyCompany.net and test_2.MyCompany.net but not test12.MyCompany.net.
 - To list DNs with similar names, prepend an asterisk. For example, *est.MyCompany.net, counts Test.MyCompany.net and West.MyCompany.net.
@@ -60,7 +62,7 @@ Get all objects of the type iis6 or capi
 
 .EXAMPLE
 Find-TppObject -Pattern 'test*'
-Find all objects matching the pattern
+Find objects with the specific name.  All objects will be searched.
 
 .EXAMPLE
 Find-TppObject -Pattern 'test*' -Attribute 'Consumers'
@@ -83,36 +85,38 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function Find-TppObject {
+
     [CmdletBinding()]
     [OutputType( [TppObject] )]
-    param (
 
+    param (
         [Parameter(Mandatory, ParameterSetName = 'FindByPath')]
         [Parameter(Mandatory, ParameterSetName = 'FindByClassAndPath')]
         [ValidateNotNullOrEmpty()]
         [Alias('DN')]
         [String] $Path,
 
+        [Parameter(ParameterSetName = 'FindByPath')]
+        [Parameter(Mandatory, ParameterSetName = 'FindByPattern')]
+        [Parameter(ParameterSetName = 'FindByClass')]
+        [Parameter(ParameterSetName = 'FindByClassAndPath')]
+        [Parameter(Mandatory, ParameterSetName = 'FindByAttribute')]
+        [ValidateNotNullOrEmpty()]
+        [String] $Pattern,
+
+        [Parameter(ParameterSetName = 'FindByPath')]
+        [Parameter(ParameterSetName = 'FindByClassAndPath')]
+        [switch] $Recursive,
+
         [Parameter(Mandatory, ParameterSetName = 'FindByClass')]
         [Parameter(Mandatory, ParameterSetName = 'FindByClassAndPath')]
         [ValidateNotNullOrEmpty()]
         [String[]] $Class,
 
-        [Parameter(Mandatory, ParameterSetName = 'FindByPattern')]
-        [Parameter(ParameterSetName = 'FindByPath')]
-        [Parameter(ParameterSetName = 'FindByClass')]
-        [Parameter(ParameterSetName = 'FindByClassAndPath')]
-        [ValidateNotNullOrEmpty()]
-        [String] $Pattern,
-
-        [Parameter(ParameterSetName = 'FindByPattern')]
+        [Parameter(Mandatory, ParameterSetName = 'FindByAttribute')]
         [ValidateNotNullOrEmpty()]
         [Alias('AttributeName')]
         [String[]] $Attribute,
-
-        [Parameter(ParameterSetName = 'FindByPath')]
-        [Parameter(ParameterSetName = 'FindByClassAndPath')]
-        [switch] $Recursive,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -129,8 +133,8 @@ function Find-TppObject {
         Body       = @{}
     }
 
-    Switch ($PsCmdlet.ParameterSetName)	{
-        'FindByPattern' {
+    Switch -Wildcard ($PsCmdlet.ParameterSetName) {
+        'FindByAttribute' {
             $params.UriLeaf = 'config/find'
         }
 
@@ -138,7 +142,13 @@ function Find-TppObject {
             $params.UriLeaf = 'config/enumerate'
         }
 
-        {$_ -in 'FindByClass', 'FindByClassAndPath'} {
+        'FindByPattern' {
+            $params.UriLeaf = 'config/enumerate'
+            $params.Body.Add( 'ObjectDN', '\VED' )
+            $params.Body.Add( 'Recursive', 'true' )
+        }
+
+        'FindByClass*' {
             $params.UriLeaf = 'config/FindObjectsOfClass'
         }
     }
@@ -164,7 +174,7 @@ function Find-TppObject {
         # the rest api doesn't have the ability to search for multiple classes and path at the same time
         # loop through classes to get around this
         $params.Body.Add('Class', '')
-        $out = $Class.ForEach{
+        $objects = $Class.ForEach{
             $thisClass = $_
             $params.Body.Class = $thisClass
 
@@ -183,19 +193,19 @@ function Find-TppObject {
         $response = Invoke-TppRestMethod @params
 
         if ( $response.Result -eq [ConfigResult]::Success ) {
-            $out = $response.Objects
+            $objects = $response.Objects
         }
         else {
             Write-Error $response.Error
         }
     }
 
-    $out.ForEach{
+    foreach ($object in $objects) {
         [TppObject] @{
-            Name     = $_.Name
-            TypeName = $_.TypeName
-            Path     = $_.DN
-            Guid     = $_.Guid
+            Name     = $object.Name
+            TypeName = $object.TypeName
+            Path     = $object.DN
+            Guid     = $object.Guid
         }
     }
 }
