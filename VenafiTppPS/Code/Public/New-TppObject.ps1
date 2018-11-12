@@ -18,6 +18,8 @@ See https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/Schema_Refere
 .PARAMETER Attribute
 List of Hashtables with initial values for the new object.
 These will be specific to the object class being created.
+Each Hashtable should have Name as one key and Value as the other.
+See the examples.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -68,7 +70,6 @@ function New-TppObject {
         [string] $Path,
 
         [Parameter(Mandatory)]
-        # [ValidateSet('Device', 'CAPI', 'Policy')]
         [String] $Class,
 
         [Parameter(Mandatory)]
