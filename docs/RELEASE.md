@@ -1,16 +1,2 @@
-- BREAKING CHANGE: Break out basic certificate gathering from Get-TppCertificateDetail into Find-TppCertificate
-- BREAKING CHANGE: update Get-TppAttribute to standardize output as PSCustomObject with properties Name, Value, IsCustomField, and CustomName
-- Add TppObject type.  This will be the InputObject to many functions.
-- Add ConvertTo-TppGuid to convert a path to a guid
-- Add Get-Certificate to retrieve a certificate
-- Add Remove-TppCertificate
-- Add InputObject support to Get-TppCertificateDetail
-- Update output of Find-TppObject, is now TppObject
-- Update Get-TppAttribute to accept InputObject and Guid parameters
-- Update Remove-TppCertificateAssociation to accept InputObject and add better pipeline support
-- Update Revoke-TppCertificate to support ShouldProcess
-- Update Set-TppAttribute to support ShouldProcess
-- Update Set-TppPermission to support ShouldProcess
-- Rename ConvertTo-TppDN to ConvertTo-TppPath.  Will look to change all references of DN to Path
-- Rename Get-TppObject to Find-TppObject to properly reflect its purpose
-- Fix Set-TppAttribute to properly support NoClobber
+- moved New-TppObject from private to public and updated to allow new objects to be created across all classes whether a custom function exists or not
+- update Find-TppObject to default a pattern search to filter on path instead of attribute value
