@@ -1,47 +1,67 @@
-# Get-TppWorkflowDetail
+# Get-TppWorkflowTicket
 
 ## SYNOPSIS
-Get details about workflow tickets
+Get workflow ticket
 
 ## SYNTAX
 
-### Path (Default)
+### ByObject
 ```
-Get-TppWorkflowDetail -Path <String[]> [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppWorkflowTicket -InputObject <TppObject> [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
-### GUID
+### ByPath
 ```
-Get-TppWorkflowDetail -Guid <Guid[]> [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppWorkflowTicket -Path <String[]> [-TppSession <TppSession>] [<CommonParameters>]
+```
+
+### ByGuid
+```
+Get-TppWorkflowTicket -Guid <Guid[]> [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Get details about workflow tickets via a certificate DN or a ticket GUID directly
+Get details about workflow tickets associated with a certificate.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Get-TppWorkflowDetail -Path '\VED\myapp.company.com'
+Get-TppWorkflowTicket -Path '\VED\policy\myapp.company.com'
 ```
 
-Get details for 1 certificate
+Get ticket details for 1 certificate
 
 ### EXAMPLE 2
 ```
-$certs | Get-TppWorkflowDetail
+$certs | Get-TppWorkflowTicket
 ```
 
 Get ticket details for multiple certificates
 
 ## PARAMETERS
 
+### -InputObject
+TppObject which represents a certificate object
+
+```yaml
+Type: TppObject
+Parameter Sets: ByObject
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
 ### -Path
 Path to the certificate
 
 ```yaml
 Type: String[]
-Parameter Sets: Path
+Parameter Sets: ByPath
 Aliases: DN, CertificateDN
 
 Required: True
@@ -52,17 +72,17 @@ Accept wildcard characters: False
 ```
 
 ### -Guid
-Guid representing a unique ticket
+Certificate guid
 
 ```yaml
 Type: Guid[]
-Parameter Sets: GUID
+Parameter Sets: ByGuid
 Aliases:
 
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: False
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -88,7 +108,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### DN
+### InputObject, Path, or Guid
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
@@ -107,9 +127,9 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## RELATED LINKS
 
-[http://venafitppps.readthedocs.io/en/latest/functions/Get-TppWorkflowDetail/](http://venafitppps.readthedocs.io/en/latest/functions/Get-TppWorkflowDetail/)
+[http://venafitppps.readthedocs.io/en/latest/functions/Get-TppWorkflowTicket/](http://venafitppps.readthedocs.io/en/latest/functions/Get-TppWorkflowTicket/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppWorkflowDetail.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppWorkflowDetail.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppWorkflowTicket.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppWorkflowTicket.ps1)
 
 [https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Workflow-ticket-enumerate.php?tocpath=REST%20API%20reference%7CWorkflow%20Ticket%20programming%20interfaces%7C_____6](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Workflow-ticket-enumerate.php?tocpath=REST%20API%20reference%7CWorkflow%20Ticket%20programming%20interfaces%7C_____6)
 
