@@ -10,18 +10,18 @@ Guid representing a unique ticket
 
 .PARAMETER Status
 The new status to assign to the ticket.
-Possible values include "Pending", "Approved", “Approved After”, “Approved Between”, and "Rejected".
+Possible values include "Pending", "Approved", "Approved After", "Approved Between", and "Rejected".
 
 .PARAMETER Explanation
 Explanation for the status change
 
 .PARAMETER ScheduledStart
 Specifies the time after which the ticket should be processed.
-ScheduledStart must be specified when the “Approved After” or “Approved Between” statuses are set
+ScheduledStart must be specified when the "Approved After" or "Approved Between" statuses are set
 
 .PARAMETER ScheduledStop
 Specifies the time before which the ticket should be processed.
-ScheduledStop must be specified when the “Approved Between” status is set
+ScheduledStop must be specified when the "Approved Between" status is set
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
