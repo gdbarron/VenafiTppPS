@@ -19,7 +19,7 @@ pages:
     - Get-TppIdentityAttribute: functions/Get-TppIdentityAttribute.md
     - Get-TppLog: functions/Get-TppLog.md
     - Get-TppPermission: functions/Get-TppPermission.md
-    - Get-TppWorkflowDetail: functions/Get-TppWorkflowDetail.md
+    - Get-TppWorkflowTicket: functions/Get-TppWorkflowTicket.md
     - Move-TppObject: functions/Move-TppObject.md
     - New-TppCapiApplication: functions/New-TppCapiApplication.md
     - New-TppCertificate: functions/New-TppCertificate.md
@@ -33,7 +33,7 @@ pages:
     - Revoke-TppCertificate: functions/Revoke-TppCertificate.md
     - Set-TppAttribute: functions/Set-TppAttribute.md
     - Set-TppPermission: functions/Set-TppPermission.md
-    - Set-TppWorkflowStatus: functions/Set-TppWorkflowStatus.md
+    - Set-TppWorkflowTicketStatus: functions/Set-TppWorkflowTicketStatus.md
     - Test-TppIdentity: functions/Test-TppIdentity.md
     - Test-TppObject: functions/Test-TppObject.md
 
