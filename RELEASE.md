@@ -1,2 +1,2 @@
-- moved New-TppObject from private to public and updated to allow new objects to be created across all classes whether a custom function exists or not
-- update Find-TppObject to default a pattern search to filter on path instead of attribute value
+- Rename Get-TppWorkflowDetail to Get-TppWorkflowTicket and add InputObject pipeline support
+- Rename Set-TppWorkflowStatus to Set-TppWorkflowTicketStatus and get it actually working.  Accept pipeline input from Get-TppWorkflowTicket.
