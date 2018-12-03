@@ -136,17 +136,18 @@ function Get-TppPermission {
 
     process {
 
-        if ( $PSBoundParameters.ContainsKey('InputObject') ) {
-            $Guid = $InputObject.Guid
+        if ( $PSBoundParameters.ContainsKey('Path') ) {
+            $InputObject = Get-TppObject -Path $Path
         }
-        elseif ( $PSBoundParameters.ContainsKey('Path') ) {
-            $Guid = $Path | ConvertTo-TppGuid
-        }
-        else {
-            # we have the cert guid we need
+        elseif ( $PSBoundParameters.ContainsKey('Guid') ) {
+            $InputObject = $Guid | ConvertTo-TppPath | Get-TppObject
         }
 
-        foreach ( $thisGuid in $Guid ) {
+
+        foreach ( $thisObject in $InputObject ) {
+
+            $thisGuid = $thisObject.Guid
+
             if ( $PSBoundParameters.ContainsKey('PrefixedUniversalId') ) {
                 $principals = $PrefixedUniversalId
             }
@@ -178,7 +179,7 @@ function Get-TppPermission {
                 $response = Invoke-TppRestMethod @params
 
                 $thisReturnObject = [PSCustomObject] @{
-                    Guid                = $thisGuid
+                    Object              = $thisObject
                     PrefixedUniversalId = $principal
                 }
 
