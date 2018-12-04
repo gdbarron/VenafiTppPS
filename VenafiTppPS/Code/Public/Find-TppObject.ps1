@@ -93,6 +93,14 @@ function Find-TppObject {
         [Parameter(Mandatory, ParameterSetName = 'FindByPath')]
         [Parameter(Mandatory, ParameterSetName = 'FindByClassAndPath')]
         [ValidateNotNullOrEmpty()]
+        [ValidateScript( {
+                if ( $_ | Test-TppDnPath ) {
+                    $true
+                }
+                else {
+                    throw "'$_' is not a valid DN path"
+                }
+            })]
         [Alias('DN')]
         [String] $Path,
 
