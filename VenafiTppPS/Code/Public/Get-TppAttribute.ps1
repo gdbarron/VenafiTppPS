@@ -19,8 +19,8 @@ Object Guid.  Just providing Guid will return all attributes.
 .PARAMETER AttributeName
 Only retrieve the value/values for this attribute
 
-.PARAMETER EffectivePolicy
-Get the effective policy of the attribute
+.PARAMETER Effective
+Get the effective values of the attribute
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -98,7 +98,8 @@ function Get-TppAttribute {
         [Parameter(Mandatory, ParameterSetName = 'EffectiveByObject')]
         [Parameter(Mandatory, ParameterSetName = 'EffectiveByPath')]
         [Parameter(Mandatory, ParameterSetName = 'EffectiveByGuid')]
-        [Switch] $EffectivePolicy,
+        [Alias('EffectivePolicy')]
+        [Switch] $Effective,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -109,7 +110,7 @@ function Get-TppAttribute {
         $TppSession.Validate()
 
         if ( $PSBoundParameters.ContainsKey('Attribute') ) {
-            if ( $PSBoundParameters.ContainsKey('EffectivePolicy') ) {
+            if ( $PSBoundParameters.ContainsKey('Effective') ) {
                 $uriLeaf = 'config/ReadEffectivePolicy'
             }
             else {

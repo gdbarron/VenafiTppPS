@@ -9,7 +9,7 @@ Determine who has rights for TPP objects and what those rights are
 Guid representing a unique object
 
 .PARAMETER PrefixedUniversalId
-The id that represents the user or group.  You can use Get-TppIdentity or Get-TppPermission to get the id.
+The id that represents the user or group.  You can use Find-TppIdentity or Get-TppPermission to get the id.
 
 .PARAMETER Permission
 TppPermission object.  You can create a new object or get existing object from Get-TppPermission.
