@@ -86,11 +86,10 @@ function Get-TppWorkflowTicket {
 
     begin {
         $TppSession.Validate()
+        Write-Verbose ("Parameter set {0}" -f $PsCmdlet.ParameterSetName)
     }
 
     process {
-
-        Write-Verbose $PsCmdlet.ParameterSetName
 
         if ( $PSBoundParameters.ContainsKey('InputObject') ) {
             $Path = $InputObject.Path

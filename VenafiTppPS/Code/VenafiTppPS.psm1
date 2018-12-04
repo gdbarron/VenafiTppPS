@@ -29,6 +29,6 @@ $Script:TppSession = New-Object 'TppSession'
 Export-ModuleMember -variable TppSession
 
 Set-Alias -Name 'ConvertTo-TppDN' -Value 'ConvertTo-TppPath'
-Set-Alias -Name 'Get-TppObject' -Value 'Find-TppObject'
 Set-Alias -Name 'Get-TppWorkflowDetail' -Value 'Get-TppWorkflowTicket'
+Set-Alias -Name 'Get-TppIdentity' -Value 'Find-TppIdentity'
 Export-ModuleMember -Alias *

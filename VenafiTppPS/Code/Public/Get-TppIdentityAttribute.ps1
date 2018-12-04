@@ -6,7 +6,7 @@ Get attribute values for TPP identity objects
 Get attribute values for TPP identity objects.
 
 .PARAMETER PrefixedUniversalId
-The id that represents the user or group.  Use Get-TppIdentity to get the id.
+The id that represents the user or group.  Use Find-TppIdentity to get the id.
 
 .PARAMETER Attribute
 Retrieve identity attribute values for the users and groups.
@@ -54,7 +54,7 @@ function Get-TppIdentityAttribute {
     [CmdletBinding()]
     param (
 
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateScript( {
                 $_ -match '(AD|LDAP)+\S+:\w{32}$' -or $_ -match 'local:\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
             })]
@@ -115,14 +115,15 @@ function Get-TppIdentityAttribute {
 
                 $attribsOut = [PSCustomObject] $attribHash
 
-            } else {
+            }
+            else {
                 $response = Invoke-TppRestMethod @params
                 $attribsOut = $response.Id
             }
 
             [PSCustomObject] @{
                 PrefixedUniversalId = $thisId
-                Attribute           = $attribsOut
+                Attributes          = $attribsOut
             }
         }
     }
