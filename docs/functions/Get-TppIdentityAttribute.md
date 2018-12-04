@@ -41,7 +41,7 @@ Get specific attribute for user
 
 ### -PrefixedUniversalId
 The id that represents the user or group. 
-Use Get-TppIdentity to get the id.
+Use Find-TppIdentity to get the id.
 
 ```yaml
 Type: String[]
@@ -51,7 +51,7 @@ Aliases: PrefixedUniversal
 Required: True
 Position: 1
 Default value: None
-Accept pipeline input: True (ByPropertyName)
+Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 

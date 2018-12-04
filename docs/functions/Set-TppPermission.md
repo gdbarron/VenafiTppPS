@@ -41,7 +41,7 @@ Accept wildcard characters: False
 
 ### -PrefixedUniversalId
 The id that represents the user or group. 
-You can use Get-TppIdentity or Get-TppPermission to get the id.
+You can use Find-TppIdentity or Get-TppPermission to get the id.
 
 ```yaml
 Type: String[]

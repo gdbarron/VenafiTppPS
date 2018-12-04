@@ -10,14 +10,15 @@ pages:
   - Change Log: ChangeLog.md
   - Functions:
     - Find-TppCertificate: functions/Find-TppCertificate.md
+    - Find-TppIdentity: functions/Find-TppIdentity.md
     - Find-TppObject: functions/Find-TppObject.md
     - Get-TppAttribute: functions/Get-TppAttribute.md
     - Get-TppCertificate: functions/Get-TppCertificate.md
     - Get-TppCertificateDetail: functions/Get-TppCertificateDetail.md
     - Get-TppCustomField: functions/Get-TppCustomField.md
-    - Get-TppIdentity: functions/Get-TppIdentity.md
     - Get-TppIdentityAttribute: functions/Get-TppIdentityAttribute.md
     - Get-TppLog: functions/Get-TppLog.md
+    - Get-TppObject: functions/Get-TppObject.md
     - Get-TppPermission: functions/Get-TppPermission.md
     - Get-TppWorkflowTicket: functions/Get-TppWorkflowTicket.md
     - Move-TppObject: functions/Move-TppObject.md
