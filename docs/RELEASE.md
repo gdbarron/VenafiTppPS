@@ -1,2 +1,12 @@
-- Rename Get-TppWorkflowDetail to Get-TppWorkflowTicket and add InputObject pipeline support
-- Rename Set-TppWorkflowStatus to Set-TppWorkflowTicketStatus and get it actually working.  Accept pipeline input from Get-TppWorkflowTicket.
+- Rename Get-TppIdentity to Find-TppIdentity to better reflect its purpose
+- Add parameter validation to Find-TppObject
+- Add Get-TppObject
+- Update Get-TppPermission:
+    - Add InputObject pipeline input
+    - Add Path input parameter
+    - Change permission retrieval to be effective by default
+- Update Revoke-TppCertificate
+    - Add InputObject input
+    - Add Path input
+    - Simplify output to include path and status instead of confusing response from API.
+- Fix function aliases

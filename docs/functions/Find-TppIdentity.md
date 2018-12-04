@@ -1,19 +1,19 @@
-# Get-TppIdentity
+# Find-TppIdentity
 
 ## SYNOPSIS
 Get identity details
 
 ## SYNTAX
 
-### Browse (Default)
+### Find (Default)
 ```
-Get-TppIdentity -Name <String[]> [-Limit <Int32>] [-IncludeUsers] [-IncludeSecurityGroups]
+Find-TppIdentity -Name <String[]> [-Limit <Int32>] [-IncludeUsers] [-IncludeSecurityGroups]
  [-IncludeDistributionGroups] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### Me
 ```
-Get-TppIdentity [-Me] [-TppSession <TppSession>] [<CommonParameters>]
+Find-TppIdentity [-Me] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,7 +24,7 @@ If no identity types are selected, all types will be included in the search.
 
 ### EXAMPLE 1
 ```
-Get-TppIdentity -Name 'greg' -IncludeUsers
+Find-TppIdentity -Name 'greg' -IncludeUsers
 ```
 
 FullName          : CN=Greg Brownstein,OU=My Group,DC=my,DC=company,DC=com
@@ -40,21 +40,21 @@ Find user identities with the name greg
 
 ### EXAMPLE 2
 ```
-Get-TppIdentity -Name 'greg'
+Find-TppIdentity -Name 'greg'
 ```
 
 Find all identity types with the name greg
 
 ### EXAMPLE 3
 ```
-'greg', 'brownstein' | Get-TppIdentity
+'greg', 'brownstein' | Find-TppIdentity
 ```
 
 Find all identity types with the name greg and brownstein
 
 ### EXAMPLE 4
 ```
-Get-TppIdentity -Me
+Find-TppIdentity -Me
 ```
 
 Find authenticated user identity and all associated identities
@@ -62,12 +62,11 @@ Find authenticated user identity and all associated identities
 ## PARAMETERS
 
 ### -Name
-The individual identity, group identity, or distribution group name to search for in the provider.
-For non-local identity providers, such as AD and LDAP, use both the Filter and Limit parameters.
+The individual identity, group identity, or distribution group name to search for
 
 ```yaml
 Type: String[]
-Parameter Sets: Browse
+Parameter Sets: Find
 Aliases:
 
 Required: True
@@ -82,7 +81,7 @@ Limit how many items are returned, the default is 100.
 
 ```yaml
 Type: Int32
-Parameter Sets: Browse
+Parameter Sets: Find
 Aliases:
 
 Required: False
@@ -97,7 +96,7 @@ Include user identity type in search
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: Browse
+Parameter Sets: Find
 Aliases:
 
 Required: False
@@ -112,7 +111,7 @@ Include security group identity type in search
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: Browse
+Parameter Sets: Find
 Aliases:
 
 Required: False
@@ -127,7 +126,7 @@ Include distribution group identity type in search
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: Browse
+Parameter Sets: Find
 Aliases:
 
 Required: False
@@ -190,9 +189,9 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## RELATED LINKS
 
-[http://venafitppps.readthedocs.io/en/latest/functions/Get-TppIdentity/](http://venafitppps.readthedocs.io/en/latest/functions/Get-TppIdentity/)
+[http://venafitppps.readthedocs.io/en/latest/functions/Find-TppIdentity/](http://venafitppps.readthedocs.io/en/latest/functions/Find-TppIdentity/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppIdentity.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppIdentity.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppIdentity.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppIdentity.ps1)
 
 [https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Browse.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____3](https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Browse.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____3)
 
