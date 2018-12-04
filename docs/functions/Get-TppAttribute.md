@@ -13,7 +13,7 @@ Get-TppAttribute -InputObject <TppObject> [-Attribute <String[]>] [-TppSession <
 
 ### EffectiveByObject
 ```
-Get-TppAttribute -InputObject <TppObject> -Attribute <String[]> [-EffectivePolicy] [-TppSession <TppSession>]
+Get-TppAttribute -InputObject <TppObject> -Attribute <String[]> [-Effective] [-TppSession <TppSession>]
  [<CommonParameters>]
 ```
 
@@ -24,7 +24,7 @@ Get-TppAttribute -Path <String[]> [-Attribute <String[]>] [-TppSession <TppSessi
 
 ### EffectiveByPath
 ```
-Get-TppAttribute -Path <String[]> -Attribute <String[]> [-EffectivePolicy] [-TppSession <TppSession>]
+Get-TppAttribute -Path <String[]> -Attribute <String[]> [-Effective] [-TppSession <TppSession>]
  [<CommonParameters>]
 ```
 
@@ -35,7 +35,7 @@ Get-TppAttribute -Guid <Guid[]> [-Attribute <String[]>] [-TppSession <TppSession
 
 ### EffectiveByGuid
 ```
-Get-TppAttribute -Guid <Guid[]> -Attribute <String[]> [-EffectivePolicy] [-TppSession <TppSession>]
+Get-TppAttribute -Guid <Guid[]> -Attribute <String[]> [-Effective] [-TppSession <TppSession>]
  [<CommonParameters>]
 ```
 
@@ -144,13 +144,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -EffectivePolicy
-Get the effective policy of the attribute
+### -Effective
+Get the effective values of the attribute
 
 ```yaml
 Type: SwitchParameter
 Parameter Sets: EffectiveByObject, EffectiveByPath, EffectiveByGuid
-Aliases:
+Aliases: EffectivePolicy
 
 Required: True
 Position: Named
