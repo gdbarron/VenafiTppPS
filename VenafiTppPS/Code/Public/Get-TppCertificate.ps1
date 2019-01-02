@@ -121,7 +121,7 @@ function Get-TppCertificate {
 
         $params.Body.CertificateDN = $Path
 
-        if ( $PSBoundParameters.ContainsKey('IncludePrivateKey') ) {
+        if ( $IncludePrivateKey.IsPresent) {
 
             # validate format to be able to export the private key
             if ( $Format -in @("Base64", "DER", "PKCS #7") ) {
@@ -129,7 +129,7 @@ function Get-TppCertificate {
                 Return
             }
 
-            $params.Body.Add('IncludePrivateKey', $IncludePrivateKey)
+            $params.Body.Add('IncludePrivateKey', $true)
             $plainTextPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePassword))
             $params.Body.Add('Password', $plainTextPassword)
         }
