@@ -18,6 +18,9 @@ The format of the returned certificate.
 .PARAMETER OutPath
 Folder path to save the certificate to.  The name of the file will be determined automatically.
 
+.PARAMETER IncludeChain
+Include the certificate chain with the exported certificate.
+
 .PARAMETER IncludePrivateKey
 Include the private key.  The Format chosen must support private keys.
 
@@ -37,9 +40,16 @@ Session object created from New-TppSession method.  The value defaults to the sc
 $certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp'
 Get one or more certificates
 
+$certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain
+Get one or more certificates with the certificate chain included
+
 .EXAMPLE
 $certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
 Get one or more certificates with private key included
+
+.EXAMPLE
+$certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludeChain -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
+Get one or more certificates with private key and certificate chain included
 
 .INPUTS
 InputObject or Path
@@ -86,6 +96,9 @@ function Get-TppCertificate {
             })]
         [String] $OutPath,
 
+        [Parameter()]
+        [switch] $IncludeChain,
+
         [Parameter(Mandatory, ParameterSetName = 'ByObjectWithPrivateKey')]
         [Parameter(Mandatory, ParameterSetName = 'ByPathWithPrivateKey')]
         [switch] $IncludePrivateKey,
@@ -121,7 +134,7 @@ function Get-TppCertificate {
 
         $params.Body.CertificateDN = $Path
 
-        if ( $IncludePrivateKey.IsPresent) {
+        if ($IncludePrivateKey.IsPresent) {
 
             # validate format to be able to export the private key
             if ( $Format -in @("Base64", "DER", "PKCS #7") ) {
@@ -132,6 +145,10 @@ function Get-TppCertificate {
             $params.Body.Add('IncludePrivateKey', $true)
             $plainTextPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePassword))
             $params.Body.Add('Password', $plainTextPassword)
+        }
+
+        if ($IncludeChain.IsPresent) {
+            $params.Body.Add('IncludeChain', $true)
         }
 
         $response = Invoke-TppRestMethod @params
