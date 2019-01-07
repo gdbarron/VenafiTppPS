@@ -96,11 +96,6 @@ function Get-TppCertificate {
             })]
         [String] $OutPath,
 
-        
-        [Parameter(ParameterSetName = 'ByObject')]
-        [Parameter(ParameterSetName = 'ByPath')]
-        [Parameter(ParameterSetName = 'ByObjectWithPrivateKey')]
-        [Parameter(ParameterSetName = 'ByPathWithPrivateKey')]
         [switch] $IncludeChain,
 
         [Parameter(Mandatory, ParameterSetName = 'ByObjectWithPrivateKey')]
