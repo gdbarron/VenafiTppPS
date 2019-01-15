@@ -40,8 +40,15 @@ Session object created from New-TppSession method.  The value defaults to the sc
 $certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp'
 Get one or more certificates
 
+.EXAMPLE
+
 $certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain
 Get one or more certificates with the certificate chain included
+
+.EXAMPLE
+
+$certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain -FriendlyName 'MyFriendlyName'
+Get one or more certificates with the certificate chain included and friendly name attribute specified
 
 .EXAMPLE
 $certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
@@ -50,6 +57,10 @@ Get one or more certificates with private key included
 .EXAMPLE
 $certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludeChain -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
 Get one or more certificates with private key and certificate chain included
+
+.EXAMPLE
+$certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludeChain -FriendlyName 'MyFriendlyName' -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
+Get one or more certificates with private key and certificate chain included and friendly name attribute specified
 
 .INPUTS
 InputObject or Path
@@ -99,6 +110,9 @@ function Get-TppCertificate {
         [Parameter()]
         [switch] $IncludeChain,
 
+        [Parameter()]
+        [string] $FriendlyName,
+
         [Parameter(Mandatory, ParameterSetName = 'ByObjectWithPrivateKey')]
         [Parameter(Mandatory, ParameterSetName = 'ByPathWithPrivateKey')]
         [switch] $IncludePrivateKey,
@@ -145,6 +159,15 @@ function Get-TppCertificate {
             $params.Body.Add('IncludePrivateKey', $true)
             $plainTextPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePassword))
             $params.Body.Add('Password', $plainTextPassword)
+        }
+
+        if ($Format -ieq 'JKS' -and [string]::IsNullOrEmpty($FriendlyName)) {
+            Write-Error "JKS format requires FriendlyName parameter to be set"
+            Return
+        }
+        
+        if (-not [string]::IsNullOrEmpty($FriendlyName)) {
+            $params.Body.Add('FriendlyName', $FriendlyName)
         }
 
         if ($IncludeChain.IsPresent) {
