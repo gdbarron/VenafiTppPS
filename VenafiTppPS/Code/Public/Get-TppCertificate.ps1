@@ -165,7 +165,7 @@ function Get-TppCertificate {
             Write-Error "JKS format requires FriendlyName parameter to be set"
             Return
         }
-        
+
         if (-not [string]::IsNullOrEmpty($FriendlyName)) {
             $params.Body.Add('FriendlyName', $FriendlyName)
         }
