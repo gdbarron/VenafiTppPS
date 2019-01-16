@@ -21,6 +21,9 @@ Folder path to save the certificate to.  The name of the file will be determined
 .PARAMETER IncludeChain
 Include the certificate chain with the exported certificate.
 
+.PARAMETER FriendlyName
+The exported certificate's FriendlyName attribute. This parameter is required when Format is JKS.
+
 .PARAMETER IncludePrivateKey
 Include the private key.  The Format chosen must support private keys.
 
