@@ -164,18 +164,30 @@ function Get-TppCertificate {
             $params.Body.Add('Password', $plainTextPassword)
         }
 
-        if ($Format -ieq 'JKS' -and [string]::IsNullOrEmpty($FriendlyName)) {
-            Write-Error "JKS format requires FriendlyName parameter to be set"
-            Return
+        if ($Format -in @("Base64 (PKCS #8)", "DER", "PKCS #7")) {
+            if (-not ([string]::IsNullOrEmpty($FriendlyName))) {
+                Write-Error "JKS format requires FriendlyName parameter to be set"
+                Return
+            }
+        }
+        else {
+            if ($Format -ieq 'JKS' -and [string]::IsNullOrEmpty($FriendlyName)) {
+                Write-Error "JKS format requires FriendlyName parameter to be set"
+                Return
+            }
         }
 
         if (-not [string]::IsNullOrEmpty($FriendlyName)) {
             $params.Body.Add('FriendlyName', $FriendlyName)
         }
 
-        if ($IncludeChain.IsPresent) {
-            $params.Body.Add('IncludeChain', $true)
+        if (($Format -in @("Base64 (PKCS #8)", "DER")) -and $IncludeChain.IsPresent)
+        {
+            Write-Error "IncludeChain is only supported when Format is Base64, JKS, PKCS #7, or PKCS #12"
+            Return
         }
+
+        $params.Body.Add('IncludeChain', $IncludeChain.IsPresent)
 
         $response = Invoke-TppRestMethod @params
 
