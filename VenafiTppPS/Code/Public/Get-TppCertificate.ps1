@@ -166,7 +166,7 @@ function Get-TppCertificate {
 
         if ($Format -in @("Base64 (PKCS #8)", "DER", "PKCS #7")) {
             if (-not ([string]::IsNullOrEmpty($FriendlyName))) {
-                Write-Error "JKS format requires FriendlyName parameter to be set"
+                Write-Error "Only Base64, JKS, PKCS #12 formats support FriendlyName parameter"
                 Return
             }
         }
