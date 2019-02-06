@@ -151,10 +151,10 @@ function Get-TppCertificate {
 
         $params.Body.CertificateDN = $Path
 
-        if ($IncludePrivateKey.IsPresent) {
+        if ($IncludePrivateKey) {
 
             # validate format to be able to export the private key
-            if ( $Format -in @("Base64", "DER", "PKCS #7") ) {
+            if ( $Format -in @("Base64 (PKCS #8)", "DER", "PKCS #7") ) {
                 Write-Error "Format '$Format' does not support private keys"
                 Return
             }
@@ -181,13 +181,15 @@ function Get-TppCertificate {
             $params.Body.Add('FriendlyName', $FriendlyName)
         }
 
-        if (($Format -in @("Base64 (PKCS #8)", "DER")) -and $IncludeChain.IsPresent)
-        {
-            Write-Error "IncludeChain is only supported when Format is Base64, JKS, PKCS #7, or PKCS #12"
-            Return
-        }
+        if ($IncludeChain) {
+            if ($Format -in @("Base64 (PKCS #8)", "DER"))
+            {
+                Write-Error "IncludeChain is only supported when Format is Base64, JKS, PKCS #7, or PKCS #12"
+                Return
+            }
 
-        $params.Body.Add('IncludeChain', $IncludeChain.IsPresent)
+            $params.Body.Add('IncludeChain', $true)
+        }
 
         $response = Invoke-TppRestMethod @params
 
