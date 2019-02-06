@@ -7,26 +7,27 @@ Get a certificate
 
 ### ByObject (Default)
 ```
-Get-TppCertificate -InputObject <TppObject> -Format <String> [-OutPath <String>] [-TppSession <TppSession>]
- [<CommonParameters>]
+Get-TppCertificate -InputObject <TppObject> -Format <String> [-OutPath <String>] [-IncludeChain]
+ [-FriendlyName <String>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### ByObjectWithPrivateKey
 ```
-Get-TppCertificate -InputObject <TppObject> -Format <String> [-OutPath <String>] [-IncludePrivateKey]
- -SecurePassword <SecureString> [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppCertificate -InputObject <TppObject> -Format <String> [-OutPath <String>] [-IncludeChain]
+ [-FriendlyName <String>] [-IncludePrivateKey] -SecurePassword <SecureString> [-TppSession <TppSession>]
+ [<CommonParameters>]
 ```
 
 ### ByPathWithPrivateKey
 ```
-Get-TppCertificate -Path <String> -Format <String> [-OutPath <String>] [-IncludePrivateKey]
- -SecurePassword <SecureString> [-TppSession <TppSession>] [<CommonParameters>]
+Get-TppCertificate -Path <String> -Format <String> [-OutPath <String>] [-IncludeChain] [-FriendlyName <String>]
+ [-IncludePrivateKey] -SecurePassword <SecureString> [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### ByPath
 ```
-Get-TppCertificate -Path <String> -Format <String> [-OutPath <String>] [-TppSession <TppSession>]
- [<CommonParameters>]
+Get-TppCertificate -Path <String> -Format <String> [-OutPath <String>] [-IncludeChain] [-FriendlyName <String>]
+ [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -44,10 +45,38 @@ Get one or more certificates
 
 ### EXAMPLE 2
 ```
+$certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain
+```
+
+Get one or more certificates with the certificate chain included
+
+### EXAMPLE 3
+```
+$certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain -FriendlyName 'MyFriendlyName'
+```
+
+Get one or more certificates with the certificate chain included and friendly name attribute specified
+
+### EXAMPLE 4
+```
 $certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
 ```
 
 Get one or more certificates with private key included
+
+### EXAMPLE 5
+```
+$certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludeChain -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
+```
+
+Get one or more certificates with private key and certificate chain included
+
+### EXAMPLE 6
+```
+$certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludeChain -FriendlyName 'MyFriendlyName' -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
+```
+
+Get one or more certificates with private key and certificate chain included and friendly name attribute specified
 
 ## PARAMETERS
 
@@ -97,7 +126,7 @@ Accept wildcard characters: False
 ```
 
 ### -OutPath
-Folder path to save the certificate to.
+Folder path to save the certificate to. 
 The name of the file will be determined automatically.
 
 ```yaml
@@ -112,8 +141,39 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -IncludeChain
+Include the certificate chain with the exported certificate.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -FriendlyName
+The exported certificate's FriendlyName attribute.
+This parameter is required when Format is JKS.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -IncludePrivateKey
-Include the private key.
+Include the private key. 
 The Format chosen must support private keys.
 
 ```yaml
@@ -129,7 +189,7 @@ Accept wildcard characters: False
 ```
 
 ### -SecurePassword
-Password required when including a private key.
+Password required when including a private key. 
 You must adhere to the following rules:
 - Password is at least 12 characters.
 - Comprised of at least three of the following:
@@ -151,7 +211,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml
