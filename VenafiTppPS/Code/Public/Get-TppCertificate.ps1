@@ -18,6 +18,12 @@ The format of the returned certificate.
 .PARAMETER OutPath
 Folder path to save the certificate to.  The name of the file will be determined automatically.
 
+.PARAMETER IncludeChain
+Include the certificate chain with the exported certificate.
+
+.PARAMETER FriendlyName
+The exported certificate's FriendlyName attribute. This parameter is required when Format is JKS.
+
 .PARAMETER IncludePrivateKey
 Include the private key.  The Format chosen must support private keys.
 
@@ -38,8 +44,26 @@ $certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp'
 Get one or more certificates
 
 .EXAMPLE
+
+$certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain
+Get one or more certificates with the certificate chain included
+
+.EXAMPLE
+
+$certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain -FriendlyName 'MyFriendlyName'
+Get one or more certificates with the certificate chain included and friendly name attribute specified
+
+.EXAMPLE
 $certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
 Get one or more certificates with private key included
+
+.EXAMPLE
+$certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludeChain -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
+Get one or more certificates with private key and certificate chain included
+
+.EXAMPLE
+$certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludeChain -FriendlyName 'MyFriendlyName' -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
+Get one or more certificates with private key and certificate chain included and friendly name attribute specified
 
 .INPUTS
 InputObject or Path
@@ -86,6 +110,12 @@ function Get-TppCertificate {
             })]
         [String] $OutPath,
 
+        [Parameter()]
+        [switch] $IncludeChain,
+
+        [Parameter()]
+        [string] $FriendlyName,
+
         [Parameter(Mandatory, ParameterSetName = 'ByObjectWithPrivateKey')]
         [Parameter(Mandatory, ParameterSetName = 'ByPathWithPrivateKey')]
         [switch] $IncludePrivateKey,
@@ -121,17 +151,44 @@ function Get-TppCertificate {
 
         $params.Body.CertificateDN = $Path
 
-        if ( $PSBoundParameters.ContainsKey('IncludePrivateKey') ) {
+        if ($IncludePrivateKey) {
 
             # validate format to be able to export the private key
-            if ( $Format -in @("Base64", "DER", "PKCS #7") ) {
+            if ( $Format -in @("Base64 (PKCS #8)", "DER", "PKCS #7") ) {
                 Write-Error "Format '$Format' does not support private keys"
                 Return
             }
 
-            $params.Body.Add('IncludePrivateKey', $IncludePrivateKey)
+            $params.Body.Add('IncludePrivateKey', $true)
             $plainTextPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePassword))
             $params.Body.Add('Password', $plainTextPassword)
+        }
+
+        if ($Format -in @("Base64 (PKCS #8)", "DER", "PKCS #7")) {
+            if (-not ([string]::IsNullOrEmpty($FriendlyName))) {
+                Write-Error "Only Base64, JKS, PKCS #12 formats support FriendlyName parameter"
+                Return
+            }
+        }
+        else {
+            if ($Format -ieq 'JKS' -and [string]::IsNullOrEmpty($FriendlyName)) {
+                Write-Error "JKS format requires FriendlyName parameter to be set"
+                Return
+            }
+        }
+
+        if (-not [string]::IsNullOrEmpty($FriendlyName)) {
+            $params.Body.Add('FriendlyName', $FriendlyName)
+        }
+
+        if ($IncludeChain) {
+            if ($Format -in @("Base64 (PKCS #8)", "DER"))
+            {
+                Write-Error "IncludeChain is only supported when Format is Base64, JKS, PKCS #7, or PKCS #12"
+                Return
+            }
+
+            $params.Body.Add('IncludeChain', $true)
         }
 
         $response = Invoke-TppRestMethod @params

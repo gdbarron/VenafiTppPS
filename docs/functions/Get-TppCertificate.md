@@ -97,7 +97,7 @@ Accept wildcard characters: False
 ```
 
 ### -OutPath
-Folder path to save the certificate to. 
+Folder path to save the certificate to.
 The name of the file will be determined automatically.
 
 ```yaml
@@ -113,7 +113,7 @@ Accept wildcard characters: False
 ```
 
 ### -IncludePrivateKey
-Include the private key. 
+Include the private key.
 The Format chosen must support private keys.
 
 ```yaml
@@ -129,7 +129,7 @@ Accept wildcard characters: False
 ```
 
 ### -SecurePassword
-Password required when including a private key. 
+Password required when including a private key.
 You must adhere to the following rules:
 - Password is at least 12 characters.
 - Comprised of at least three of the following:
@@ -151,7 +151,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method. 
+Session object created from New-TppSession method.
 The value defaults to the script session object $TppSession.
 
 ```yaml
