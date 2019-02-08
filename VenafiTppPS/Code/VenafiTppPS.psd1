@@ -57,7 +57,7 @@ PowerShellVersion = '5.0'
 # RequiredAssemblies = @()
 
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
-ScriptsToProcess = 'classes\TppSession.ps1', 'classes\TppPermission.ps1', 
+ScriptsToProcess = 'classes\TppSession.ps1', 'classes\TppPermission.ps1',
                'classes\TppObject.ps1'
 
 # Type files (.ps1xml) to be loaded when importing this module
@@ -70,22 +70,22 @@ ScriptsToProcess = 'classes\TppSession.ps1', 'classes\TppPermission.ps1',
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Find-TppCertificate', 'Find-TppIdentity', 'Find-TppObject', 
-               'Get-TppAttribute', 'Get-TppCertificate', 'Get-TppCertificateDetail', 
-               'Get-TppCustomField', 'Get-TppIdentityAttribute', 'Get-TppLog', 
-               'Get-TppObject', 'Get-TppPermission', 'Get-TppWorkflowTicket', 
-               'Move-TppObject', 'New-TppCapiApplication', 'New-TppCertificate', 
-               'New-TppObject', 'New-TppPolicy', 'New-TppSession', 
-               'Remove-TppCertificate', 'Remove-TppCertificateAssociation', 
-               'Rename-TppObject', 'Restore-TppCertificate', 'Revoke-TppCertificate', 
-               'Set-TppAttribute', 'Set-TppPermission', 
-               'Set-TppWorkflowTicketStatus', 'Test-TppIdentity', 'Test-TppObject'
+FunctionsToExport = 'Find-TppCertificate', 'Find-TppIdentity', 'Find-TppObject',
+               'Get-TppAttribute', 'Get-TppCertificate', 'Get-TppCertificateDetail',
+               'Get-TppCustomField', 'Get-TppIdentityAttribute', 'Get-TppLog',
+               'Get-TppObject', 'Get-TppPermission', 'Get-TppWorkflowTicket',
+               'Move-TppObject', 'New-TppCapiApplication', 'New-TppCertificate',
+               'New-TppObject', 'New-TppPolicy', 'New-TppSession',
+               'Remove-TppCertificate', 'Remove-TppCertificateAssociation',
+               'Rename-TppObject', 'Restore-TppCertificate', 'Revoke-TppCertificate',
+               'Set-TppAttribute', 'Set-TppPermission',
+               'Set-TppWorkflowTicketStatus', 'Test-TppIdentity', 'Test-TppObject', 'Get-TppSystemStatus'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
 
 # Variables to export from this module
-VariablesToExport = 'TppSession'
+VariablesToExport = 'TppSession', 'TppSupportedVersion'
 
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
 AliasesToExport = 'ConvertTo-TppDN', 'Get-TppWorkflowDetail', 'Get-TppIdentity'

@@ -5,6 +5,7 @@ class TppSession {
     [string] $ServerUrl
     [datetime] $ValidUntil
     [PSCustomObject] $CustomField
+    [Version] $Version
 
     TppSession () {
         # throw [System.NotImplementedException]::New()
@@ -73,6 +74,8 @@ class TppSession {
             $allFields += $deviceFields | Where-Object {$_.Guid -notin $allFields.Guid}
             $this.CustomField = $allFields
         }
+
+        $this.Version = (Get-TppSystemStatus -TppSession $this) | Select-Object -First 1 -ExpandProperty version
 
     }
 
