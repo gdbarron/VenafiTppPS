@@ -1,12 +1,4 @@
-- Rename Get-TppIdentity to Find-TppIdentity to better reflect its purpose
-- Add parameter validation to Find-TppObject
-- Add Get-TppObject
-- Update Get-TppPermission:
-    - Add InputObject pipeline input
-    - Add Path input parameter
-    - Change permission retrieval to be effective by default
-- Update Revoke-TppCertificate
-    - Add InputObject input
-    - Add Path input
-    - Simplify output to include path and status instead of confusing response from API.
-- Fix function aliases
+- Add Get-TppSystemStatus
+- Add system version to TppSession.  Uses SystemStatus instead of SystemStatus/Version which is new to 18.3 and folks might not be running yet
+- Add framework utilizing the system version and config file to validate the current api call is supported on the current version, throw an error otherwise
+- Fix bug in Get-TppCertificate.  This was actually fixed in 0.7.2, but the release notes didn't call it out.  Thanks for the contribution, tristanbarcelon!
