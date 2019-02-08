@@ -20,6 +20,7 @@ pages:
     - Get-TppLog: functions/Get-TppLog.md
     - Get-TppObject: functions/Get-TppObject.md
     - Get-TppPermission: functions/Get-TppPermission.md
+    - Get-TppSystemStatus: functions/Get-TppSystemStatus.md
     - Get-TppWorkflowTicket: functions/Get-TppWorkflowTicket.md
     - Move-TppObject: functions/Move-TppObject.md
     - New-TppCapiApplication: functions/New-TppCapiApplication.md
