@@ -51,6 +51,14 @@ function Invoke-TppRestMethod {
         [switch] $UseWebRequest
     )
 
+    # ensure this api is supported for the current version
+    $supportedVersion = $TppSupportedVersion.Where{$_.UriLeaf -eq $UriLeaf}
+    if ( $supportedVersion ) {
+        if ( $TppSession.Version -lt ([Version] $supportedVersion.Version) ) {
+            throw ("{0} is not a supported api call for this version (v{1}) of TPP" -f $UriLeaf, $TppSession.Version)
+        }
+    }
+
     Switch ($PsCmdlet.ParameterSetName)	{
         "Session" {
             $ServerUrl = $TppSession.ServerUrl
@@ -87,10 +95,12 @@ function Invoke-TppRestMethod {
         Write-Debug "Using Invoke-WebRequest"
         try {
             Invoke-WebRequest @params
-        } catch {
+        }
+        catch {
             $_.Exception.Response
         }
-    } else {
+    }
+    else {
         Write-Debug "Using Invoke-RestMethod"
         Invoke-RestMethod @params
     }
