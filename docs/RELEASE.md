@@ -1,4 +1,1 @@
-- Add Get-TppSystemStatus
-- Add system version to TppSession.  Uses SystemStatus instead of SystemStatus/Version which is new to 18.3 and folks might not be running yet
-- Add framework utilizing the system version and config file to validate the current api call is supported on the current version, throw an error otherwise
-- Fix bug in Get-TppCertificate.  This was actually fixed in 0.7.2, but the release notes didn't call it out.  Thanks for the contribution, tristanbarcelon!
+- Rolling back version checking from 0.7.3 due to possible bug with API method /SystemStatus
