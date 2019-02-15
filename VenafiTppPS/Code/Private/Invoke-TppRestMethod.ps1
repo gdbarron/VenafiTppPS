@@ -52,12 +52,12 @@ function Invoke-TppRestMethod {
     )
 
     # ensure this api is supported for the current version
-    $supportedVersion = $TppSupportedVersion.Where{$_.UriLeaf -eq $UriLeaf}
-    if ( $supportedVersion ) {
-        if ( $TppSession.Version -lt ([Version] $supportedVersion.Version) ) {
-            throw ("{0} is not a supported api call for this version (v{1}) of TPP" -f $UriLeaf, $TppSession.Version)
-        }
-    }
+    # $supportedVersion = $TppSupportedVersion.Where{$_.UriLeaf -eq $UriLeaf}
+    # if ( $supportedVersion ) {
+    #     if ( $TppSession.Version -lt ([Version] $supportedVersion.Version) ) {
+    #         throw ("{0} is not a supported api call for this version (v{1}) of TPP" -f $UriLeaf, $TppSession.Version)
+    #     }
+    # }
 
     Switch ($PsCmdlet.ParameterSetName)	{
         "Session" {
