@@ -108,7 +108,10 @@ function New-TppSession {
         ServerUrl  = $ServerUrl
     }
 
-    if ( -not ($PsCmdlet.ParameterSetName -eq 'WindowsIntegrated') ) {
+    if ( $PsCmdlet.ParameterSetName -eq 'WindowsIntegrated' ) {
+        # Force TLS 1.2, needed for Windows Authentication
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    } else {
         $newSession.Credential = $sessionCredential
     }
 
