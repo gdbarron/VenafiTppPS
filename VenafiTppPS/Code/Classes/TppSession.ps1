@@ -5,7 +5,7 @@ class TppSession {
     [string] $ServerUrl
     [datetime] $ValidUntil
     [PSCustomObject] $CustomField
-    [Version] $Version
+    # [Version] $Version
 
     TppSession () {
         # throw [System.NotImplementedException]::New()
@@ -35,13 +35,15 @@ class TppSession {
                     ContentType = 'application/json'
                 }
                 Invoke-RestMethod @params
-            } catch {
+            }
+            catch {
                 # tpp sessions timeout after 3 mins of inactivity
                 # reestablish connection
                 if ( $_.Exception.Response.StatusCode.value__ -eq '401' ) {
                     Write-Verbose "Unauthorized, re-authenticating"
                     $this.Connect()
-                } else {
+                }
+                else {
                     throw $_
                 }
             }
@@ -49,17 +51,26 @@ class TppSession {
     }
 
     [void] Connect() {
-        if ( $null -eq $this.ServerUrl -or $null -eq $this.Credential ) {
-            throw "You must provide values for ServerUrl and Credential"
+        if ( -not ($this.ServerUrl) ) {
+            throw "You must provide a value for ServerUrl"
         }
 
-        $params = @{
-            Method    = 'Post'
-            ServerUrl = $this.ServerUrl
-            UriLeaf   = 'authorize'
-            Body      = @{
-                Username = $this.Credential.username
-                Password = $this.Credential.GetNetworkCredential().password
+        if ( $this.Credential ) {
+            $params = @{
+                Method    = 'Post'
+                ServerUrl = $this.ServerUrl
+                UriLeaf   = 'authorize'
+                Body      = @{
+                    Username = $this.Credential.username
+                    Password = $this.Credential.GetNetworkCredential().password
+                }
+            }
+        }
+        else {
+            $params = @{
+                Method    = 'Get'
+                ServerUrl = $this.ServerUrl
+                UriLeaf   = 'authorize/integrated'
             }
         }
 
@@ -75,18 +86,20 @@ class TppSession {
             $this.CustomField = $allFields
         }
 
-        $this.Version = (Get-TppSystemStatus -TppSession $this) | Select-Object -First 1 -ExpandProperty version
+        # $this.Version = (Get-TppSystemStatus -TppSession $this) | Select-Object -First 1 -ExpandProperty version
 
     }
 
     hidden [void] _init ([Hashtable] $initHash) {
 
-        if ( -not ($initHash.ServerUrl -and $initHash.Credential) ) {
-            throw "ServerUrl and Credential are required"
+        if ( -not ($initHash.ServerUrl) ) {
+            throw "ServerUrl is required"
         }
 
         $this.ServerUrl = $initHash.ServerUrl
-        $this.Credential = $initHash.Credential
+        if ( $initHash.Credential ) {
+            $this.Credential = $initHash.Credential
+        }
         $this.CustomField = $null
     }
 }

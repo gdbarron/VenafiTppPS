@@ -66,7 +66,7 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function New-TppSession {
     [OutputType('TppSession')]
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'WindowsIntegrated')]
     param(
         [Parameter(Mandatory)]
         [string] $ServerUrl,
@@ -90,14 +90,9 @@ function New-TppSession {
 
         "Credential" {
             $sessionCredential = $Credential
-            # $Username = $Credential.username
-            # $Password = $Credential.GetNetworkCredential().password
         }
 
         "UsernamePassword" {
-            # we have username, just need password
-            # $Password = ConvertTo-InsecureString $SecurePassword
-
             # build a credential object to attached to the session object
             $sessionCredential = New-Object System.Management.Automation.PSCredential ($Username, $SecurePassword)
         }
@@ -106,7 +101,11 @@ function New-TppSession {
 
     $newSession = [TppSession] @{
         ServerUrl  = $ServerUrl
-        Credential = $sessionCredential
+        # Credential = $sessionCredential
+    }
+
+    if ( -not ($PsCmdlet.ParameterSetName -eq 'WindowsIntegrated') ) {
+        $newSession.Credential = $sessionCredential
     }
 
     $newSession.Connect()
