@@ -35,4 +35,5 @@ Set-Alias -Name 'ConvertTo-TppDN' -Value 'ConvertTo-TppPath'
 Set-Alias -Name 'Get-TppWorkflowDetail' -Value 'Get-TppWorkflowTicket'
 Set-Alias -Name 'Get-TppIdentity' -Value 'Find-TppIdentity'
 Set-Alias -Name 'Restore-TppCertificate' -Value 'Invoke-TppCertificateRenewal'
+Set-Alias -Name 'Get-TppLog' -Value 'Read-TppLog'
 Export-ModuleMember -Alias *
