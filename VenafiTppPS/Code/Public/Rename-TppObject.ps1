@@ -84,7 +84,7 @@ function Rename-TppObject {
 
     $response = Invoke-TppRestMethod @params
 
-    if ( $response.Result -ne [ConfigResult]::Success ) {
+    if ( $response.Result -ne [TppConfigResult]::Success ) {
         throw $response.Error
     }
 }

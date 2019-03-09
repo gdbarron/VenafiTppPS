@@ -55,7 +55,7 @@ function ConvertTo-TppPath {
 
         $response = Invoke-TppRestMethod @params
 
-        if ( $response.Result -eq [ConfigResult]::Success ) {
+        if ( $response.Result -eq [TppConfigResult]::Success ) {
             if ( $PSBoundParameters.ContainsKey('IncludeType') ) {
                 [PSCustomObject] @{
                     Path     = $response.ObjectDN

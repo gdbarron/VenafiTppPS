@@ -132,14 +132,14 @@ function Get-TppWorkflowTicket {
 
             $response = Invoke-TppRestMethod @params
 
-            if ( $response.Result -eq [WorkflowResult]::Success ) {
+            if ( $response.Result -eq [TppWorkflowResult]::Success ) {
                 $response | Add-Member @{
                     TicketGuid = [guid] $thisGuid
                 }
                 $response
             }
             else {
-                throw ("Error getting ticket details, error is {0}" -f [enum]::GetName([WorkflowResult], $response.Result))
+                throw ("Error getting ticket details, error is {0}" -f [enum]::GetName([TppWorkflowResult], $response.Result))
             }
         }
     }

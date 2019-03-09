@@ -115,18 +115,18 @@ function Find-TppIdentity {
         $identityType = 0
         # determine settings to use
         if ( $PSBoundParameters.ContainsKey('IncludeUsers') ) {
-            $identityType += [IdentityType]::User
+            $identityType += [TppIdentityType]::User
         }
         if ( $PSBoundParameters.ContainsKey('IncludeSecurityGroups') ) {
-            $identityType += [IdentityType]::SecurityGroups
+            $identityType += [TppIdentityType]::SecurityGroups
         }
         if ( $PSBoundParameters.ContainsKey('IncludeDistributionGroups') ) {
-            $identityType += [IdentityType]::DistributionGroups
+            $identityType += [TppIdentityType]::DistributionGroups
         }
 
         # if no types to include were provided, include all
         if ( $identityType -eq 0 ) {
-            $identityType = [IdentityType]::User + [IdentityType]::SecurityGroups + [IdentityType]::DistributionGroups
+            $identityType = [TppIdentityType]::User + [TppIdentityType]::SecurityGroups + [TppIdentityType]::DistributionGroups
         }
 
         Switch ($PsCmdlet.ParameterSetName)	{

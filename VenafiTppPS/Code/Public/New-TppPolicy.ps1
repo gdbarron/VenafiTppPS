@@ -82,7 +82,7 @@ function New-TppPolicy {
 
     $response = New-TppObject @params
 
-    if ( $response.Result -eq [ConfigResult]::Success ) {
+    if ( $response.Result -eq [TppConfigResult]::Success ) {
         $response.Object
     } else {
         throw $response.Error
