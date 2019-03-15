@@ -48,7 +48,6 @@ function ConvertTo-TppGuid {
     )
 
     begin {
-
         $TppSession.Validate()
 
         $params = @{
@@ -68,7 +67,7 @@ function ConvertTo-TppGuid {
         $response = Invoke-TppRestMethod @params
 
         if ( $response.Result -eq [TppConfigResult]::Success ) {
-            if ( $PSBoundParameters.ContainsKey('IncludeType') ) {
+            if ( $IncludeType ) {
                 [PSCustomObject] @{
                     Guid     = [Guid] $response.Guid
                     TypeName = $response.ClassName

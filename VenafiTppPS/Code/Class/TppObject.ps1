@@ -44,7 +44,7 @@ class TppObject {
     }
 
     TppObject ([string] $Path) {
-        $info = ConvertTo-TppGuid -Path $Path -IncludeType
+        $info = $Path | ConvertTo-TppGuid -IncludeType
         $this.Path = $Path
         $this.Name = Split-Path $Path -Leaf
         $this.Guid = $info.Guid
