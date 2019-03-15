@@ -4,7 +4,7 @@ Create a new Venafi TPP session
 
 .DESCRIPTION
 Authenticates a user and creates a new session with which future calls can be made.
-Windows Integrated authentication is supported as well as providing credentials.
+Windows Integrated authentication is the default.
 
 .PARAMETER ServerUrl
 URL for the Venafi server.
@@ -22,27 +22,7 @@ SecureString password to authenticate to ServerUrl with
 Optionally, send the session object to the pipeline instead of script scope.
 
 .OUTPUTS
-PSCustomObject with the following properties, if the PassThru switch is provided:
-    APIKey - Guid representing the current session with TPP
-    Credential - Credential object provided to authenticate against TPP server.  This will be used to re-authenticate once the connection has expired.
-    ServerUrl - URL to the TPP server
-    ValidateUtil - DateTime when the session will expire.
-    CustomField - PSCustomObject containing custom fields defined on this server.  Properties include:
-        AllowedValues
-        Classes
-        ConfigAttribute
-        DN
-        DefaultValues
-        Guid
-        Label
-        Mandatory
-        Name
-        Policyable
-        RenderHidden
-        RenderReadOnly
-        Single
-        Type
-
+TppSession, if PassThru is provided
 
 .EXAMPLE
 New-TppSession -ServerUrl https://venafitpp.mycompany.com
