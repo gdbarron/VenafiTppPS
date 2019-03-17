@@ -204,9 +204,6 @@ function New-TppCapiApplication {
 
     $response = New-TppObject @params
 
-    # if ( $response.Result -eq [TppConfigResult]::Success ) {
-    #     $capiObject = $response.Object
-
     # update Consumers attribute on cert with DN of this new app
     # required to make the "cross connection" between objects
     $certUpdateParams = @{
@@ -224,10 +221,4 @@ function New-TppCapiApplication {
     else {
         throw $certUpdateResponse.Error
     }
-
-    # }
-    # else {
-    #     throw $response.Error
-    # }
-
 }
