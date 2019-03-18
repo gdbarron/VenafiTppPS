@@ -59,7 +59,8 @@ PowerShellVersion = '5.0'
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
 ScriptsToProcess = 'class\TppSession.ps1', 'class\TppPermission.ps1', 'class\TppObject.ps1',
  'enum\TppCertificateStage.ps1', 'enum\TppConfigResult.ps1', 'enum\TppEventSeverity.ps1',
- 'enum\TppIdentityType.ps1', 'enum\TppMetadataResult.ps1', 'enum\TppWorkflowResult.ps1'
+ 'enum\TppIdentityType.ps1', 'enum\TppMetadataResult.ps1', 'enum\TppWorkflowResult.ps1',
+ 'enum\TppEventGroup.ps1'
 
 # Type files (.ps1xml) to be loaded when importing this module
 # TypesToProcess = @()
@@ -87,7 +88,7 @@ FunctionsToExport = 'Find-TppCertificate', 'Find-TppIdentity', 'Find-TppObject',
 CmdletsToExport = @()
 
 # Variables to export from this module
-VariablesToExport = 'TppSession', 'TppSupportedVersion', 'TppEventGroup'
+VariablesToExport = 'TppSession', 'TppSupportedVersion'
 
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
 AliasesToExport = 'ConvertTo-TppDN', 'Get-TppWorkflowDetail', 'Get-TppIdentity'
