@@ -35,15 +35,13 @@ class TppSession {
                     ContentType = 'application/json'
                 }
                 Invoke-RestMethod @params
-            }
-            catch {
+            } catch {
                 # tpp sessions timeout after 3 mins of inactivity
                 # reestablish connection
                 if ( $_.Exception.Response.StatusCode.value__ -eq '401' ) {
                     Write-Verbose "Unauthorized, re-authenticating"
                     $this.Connect()
-                }
-                else {
+                } else {
                     throw $_
                 }
             }
@@ -92,4 +90,3 @@ class TppSession {
         $this.CustomField = $null
     }
 }
-
