@@ -3,10 +3,8 @@
 Create a new Venafi TPP session
 
 .DESCRIPTION
-Authenticates a user via a username and password against a configured Trust
-Protection Platform identity provider (e.g. Active Directory, LDAP, or Local). After
-the user is authenticated, Trust Protection Platform returns an API key allowing
-access to all other REST calls.
+Authenticates a user and creates a new session with which future calls can be made.
+Windows Integrated authentication is the default.
 
 .PARAMETER ServerUrl
 URL for the Venafi server.
@@ -21,34 +19,18 @@ Username to authenticate to ServerUrl with
 SecureString password to authenticate to ServerUrl with
 
 .PARAMETER PassThru
-Optionally, send the session object to the pipeline.
+Optionally, send the session object to the pipeline instead of script scope.
 
 .OUTPUTS
-PSCustomObject with the following properties:
-    APIKey - Guid representing the current session with TPP
-    Credential - Credential object provided to authenticate against TPP server.  This will be used to re-authenticate once the connection has expired.
-    ServerUrl - URL to the TPP server
-    ValidateUtil - DateTime when the session will expire.
-    CustomField - PSCustomObject containing custom fields defined on this server.  Properties include:
-        AllowedValues
-        Classes
-        ConfigAttribute
-        DN
-        DefaultValues
-        Guid
-        Label
-        Mandatory
-        Name
-        Policyable
-        RenderHidden
-        RenderReadOnly
-        Single
-        Type
+TppSession, if PassThru is provided
 
+.EXAMPLE
+New-TppSession -ServerUrl https://venafitpp.mycompany.com
+Connect using Windows Integrated authentication and store the session object in the script scope
 
 .EXAMPLE
 New-TppSession -ServerUrl https://venafitpp.mycompany.com -Credential $cred
-Connect to the TPP server and store the session object in the script variable
+Connect to the TPP server and store the session object in the script scope
 
 .EXAMPLE
 $sess = New-TppSession -ServerUrl https://venafitpp.mycompany.com -Credential $cred -PassThru
@@ -63,10 +45,13 @@ https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Authorize.php?TocPath=REST%20API%20reference|Authentication%20and%20API%20key%20programming%20interfaces|_____1
 
+.LINK
+https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Authorize-Integrated.php?tocpath=REST%20API%20reference%7CAuthentication%20and%20API%20key%20programming%20interfaces%7C_____2
+
 #>
 function New-TppSession {
     [OutputType('TppSession')]
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'WindowsIntegrated')]
     param(
         [Parameter(Mandatory)]
         [string] $ServerUrl,
@@ -90,14 +75,9 @@ function New-TppSession {
 
         "Credential" {
             $sessionCredential = $Credential
-            # $Username = $Credential.username
-            # $Password = $Credential.GetNetworkCredential().password
         }
 
         "UsernamePassword" {
-            # we have username, just need password
-            # $Password = ConvertTo-InsecureString $SecurePassword
-
             # build a credential object to attached to the session object
             $sessionCredential = New-Object System.Management.Automation.PSCredential ($Username, $SecurePassword)
         }
@@ -106,7 +86,13 @@ function New-TppSession {
 
     $newSession = [TppSession] @{
         ServerUrl  = $ServerUrl
-        Credential = $sessionCredential
+    }
+
+    if ( $PsCmdlet.ParameterSetName -eq 'WindowsIntegrated' ) {
+        # Force TLS 1.2, needed for Windows Authentication
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    } else {
+        $newSession.Credential = $sessionCredential
     }
 
     $newSession.Connect()

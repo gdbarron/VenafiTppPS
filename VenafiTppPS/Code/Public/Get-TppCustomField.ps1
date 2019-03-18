@@ -75,7 +75,7 @@ function Get-TppCustomField {
 
         $response = Invoke-TppRestMethod @params
 
-        if ( $response.Result -eq [MetadataResult]::Success ) {
+        if ( $response.Result -eq [TppMetadataResult]::Success ) {
             [PSCustomObject] @{
                 Items  = $response.Items
                 Locked = $response.Locked

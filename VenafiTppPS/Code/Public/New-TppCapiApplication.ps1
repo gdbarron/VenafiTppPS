@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-Create a new CAPI application object
+Create a new CAPI application
 
 .DESCRIPTION
-Create a new CAPI application object
+Create a new CAPI application
 
 .PARAMETER Path
 DN path to the new object.
@@ -20,6 +20,9 @@ Path to the associated credential which has rights to access the connected devic
 .PARAMETER Disable
 Set processing to disabled.  It is enabled by default.
 
+.PARAMETER PassThru
+Return a TppObject representing the newly created capi app.
+
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
@@ -27,6 +30,7 @@ Session object created from New-TppSession method.  The value defaults to the sc
 none
 
 .OUTPUTS
+TppObject, if PassThru provided
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppCapiApplication/
@@ -58,7 +62,8 @@ function New-TppCapiApplication {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -77,7 +82,8 @@ function New-TppCapiApplication {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -93,7 +99,8 @@ function New-TppCapiApplication {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -113,14 +120,7 @@ function New-TppCapiApplication {
 
         [Parameter(ParameterSetName = 'UpdateIis')]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( {
-                if ( $_ -match "^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}$" ) {
-                    $true
-                } else {
-                    throw "'$_' is not a valid IP address"
-                }
-            })]
-        [String] $BindingIpAddress,
+        [ipaddress] $BindingIpAddress,
 
         [Parameter(ParameterSetName = 'UpdateIis')]
         [ValidateNotNullOrEmpty()]
@@ -133,6 +133,9 @@ function New-TppCapiApplication {
         [Parameter(ParameterSetName = 'UpdateIis')]
         [ValidateNotNullOrEmpty()]
         [Bool] $CreateBinding,
+
+        [Parameter()]
+        [switch] $PassThru,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -161,96 +164,61 @@ function New-TppCapiApplication {
     $params = @{
         DN        = $Path
         Class     = 'CAPI'
-        Attribute = @(
-            @{
-                Name  = 'Driver Name'
-                Value = 'appcapi'
-            },
-            @{
-                Name  = 'Friendly Name'
-                Value = $FriendlyName
-            },
-            @{
-                Name  = 'Credential'
-                Value = $CredentialPath
-            },
-            @{
-                Name  = 'Certificate'
-                Value = $CertificatePath
-            }
-        )
+        Attribute = @{
+            'Driver Name'   = 'appcapi'
+            'Friendly Name' = $FriendlyName
+            'Credential'    = $CredentialPath
+            'Certificate'   = $CertificatePath
+        }
+        PassThru  = $true
     }
 
     if ( $Disabled ) {
-        $params.Attribute += @{
-            Name  = 'Disabled'
-            Value = '1'
-        }
+        $params.Attribute.Add('Disabled', '1')
     }
 
     if ( $UpdateIis ) {
-        $params.Attribute += @(
+        $params.Attribute.Add(
             @{
-                Name  = 'Update IIS'
-                Value = '1'
-            },
-            @{
-                Name  = 'Web Site Name'
-                Value = $WebSiteName
+                'Update IIS'    = '1'
+                'Web Site Name' = $WebSiteName
             }
         )
 
-        if ( $BindingIpAddress ) {
-            $params.Attribute += @{
-                Name  = 'Binding IP Address'
-                Value = $BindingIpAddress
-            }
+        if ( $PSBoundParameters.ContainsKey('BindingIpAddress') ) {
+            $params.Attribute.Add('Binding IP Address', $BindingIpAddress.ToString())
         }
 
         if ( $BindingPort ) {
-            $params.Attribute += @{
-                Name  = 'Binding Port'
-                Value = $BindingPort
-            }
+            $params.Attribute.Add('Binding Port', $BindingPort)
         }
 
         if ( $BindingHostName ) {
-            $params.Attribute += @{
-                Name  = 'Hostname'
-                Value = $BindingHostName
-            }
+            $params.Attribute.Add('Hostname', $BindingHostName)
         }
 
         if ( $CreateBinding ) {
-            $params.Attribute += @{
-                Name  = 'Create Binding'
-                Value = $CreateBinding
-            }
+            $params.Attribute.Add('Create Binding', $CreateBinding)
         }
     }
 
     $response = New-TppObject @params
 
-    if ( $response.Result -eq [ConfigResult]::Success ) {
-        $capiObject = $response.Object
-
-        # update Consumers attribute on cert with DN of this new app
-        # required to make the "cross connection" between objects
-        $certUpdateParams = @{
-            DN            = $CertificatePath
-            AttributeName = 'Consumers'
-            Value         = $capiObject.DN
-        }
-        $certUpdateResponse = Set-TppAttribute @certUpdateParams -NoClobber
-
-        if ( $certUpdateResponse.Success ) {
-            $capiObject
-        } else {
-            throw $certUpdateResponse.Error
-        }
-
-    } else {
-        throw $response.Error
+    # update Consumers attribute on cert with DN of this new app
+    # required to make the "cross connection" between objects
+    $certUpdateParams = @{
+        Path          = $CertificatePath
+        AttributeName = 'Consumers'
+        Value         = $response.Path
     }
+    $certUpdateResponse = Set-TppAttribute @certUpdateParams -NoClobber
 
+    if ( $certUpdateResponse.Success ) {
+        if ( $PassThru ) {
+            $response
+        }
+    }
+    else {
+        throw $certUpdateResponse.Error
+    }
 }

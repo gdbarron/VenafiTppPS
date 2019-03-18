@@ -32,6 +32,9 @@ function Invoke-TppRestMethod {
         [ValidateNotNullOrEmpty()]
         [String] $ServerUrl,
 
+        [Parameter(ParameterSetName = 'URL')]
+        [switch] $UseDefaultCredentials,
+
         [Parameter(Mandatory)]
         [ValidateSet("Get", "Post", "Patch", "Put", "Delete")]
         [String] $Method,
@@ -87,6 +90,10 @@ function Invoke-TppRestMethod {
         Headers     = $hdr
         Body        = $restBody
         ContentType = 'application/json'
+    }
+
+    if ( $UseDefaultCredentials ) {
+        $params.Add('UseDefaultCredentials', $true)
     }
 
     Write-Verbose ($params | ConvertTo-Json | out-string)
