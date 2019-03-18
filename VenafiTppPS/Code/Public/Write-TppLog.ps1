@@ -13,7 +13,7 @@ Default event group.
 Custom Event Group ID, 4 characters.
 
 .PARAMETER EventId
-Event ID from within the Group ID provided.  Only provide the 4 character event id, do not precede with group ID.
+Event ID from within the EventGroup or CustomEventGroup provided.  Only provide the 4 character event id, do not precede with group ID.
 
 .PARAMETER Component
 The item this event is associated with.  Typically, this is the Path (DN) of the object.
