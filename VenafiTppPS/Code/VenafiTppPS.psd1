@@ -12,7 +12,7 @@
 RootModule = 'VenafiTppPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.7.4'
+ModuleVersion = '1.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -27,7 +27,7 @@ Author = 'Greg Brownstein'
 CompanyName = 'Greg Brownstein'
 
 # Copyright statement for this module
-Copyright = '(c) 2018 Greg Brownstein. All rights reserved.'
+Copyright = '(c) 2018-2019 Greg Brownstein. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PowerShell module to access the features of Venafi Trust Protection Platform REST API'
