@@ -9,6 +9,8 @@ pages:
   - Release Notes: RELEASE.md
   - Change Log: ChangeLog.md
   - Functions:
+    - ConvertTo-TppGuid: functions/ConvertTo-TppGuid.md
+    - ConvertTo-TppPath: functions/ConvertTo-TppPath.md
     - Find-TppCertificate: functions/Find-TppCertificate.md
     - Find-TppIdentity: functions/Find-TppIdentity.md
     - Find-TppObject: functions/Find-TppObject.md
@@ -17,25 +19,27 @@ pages:
     - Get-TppCertificateDetail: functions/Get-TppCertificateDetail.md
     - Get-TppCustomField: functions/Get-TppCustomField.md
     - Get-TppIdentityAttribute: functions/Get-TppIdentityAttribute.md
-    - Get-TppLog: functions/Get-TppLog.md
     - Get-TppObject: functions/Get-TppObject.md
     - Get-TppPermission: functions/Get-TppPermission.md
     - Get-TppSystemStatus: functions/Get-TppSystemStatus.md
+    - Get-TppVersion: functions/Get-TppVersion.md
     - Get-TppWorkflowTicket: functions/Get-TppWorkflowTicket.md
+    - Invoke-TppCertificateRenewal: functions/Invoke-TppCertificateRenewal.md
     - Move-TppObject: functions/Move-TppObject.md
     - New-TppCapiApplication: functions/New-TppCapiApplication.md
     - New-TppCertificate: functions/New-TppCertificate.md
     - New-TppObject: functions/New-TppObject.md
     - New-TppPolicy: functions/New-TppPolicy.md
     - New-TppSession: functions/New-TppSession.md
+    - Read-TppLog: functions/Read-TppLog.md
     - Remove-TppCertificate: functions/Remove-TppCertificate.md
     - Remove-TppCertificateAssociation: functions/Remove-TppCertificateAssociation.md
     - Rename-TppObject: functions/Rename-TppObject.md
-    - Restore-TppCertificate: functions/Restore-TppCertificate.md
     - Revoke-TppCertificate: functions/Revoke-TppCertificate.md
     - Set-TppAttribute: functions/Set-TppAttribute.md
     - Set-TppPermission: functions/Set-TppPermission.md
     - Set-TppWorkflowTicketStatus: functions/Set-TppWorkflowTicketStatus.md
     - Test-TppIdentity: functions/Test-TppIdentity.md
     - Test-TppObject: functions/Test-TppObject.md
+    - Write-TppLog: functions/Write-TppLog.md
 

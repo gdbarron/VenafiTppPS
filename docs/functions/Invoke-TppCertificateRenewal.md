@@ -1,12 +1,18 @@
-# Restore-TppCertificate
+# Invoke-TppCertificateRenewal
 
 ## SYNOPSIS
 Renew a certificate
 
 ## SYNTAX
 
+### ByObject
 ```
-Restore-TppCertificate [-CertificateDN] <String> [[-TppSession] <TppSession>] [<CommonParameters>]
+Invoke-TppCertificateRenewal -InputObject <TppObject> [-TppSession <TppSession>] [<CommonParameters>]
+```
+
+### ByPath
+```
+Invoke-TppCertificateRenewal -Path <String> [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -15,7 +21,7 @@ This call marks a certificate for
 immediate renewal.
 The certificate must not be in error, already being processed, or
 configured for Monitoring in order for it be renewable.
-Caller must have Write access
+You must have Write access
 to the certificate object being renewed.
 
 ## EXAMPLES
@@ -27,18 +33,33 @@ Invoke-TppCertificateRenewal -CertificateDN '\VED\Policy\My folder\app.mycompany
 
 ## PARAMETERS
 
-### -CertificateDN
-{{Fill CertificateDN Description}}
+### -InputObject
+TppObject which represents a unique object
 
 ```yaml
-Type: String
-Parameter Sets: (All)
+Type: TppObject
+Parameter Sets: ByObject
 Aliases:
 
 Required: True
-Position: 1
+Position: Named
 Default value: None
-Accept pipeline input: True (ByPropertyName, ByValue)
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -Path
+Path to the certificate to remove
+
+```yaml
+Type: String
+Parameter Sets: ByPath
+Aliases: DN, CertificateDN
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -52,19 +73,18 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: Named
 Default value: $Script:TppSession
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
-### Path (alias: DN)
+### InputObject or Path
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:

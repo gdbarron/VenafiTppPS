@@ -14,9 +14,9 @@ Find-TppCertificate [-Recursive] [-Limit <Int32>] [-Country <String>] [-CommonNa
  [-SerialNumber <String>] [-SignatureAlgorithm <String>] [-Thumbprint <String>] [-IssueDate <DateTime>]
  [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>] [-ExpireBefore <DateTime>] [-Enabled] [-InError <Boolean>]
  [-NetworkValidationEnabled <Boolean>] [-CreateDate <DateTime>] [-CreatedAfter <DateTime>]
- [-CreatedBefore <DateTime>] [-ManagementType <String[]>] [-PendingWorkflow] [-Stage <Int32[]>]
- [-StageGreaterThan <Int32>] [-StageLessThan <Int32>] [-ValidationEnabled] [-ValidationState <String[]>]
- [-TppSession <TppSession>] [<CommonParameters>]
+ [-CreatedBefore <DateTime>] [-ManagementType <String[]>] [-PendingWorkflow] [-Stage <TppCertificateStage[]>]
+ [-StageGreaterThan <TppCertificateStage>] [-StageLessThan <TppCertificateStage>] [-ValidationEnabled]
+ [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### ByObject
@@ -29,8 +29,9 @@ Find-TppCertificate -InputObject <TppObject> [-Recursive] [-Limit <Int32>] [-Cou
  [-Thumbprint <String>] [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>]
  [-ExpireBefore <DateTime>] [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>]
  [-CreateDate <DateTime>] [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <String[]>]
- [-PendingWorkflow] [-Stage <Int32[]>] [-StageGreaterThan <Int32>] [-StageLessThan <Int32>]
- [-ValidationEnabled] [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
+ [-PendingWorkflow] [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
+ [-StageLessThan <TppCertificateStage>] [-ValidationEnabled] [-ValidationState <String[]>]
+ [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### ByPath
@@ -43,8 +44,9 @@ Find-TppCertificate -Path <String> [-Recursive] [-Limit <Int32>] [-Country <Stri
  [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>] [-ExpireBefore <DateTime>]
  [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>] [-CreateDate <DateTime>]
  [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <String[]>] [-PendingWorkflow]
- [-Stage <Int32[]>] [-StageGreaterThan <Int32>] [-StageLessThan <Int32>] [-ValidationEnabled]
- [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
+ [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
+ [-StageLessThan <TppCertificateStage>] [-ValidationEnabled] [-ValidationState <String[]>]
+ [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### ByGuid
@@ -57,8 +59,9 @@ Find-TppCertificate -Guid <Guid> [-Recursive] [-Limit <Int32>] [-Country <String
  [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>] [-ExpireBefore <DateTime>]
  [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>] [-CreateDate <DateTime>]
  [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <String[]>] [-PendingWorkflow]
- [-Stage <Int32[]>] [-StageGreaterThan <Int32>] [-StageLessThan <Int32>] [-ValidationEnabled]
- [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
+ [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
+ [-StageLessThan <TppCertificateStage>] [-ValidationEnabled] [-ValidationState <String[]>]
+ [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -678,9 +681,10 @@ Accept wildcard characters: False
 Find certificates by one or more stages in the certificate lifecycle
 
 ```yaml
-Type: Int32[]
+Type: TppCertificateStage[]
 Parameter Sets: (All)
 Aliases:
+Accepted values: CheckStore, CreateConfigureStore, CreateKey, CreateCSR, PostCSR, ApproveRequest, RetrieveCertificate, InstallCertificate, CheckConfiguration, ConfigureApplication, RestartApplication, EndProcessing, Revocation, UpdateTrustStore, EndTrustStoreProcessing
 
 Required: False
 Position: Named
@@ -693,13 +697,14 @@ Accept wildcard characters: False
 Find certificates with a stage greater than the specified stage (does not include specified stage)
 
 ```yaml
-Type: Int32
+Type: TppCertificateStage
 Parameter Sets: (All)
 Aliases: StageGreater
+Accepted values: CheckStore, CreateConfigureStore, CreateKey, CreateCSR, PostCSR, ApproveRequest, RetrieveCertificate, InstallCertificate, CheckConfiguration, ConfigureApplication, RestartApplication, EndProcessing, Revocation, UpdateTrustStore, EndTrustStoreProcessing
 
 Required: False
 Position: Named
-Default value: 0
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -708,13 +713,14 @@ Accept wildcard characters: False
 Find certificates with a stage less than the specified stage (does not include specified stage)
 
 ```yaml
-Type: Int32
+Type: TppCertificateStage
 Parameter Sets: (All)
 Aliases: StageLess
+Accepted values: CheckStore, CreateConfigureStore, CreateKey, CreateCSR, PostCSR, ApproveRequest, RetrieveCertificate, InstallCertificate, CheckConfiguration, ConfigureApplication, RestartApplication, EndProcessing, Revocation, UpdateTrustStore, EndTrustStoreProcessing
 
 Required: False
 Position: Named
-Default value: 0
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -766,8 +772,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
