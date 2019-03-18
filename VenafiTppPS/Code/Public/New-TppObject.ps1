@@ -4,7 +4,6 @@ Create a new object
 
 .DESCRIPTION
 Create a new object.  Generic use function if a specific function hasn't been created yet for the class.
-To get the list of attributes a class has, use Get-TppClassDefinition.
 
 .PARAMETER Path
 Full path for the object to be created.
@@ -14,8 +13,7 @@ Class name of the new object.
 See https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/Schema_Reference/r-SDK-CNattributesWhere.php for more info.
 
 .PARAMETER Attribute
-Hashtable with initial values for the new object.
-These will be specific to the object class being created.  Use Get-TppClassDefinition to get the list of class attibutes.
+Hashtable with initial values for the new object.  These will be specific to the object class being created.
 
 .PARAMETER PassThru
 Return a TppObject representing the newly created object.
