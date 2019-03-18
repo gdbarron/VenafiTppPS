@@ -5,9 +5,16 @@ Enrolls or provisions a new certificate
 
 ## SYNTAX
 
+### ByName (Default)
 ```
-New-TppCertificate [-Path] <String> [[-Name] <String>] [[-Subject] <String>] [-CertificateAuthorityDN] <String>
- [[-ManagementType] <String>] [[-TppSession] <TppSession>] [<CommonParameters>]
+New-TppCertificate -Name <String> [-CommonName <String>] -Path <String> -CertificateAuthorityPath <String>
+ [-ManagementType <String>] [-PassThru] [-TppSession <TppSession>] [<CommonParameters>]
+```
+
+### BySubject
+```
+New-TppCertificate -CommonName <String> -Path <String> -CertificateAuthorityPath <String>
+ [-ManagementType <String>] [-PassThru] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -17,10 +24,64 @@ Enrolls or provisions a new certificate
 
 ### EXAMPLE 1
 ```
-
+New-TppCertificate -Path '\ved\policy\folder' -Name 'mycert.com' -CertificateAuthorityDN '\ved\policy\CA Templates\my template'
 ```
 
+Create certifcate by name
+
+### EXAMPLE 2
+```
+New-TppCertificate -Path '\ved\policy\folder' -CommonName 'mycert.com' -CertificateAuthorityDN '\ved\policy\CA Templates\my template' -PassThru
+```
+
+Create certificate using common name. 
+Return the created object.
+
 ## PARAMETERS
+
+### -Name
+Name of the certifcate. 
+If not provided, the name will be the same as the subject.
+
+```yaml
+Type: String
+Parameter Sets: ByName
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -CommonName
+Subject Common Name. 
+If Name isn't provided, CommonName will be used.
+
+```yaml
+Type: String
+Parameter Sets: ByName
+Aliases: Subject
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+```yaml
+Type: String
+Parameter Sets: BySubject
+Aliases: Subject
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -Path
 The folder DN path for the new certificate.
@@ -32,59 +93,22 @@ Parameter Sets: (All)
 Aliases: PolicyDN
 
 Required: True
-Position: 1
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Name
-Either the Name or Subject parameter is required.
-Both the Name and Subject parameters can appear in the same Certificates/Request call.
-If the Subject parameter has a value, The friendly name for the certificate object in Trust Protection Platform.
-If the value is missing, the Name is the Subject DN
+### -CertificateAuthorityPath
+{{ Fill CertificateAuthorityPath Description }}
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Subject
-Either the Name or Subject parameter is required.
-Both parameters are allowed in same request.
-The Common Name field for the certificate Subject Distinguished Name (DN).
-Specify a value when a centrally generated CSR is being requested
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -CertificateAuthorityDN
-The Distinguished Name (DN) of the Trust Protection Platform Certificate Authority Template object for enrolling the certificate.
-If the value is missing, use the default CADN
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
+Aliases: CertificateAuthorityDN
 
 Required: True
-Position: 4
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -92,14 +116,13 @@ Accept wildcard characters: False
 
 ### -ManagementType
 The level of management that Trust Protection Platform applies to the certificate:
-
-Enrollment: Default.
+- Enrollment: Default.
 Issue a new certificate, renewed certificate, or key generation request to a CA for enrollment.
 Do not automatically provision the certificate.
-Provisioning:  Issue a new certificate, renewed certificate, or key generation request to a CA for enrollment.
+- Provisioning:  Issue a new certificate, renewed certificate, or key generation request to a CA for enrollment.
 Automatically install or provision the certificate.
-Monitoring:  Allow Trust Protection Platform to monitor the certificate for expiration and renewal.
-Unassigned: Certificates are neither enrolled or monitored by Trust Protection Platform.
+- Monitoring:  Allow Trust Protection Platform to monitor the certificate for expiration and renewal.
+- Unassigned: Certificates are neither enrolled or monitored by Trust Protection Platform.
 
 ```yaml
 Type: String
@@ -107,8 +130,23 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: Named
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PassThru
+Return a TppObject representing the newly created certificate.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -123,25 +161,21 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: Named
 Default value: $Script:TppSession
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
 ### None
 ## OUTPUTS
 
-### PSCustomObject with the following properties:
-###     CertificateDN - The Trust Protection Platform DN of the newly created certificate object, if it was successfully created. Otherwise, this value is absent.
-###     Guid - A Guid that uniquely identifies the certificate.
-###     Error - The reason why Certificates/Request could no create the certificate. Otherwise, this value is not present.
+### TppObject, if PassThru is provided
 ## NOTES
 
 ## RELATED LINKS

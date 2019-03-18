@@ -40,8 +40,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
@@ -57,5 +56,5 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppSystemStatus.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppSystemStatus.ps1)
 
-[https://docs.venafi.com/Docs/17.4SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-SystemStatus.php?tocpath=REST%20API%20reference%7CServiceStatus%20programming%20interfaces%7C_____1](https://docs.venafi.com/Docs/17.4SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-SystemStatus.php?tocpath=REST%20API%20reference%7CServiceStatus%20programming%20interfaces%7C_____1)
+[https://docs.venafi.com/Docs/18.4SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-SystemStatus.php?tocpath=REST%20API%20reference%7CSystemStatus%20programming%20interfaces%7C_____1](https://docs.venafi.com/Docs/18.4SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-SystemStatus.php?tocpath=REST%20API%20reference%7CSystemStatus%20programming%20interfaces%7C_____1)
 

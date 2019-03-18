@@ -1,22 +1,22 @@
-# Get-TppLog
+# Read-TppLog
 
 ## SYNOPSIS
-Get the TPP log
+Read entries from the TPP log
 
 ## SYNTAX
 
 ```
-Get-TppLog [[-Limit] <Int32>] [[-TppSession] <TppSession>] [<CommonParameters>]
+Read-TppLog [[-Limit] <Int32>] [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Get the Tpp log, with the ability to filter in a variety of ways.
+Read entries from the Tpp log
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Get-TppLog -Limit 10
+Read-TppLog -Limit 10
 ```
 
 Get the most recent 10 log items
@@ -55,8 +55,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
@@ -67,9 +66,9 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## RELATED LINKS
 
-[http://venafitppps.readthedocs.io/en/latest/functions/Get-TppLog/](http://venafitppps.readthedocs.io/en/latest/functions/Get-TppLog/)
+[http://venafitppps.readthedocs.io/en/latest/functions/Read-TppLog/](http://venafitppps.readthedocs.io/en/latest/functions/Read-TppLog/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppLog.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppLog.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Read-TppLog.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Read-TppLog.ps1)
 
 [https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Log.php?tocpath=REST%20API%20reference%7CLog%20programming%20interfaces%7C_____1](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Log.php?tocpath=REST%20API%20reference%7CLog%20programming%20interfaces%7C_____1)
 
