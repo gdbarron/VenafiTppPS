@@ -128,7 +128,7 @@ function Set-TppAttribute {
 
                         [PSCustomObject] @{
                             DN      = $thisDn
-                            Success = $response.Result -eq [ConfigResult]::Success
+                            Success = $response.Result -eq [TppConfigResult]::Success
                             Error   = $response.Error
                         }
                     }
@@ -145,7 +145,7 @@ function Set-TppAttribute {
 
                     [PSCustomObject] @{
                         DN      = $thisDn
-                        Success = $response.Result -eq [ConfigResult]::Success
+                        Success = $response.Result -eq [TppConfigResult]::Success
                         Error   = $response.Error
                     }
                 }

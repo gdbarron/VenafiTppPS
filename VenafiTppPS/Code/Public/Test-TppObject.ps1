@@ -116,11 +116,11 @@ function Test-TppObject {
             $response = Invoke-TppRestMethod @params
 
             if ( $ExistOnly ) {
-                $response.Result -eq [ConfigResult]::Success
+                $response.Result -eq [TppConfigResult]::Success
             } else {
                 [PSCustomObject] @{
                     Object = $thisValue
-                    Exists = ($response.Result -eq [ConfigResult]::Success)
+                    Exists = ($response.Result -eq [TppConfigResult]::Success)
                 }
             }
         }

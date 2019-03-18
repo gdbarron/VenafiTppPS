@@ -188,7 +188,7 @@ function Find-TppObject {
 
             $response = Invoke-TppRestMethod @params
 
-            if ( $response.Result -eq [ConfigResult]::Success ) {
+            if ( $response.Result -eq [TppConfigResult]::Success ) {
                 $response.Objects
             }
             else {
@@ -200,7 +200,7 @@ function Find-TppObject {
     else {
         $response = Invoke-TppRestMethod @params
 
-        if ( $response.Result -eq [ConfigResult]::Success ) {
+        if ( $response.Result -eq [TppConfigResult]::Success ) {
             $objects = $response.Objects
         }
         else {

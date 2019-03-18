@@ -9,21 +9,23 @@ Enrolls or provisions a new certificate
 The folder DN path for the new certificate. If the value is missing, use the system default
 
 .PARAMETER Name
-Either the Name or Subject parameter is required. Both the Name and Subject parameters can appear in the same Certificates/Request call. If the Subject parameter has a value, The friendly name for the certificate object in Trust Protection Platform. If the value is missing, the Name is the Subject DN
+Name of the certifcate.  If not provided, the name will be the same as the subject.
 
-.PARAMETER Subject
-Either the Name or Subject parameter is required. Both parameters are allowed in same request. The Common Name field for the certificate Subject Distinguished Name (DN). Specify a value when a centrally generated CSR is being requested
+.PARAMETER CommonName
+Subject Common Name.  If Name isn't provided, CommonName will be used.
 
 .PARAMETER CertificateAuthorityDN
 The Distinguished Name (DN) of the Trust Protection Platform Certificate Authority Template object for enrolling the certificate. If the value is missing, use the default CADN
 
 .PARAMETER ManagementType
 The level of management that Trust Protection Platform applies to the certificate:
+- Enrollment: Default. Issue a new certificate, renewed certificate, or key generation request to a CA for enrollment. Do not automatically provision the certificate.
+- Provisioning:  Issue a new certificate, renewed certificate, or key generation request to a CA for enrollment. Automatically install or provision the certificate.
+- Monitoring:  Allow Trust Protection Platform to monitor the certificate for expiration and renewal.
+- Unassigned: Certificates are neither enrolled or monitored by Trust Protection Platform.
 
-Enrollment: Default. Issue a new certificate, renewed certificate, or key generation request to a CA for enrollment. Do not automatically provision the certificate.
-Provisioning:  Issue a new certificate, renewed certificate, or key generation request to a CA for enrollment. Automatically install or provision the certificate.
-Monitoring:  Allow Trust Protection Platform to monitor the certificate for expiration and renewal.
-Unassigned: Certificates are neither enrolled or monitored by Trust Protection Platform.
+.PARAMETER PassThru
+Return a TppObject representing the newly created certificate.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -32,13 +34,16 @@ Session object created from New-TppSession method.  The value defaults to the sc
 None
 
 .OUTPUTS
-PSCustomObject with the following properties:
-    CertificateDN - The Trust Protection Platform DN of the newly created certificate object, if it was successfully created. Otherwise, this value is absent.
-    Guid - A Guid that uniquely identifies the certificate.
-    Error - The reason why Certificates/Request could no create the certificate. Otherwise, this value is not present.
+TppObject, if PassThru is provided
 
 .EXAMPLE
+New-TppCertificate -Path '\ved\policy\folder' -Name 'mycert.com' -CertificateAuthorityDN '\ved\policy\CA Templates\my template'
 
+Create certifcate by name
+.EXAMPLE
+New-TppCertificate -Path '\ved\policy\folder' -CommonName 'mycert.com' -CertificateAuthorityDN '\ved\policy\CA Templates\my template' -PassThru
+
+Create certificate using common name.  Return the created object.
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppCertificate/
 
@@ -50,49 +55,56 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function New-TppCertificate {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'ByName')]
+    [OutputType( [TppObject] )]
     param (
+
+        [Parameter(Mandatory, ParameterSetName = 'ByName')]
+        [String] $Name,
+
+        [Parameter(ParameterSetName = 'ByName')]
+        [Parameter(Mandatory, ParameterSetName = 'BySubject')]
+        [Alias('Subject')]
+        [String] $CommonName,
+
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
         [Alias('PolicyDN')]
         [String] $Path,
 
-        [Parameter()]
-        [String] $Name,
-
-        [Parameter()]
-        [String] $Subject,
-
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                } else {
+                }
+                else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [String] $CertificateAuthorityDN,
+        [Alias('CertificateAuthorityDN')]
+        [String] $CertificateAuthorityPath,
 
         [Parameter()]
         [ValidateSet('Enrollment', 'Provisioning', 'Monitoring', 'Unassigned')]
         [String] $ManagementType,
 
         [Parameter()]
+        [switch] $PassThru,
+
+        [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
 
     begin {
-        if ( -not $Name -and -not $Subject ) {
-            throw "Either Name or Subject is required"
-        }
 
         $TppSession.Validate()
     }
@@ -100,33 +112,49 @@ function New-TppCertificate {
     process {
 
         $params = @{
-            TppSession = $TppSession
-            Method     = 'Post'
-            UriLeaf    = 'certificates/request'
-            Body       = @{
+            TppSession    = $TppSession
+            Method        = 'Post'
+            UriLeaf       = 'certificates/request'
+            Body          = @{
                 PolicyDN = $Path
-                CADN     = $CertificateAuthorityDN
+                CADN     = $CertificateAuthorityPath
             }
+            UseWebRequest = $true
         }
 
         if ( $Name ) {
-            $params.Body += @{
-                ObjectName = $Name
-            }
+            $params.Body.Add('ObjectName', $Name)
         }
 
-        if ( $Subject ) {
-            $params.Body += @{
-                Subject = $Subject
-            }
+        if ( $CommonName ) {
+            $params.Body.Add('Subject', $CommonName)
         }
 
         if ( $ManagementType ) {
-            $params.Body += @{
-                ManagementType = $ManagementType
-            }
+            $params.Body.Add('ManagementType', $ManagementType)
         }
 
-        Invoke-TppRestMethod @params
+        $response = Invoke-TppRestMethod @params
+        Write-Verbose ($response|Out-String)
+
+        switch ($response.StatusCode) {
+
+            '200' {
+                if ( $PassThru ) {
+                    $contentObject = $response.Content | ConvertFrom-Json
+                    $info = $contentObject.CertificateDN | ConvertTo-TppGuid -IncludeType
+                    [TppObject]@{
+                        Path     = $contentObject.CertificateDN
+                        Name     = Split-path $contentObject.CertificateDN -Leaf
+                        Guid     = $info.Guid
+                        TypeName = $info.TypeName
+                    }
+                }
+            }
+
+            default {
+                throw $response.StatusDescription
+            }
+        }
     }
 }
