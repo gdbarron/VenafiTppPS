@@ -457,7 +457,7 @@ function Find-TppCertificate {
                 $params.Body.Add( 'PendingWorkflow', '')
             }
             'Stage' {
-                $params.Body.Add( 'Stage', ($Stage | % {[TppCertificateStage]::$_.value__}) -join ',' )
+                $params.Body.Add( 'Stage', ($Stage | ForEach-Object {[TppCertificateStage]::$_.value__}) -join ',' )
             }
             'StageGreaterThan' {
                 $params.Body.Add( 'StageGreater', [TppCertificateStage]::$StageGreaterThan.value__ )

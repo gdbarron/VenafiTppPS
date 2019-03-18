@@ -112,7 +112,7 @@ function New-TppObject {
         # api requires a list of hashtables for nameattributelist
         # with 2 items per hashtable, with key names 'name' and 'value'
         # this is cumbersome for the user so allow them to pass a standard hashtable and convert it for them
-        $updatedAttribute = @($Attribute.GetEnumerator() | % {@{'Name' = $_.name; 'Value' = $_.value}})
+        $updatedAttribute = @($Attribute.GetEnumerator() | ForEach-Object {@{'Name' = $_.name; 'Value' = $_.value}})
         $params.Body.Add('NameAttributeList', $updatedAttribute)
     }
 
