@@ -6,7 +6,8 @@ Add a new policy folder
 ## SYNTAX
 
 ```
-New-TppPolicy [-Path] <String> [[-Description] <String>] [[-TppSession] <TppSession>] [<CommonParameters>]
+New-TppPolicy [-Path] <String> [[-Description] <String>] [-PassThru] [[-TppSession] <TppSession>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -16,8 +17,17 @@ Add a new policy folder
 
 ### EXAMPLE 1
 ```
-New-TppPolicy -PolicyDN '\VED\Policy\Existing Policy Folder\New Policy Folder' -Description 'this is awesome'
+$newPolicy = New-TppPolicy -Path '\VED\Policy\Existing Policy Folder\New Policy Folder' -PassThru
 ```
+
+Create policy returning the policy object created
+
+### EXAMPLE 2
+```
+New-TppPolicy -Path '\VED\Policy\Existing Policy Folder\New Policy Folder' -Description 'this is awesome'
+```
+
+Create policy with description
 
 ## PARAMETERS
 
@@ -51,6 +61,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -PassThru
+Return a TppObject representing the newly created policy.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -TppSession
 Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
@@ -68,23 +93,14 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
 ### none
 ## OUTPUTS
 
-### PSCustomObject with the following properties:
-###     AbsoluteGUID: The left-to-right concatenation of all of the GUIDs for all of the objects in the DN.
-###     DN: The Distinguished Name (DN) of the object, provided as PolicyDN
-###     GUID: The GUID that identifies the object.
-###     ID: The object identifier.
-###     Name: The Common Name (CN) of the object.
-###     Parent: The parent DN of the object.
-###     Revision: The revision of the object.
-###     TypeName: will always be Policy
+### TppObject, if PassThru provided
 ## NOTES
 
 ## RELATED LINKS
@@ -92,4 +108,8 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 [http://venafitppps.readthedocs.io/en/latest/functions/New-TppPolicy/](http://venafitppps.readthedocs.io/en/latest/functions/New-TppPolicy/)
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppPolicy.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppPolicy.ps1)
+
+[http://venafitppps.readthedocs.io/en/latest/functions/New-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/New-TppObject/)
+
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppObject.ps1)
 

@@ -1,25 +1,25 @@
 # New-TppCapiApplication
 
 ## SYNOPSIS
-Create a new CAPI application object
+Create a new CAPI application
 
 ## SYNTAX
 
 ```
 New-TppCapiApplication -Path <String> -FriendlyName <String> [-Disable] -CertificatePath <String>
  [-Description <String>] -CredentialPath <String> [-WinRmPort <Int32>] [-UpdateIis] -WebSiteName <String>
- [-BindingIpAddress <String>] [-BindingPort <Int32>] [-BindingHostName <String>] [-CreateBinding <Boolean>]
- [-TppSession <TppSession>] [<CommonParameters>]
+ [-BindingIpAddress <IPAddress>] [-BindingPort <Int32>] [-BindingHostName <String>] [-CreateBinding <Boolean>]
+ [-PassThru] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Create a new CAPI application object
+Create a new CAPI application
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:> {{ Add example code here }}
 ```
 
 {{ Add example description here }}
@@ -88,7 +88,7 @@ Accept wildcard characters: False
 ```
 
 ### -Description
-{{Fill Description Description}}
+{{ Fill Description Description }}
 
 ```yaml
 Type: String
@@ -118,7 +118,7 @@ Accept wildcard characters: False
 ```
 
 ### -WinRmPort
-{{Fill WinRmPort Description}}
+{{ Fill WinRmPort Description }}
 
 ```yaml
 Type: Int32
@@ -133,7 +133,7 @@ Accept wildcard characters: False
 ```
 
 ### -UpdateIis
-{{Fill UpdateIis Description}}
+{{ Fill UpdateIis Description }}
 
 ```yaml
 Type: SwitchParameter
@@ -148,7 +148,7 @@ Accept wildcard characters: False
 ```
 
 ### -WebSiteName
-{{Fill WebSiteName Description}}
+{{ Fill WebSiteName Description }}
 
 ```yaml
 Type: String
@@ -163,10 +163,10 @@ Accept wildcard characters: False
 ```
 
 ### -BindingIpAddress
-{{Fill BindingIpAddress Description}}
+{{ Fill BindingIpAddress Description }}
 
 ```yaml
-Type: String
+Type: IPAddress
 Parameter Sets: (All)
 Aliases:
 
@@ -178,7 +178,7 @@ Accept wildcard characters: False
 ```
 
 ### -BindingPort
-{{Fill BindingPort Description}}
+{{ Fill BindingPort Description }}
 
 ```yaml
 Type: Int32
@@ -193,7 +193,7 @@ Accept wildcard characters: False
 ```
 
 ### -BindingHostName
-{{Fill BindingHostName Description}}
+{{ Fill BindingHostName Description }}
 
 ```yaml
 Type: String
@@ -208,10 +208,25 @@ Accept wildcard characters: False
 ```
 
 ### -CreateBinding
-{{Fill CreateBinding Description}}
+{{ Fill CreateBinding Description }}
 
 ```yaml
 Type: Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PassThru
+Return a TppObject representing the newly created capi app.
+
+```yaml
+Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
 
@@ -239,14 +254,14 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
 ### none
 ## OUTPUTS
 
+### TppObject, if PassThru provided
 ## NOTES
 
 ## RELATED LINKS
