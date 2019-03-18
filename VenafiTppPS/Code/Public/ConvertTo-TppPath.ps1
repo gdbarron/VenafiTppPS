@@ -1,44 +1,32 @@
 <#
 .SYNOPSIS
-Convert DN path to GUID
+Convert GUID to Path
 
 .DESCRIPTION
-Convert DN path to GUID
+Convert GUID to Path
 
-.PARAMETER Path
-DN path representing an object
+.PARAMETER Guid
+Guid type, [guid] 'xyxyxyxy-xyxy-xyxy-xyxy-xyxyxyxyxyxy'
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-Path
-
-.OUTPUTS
 Guid
 
+.OUTPUTS
+String representing the Path
+
 .EXAMPLE
-ConvertTo-TppGuid -Guid 'xyxyxyxy-xyxy-xyxy-xyxy-xyxyxyxyxyxy'
+ConvertTo-TppPath -Guid [guid]'xyxyxyxy-xyxy-xyxy-xyxy-xyxyxyxyxyxy'
 
 #>
-function ConvertTo-TppGuid {
-
+function ConvertTo-TppPath {
     [CmdletBinding()]
-    [OutputType( [System.Guid] )]
-
     param (
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( {
-                if ( $_ | Test-TppDnPath ) {
-                    $true
-                }
-                else {
-                    throw "'$_' is not a valid DN path"
-                }
-            })]
-        [Alias('DN')]
-        [String] $Path,
+        [Guid] $Guid,
 
         [Parameter()]
         [switch] $IncludeType,
@@ -54,28 +42,28 @@ function ConvertTo-TppGuid {
         $params = @{
             TppSession = $TppSession
             Method     = 'Post'
-            UriLeaf    = 'config/DnToGuid'
+            UriLeaf    = 'config/GuidToDN'
         }
     }
 
     process {
 
         $params.Add('Body', @{
-                ObjectDN = $Path
+                ObjectGUID = "{$Guid}"
             }
         )
 
         $response = Invoke-TppRestMethod @params
 
-        if ( $response.Result -eq [ConfigResult]::Success ) {
+        if ( $response.Result -eq [TppConfigResult]::Success ) {
             if ( $PSBoundParameters.ContainsKey('IncludeType') ) {
                 [PSCustomObject] @{
-                    Guid     = [Guid] $response.Guid
+                    Path     = $response.ObjectDN
                     TypeName = $response.ClassName
                 }
             }
             else {
-                [Guid] $response.Guid
+                $response.ObjectDN
             }
         }
         else {

@@ -25,7 +25,7 @@ http://venafitppps.readthedocs.io/en/latest/functions/Get-TppSystemStatus/
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppSystemStatus.ps1
 
 .LINK
-https://docs.venafi.com/Docs/17.4SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-SystemStatus.php?tocpath=REST%20API%20reference%7CServiceStatus%20programming%20interfaces%7C_____1
+https://docs.venafi.com/Docs/18.4SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-SystemStatus.php?tocpath=REST%20API%20reference%7CSystemStatus%20programming%20interfaces%7C_____1
 
 #>
 function Get-TppSystemStatus {
@@ -45,5 +45,10 @@ function Get-TppSystemStatus {
         UriLeaf    = 'SystemStatus'
     }
 
-    Invoke-TppRestMethod @params
+    try {
+        Invoke-TppRestMethod @params
+    }
+    catch {
+        Throw ("Getting the system status failed with the following error: {0}.  Ensure you have read rights to the engine root." -f $_)
+    }
 }

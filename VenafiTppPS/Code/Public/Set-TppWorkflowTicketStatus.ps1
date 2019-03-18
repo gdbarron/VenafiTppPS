@@ -126,8 +126,8 @@ function Set-TppWorkflowTicketStatus {
 
             $response = Invoke-TppRestMethod @params
 
-            if ( -not ($response.Result -eq [WorkflowResult]::Success) ) {
-                throw ("Error setting workflow ticket status, error is {0}" -f [enum]::GetName([WorkflowResult], $response.Result))
+            if ( -not ($response.Result -eq [TppWorkflowResult]::Success) ) {
+                throw ("Error setting workflow ticket status, error is {0}" -f [enum]::GetName([TppWorkflowResult], $response.Result))
             }
         }
     }

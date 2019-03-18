@@ -338,42 +338,15 @@ function Find-TppCertificate {
         [Switch] $PendingWorkflow,
 
         [Parameter()]
-        [ValidateScript( {
-                $enumValues = Get-EnumValues -EnumName 'CertificateStage'
-                if ( $_ -in $enumValues.Values ) {
-                    $true
-                }
-                else {
-                    throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
-                }
-            })]
-        [int[]] $Stage,
+        [TppCertificateStage[]] $Stage,
 
         [Parameter()]
         [Alias('StageGreater')]
-        [ValidateScript( {
-                $enumValues = Get-EnumValues -EnumName 'CertificateStage'
-                if ( $_ -in $enumValues.Values ) {
-                    $true
-                }
-                else {
-                    throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
-                }
-            })]
-        [int] $StageGreaterThan,
+        [TppCertificateStage] $StageGreaterThan,
 
         [Parameter()]
         [Alias('StageLess')]
-        [ValidateScript( {
-                $enumValues = Get-EnumValues -EnumName 'CertificateStage'
-                if ( $_ -in $enumValues.Values ) {
-                    $true
-                }
-                else {
-                    throw "'$_' is not a valid Stage.  Valid values include {0}." -f ($enumValues.Values -join ', ')
-                }
-            })]
-        [int] $StageLessThan,
+        [TppCertificateStage] $StageLessThan,
 
         [Parameter()]
         [Switch] $ValidationEnabled,
@@ -484,13 +457,13 @@ function Find-TppCertificate {
                 $params.Body.Add( 'PendingWorkflow', '')
             }
             'Stage' {
-                $params.Body.Add( 'Stage', $Stage -join ',' )
+                $params.Body.Add( 'Stage', ($Stage | ForEach-Object {[TppCertificateStage]::$_.value__}) -join ',' )
             }
             'StageGreaterThan' {
-                $params.Body.Add( 'StageGreater', $StageGreaterThan )
+                $params.Body.Add( 'StageGreater', [TppCertificateStage]::$StageGreaterThan.value__ )
             }
             'StageLessThan' {
-                $params.Body.Add( 'StageLess', $StageLessThan )
+                $params.Body.Add( 'StageLess', [TppCertificateStage]::$StageLessThan.value__ )
             }
             'ValidationEnabled' {
                 $params.Body.Add( 'ValidationDisabled', [int] (-not $ValidationEnabled) )

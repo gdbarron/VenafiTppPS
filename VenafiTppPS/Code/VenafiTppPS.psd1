@@ -12,7 +12,7 @@
 RootModule = 'VenafiTppPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.7.4'
+ModuleVersion = '1.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -27,7 +27,7 @@ Author = 'Greg Brownstein'
 CompanyName = 'Greg Brownstein'
 
 # Copyright statement for this module
-Copyright = '(c) 2018 Greg Brownstein. All rights reserved.'
+Copyright = '(c) 2018-2019 Greg Brownstein. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PowerShell module to access the features of Venafi Trust Protection Platform REST API'
@@ -57,8 +57,10 @@ PowerShellVersion = '5.0'
 # RequiredAssemblies = @()
 
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
-ScriptsToProcess = 'classes\TppSession.ps1', 'classes\TppPermission.ps1', 
-               'classes\TppObject.ps1'
+ScriptsToProcess = 'class\TppSession.ps1', 'class\TppPermission.ps1', 'class\TppObject.ps1',
+ 'enum\TppCertificateStage.ps1', 'enum\TppConfigResult.ps1', 'enum\TppEventSeverity.ps1',
+ 'enum\TppIdentityType.ps1', 'enum\TppMetadataResult.ps1', 'enum\TppWorkflowResult.ps1',
+ 'enum\TppEventGroup.ps1'
 
 # Type files (.ps1xml) to be loaded when importing this module
 # TypesToProcess = @()
@@ -70,17 +72,17 @@ ScriptsToProcess = 'classes\TppSession.ps1', 'classes\TppPermission.ps1',
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Find-TppCertificate', 'Find-TppIdentity', 'Find-TppObject', 
-               'Get-TppAttribute', 'Get-TppCertificate', 'Get-TppCertificateDetail', 
-               'Get-TppCustomField', 'Get-TppIdentityAttribute', 'Get-TppLog', 
-               'Get-TppObject', 'Get-TppPermission', 'Get-TppSystemStatus', 
-               'Get-TppWorkflowTicket', 'Move-TppObject', 'New-TppCapiApplication', 
-               'New-TppCertificate', 'New-TppObject', 'New-TppPolicy', 
-               'New-TppSession', 'Remove-TppCertificate', 
-               'Remove-TppCertificateAssociation', 'Rename-TppObject', 
-               'Restore-TppCertificate', 'Revoke-TppCertificate', 'Set-TppAttribute', 
-               'Set-TppPermission', 'Set-TppWorkflowTicketStatus', 
-               'Test-TppIdentity', 'Test-TppObject'
+FunctionsToExport = 'Find-TppCertificate', 'Find-TppIdentity', 'Find-TppObject',
+               'Get-TppAttribute', 'Get-TppCertificate', 'Get-TppCertificateDetail',
+               'Get-TppCustomField', 'Get-TppIdentityAttribute', 'Read-TppLog',
+               'Get-TppObject', 'Get-TppPermission', 'Get-TppSystemStatus',
+               'Get-TppWorkflowTicket', 'Move-TppObject', 'New-TppCapiApplication',
+               'New-TppCertificate', 'New-TppObject', 'New-TppPolicy',
+               'New-TppSession', 'Remove-TppCertificate',
+               'Remove-TppCertificateAssociation', 'Rename-TppObject',
+               'Invoke-TppCertificateRenewal', 'Revoke-TppCertificate', 'Set-TppAttribute',
+               'Set-TppPermission', 'Set-TppWorkflowTicketStatus',
+               'Test-TppIdentity', 'Test-TppObject', 'Get-TppVersion', 'Write-TppLog', 'Get-TppClassDefinition', 'ConvertTo-TppGuid', 'ConvertTo-TppPath'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
