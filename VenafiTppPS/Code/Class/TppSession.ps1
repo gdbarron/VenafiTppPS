@@ -51,27 +51,17 @@ class TppSession {
     }
 
     [void] Connect() {
-        if ( -not ($this.ServerUrl) ) {
-            throw "You must provide a value for ServerUrl"
+        if ( $null -eq $this.ServerUrl -or $null -eq $this.Credential ) {
+            throw "You must provide values for ServerUrl and Credential"
         }
 
-        if ( $this.Credential ) {
-            $params = @{
-                Method    = 'Post'
-                ServerUrl = $this.ServerUrl
-                UriLeaf   = 'authorize'
-                Body      = @{
-                    Username = $this.Credential.username
-                    Password = $this.Credential.GetNetworkCredential().password
-                }
-            }
-        }
-        else {
-            $params = @{
-                Method    = 'Get'
-                ServerUrl = $this.ServerUrl
-                UriLeaf   = 'authorize/integrated'
-                UseDefaultCredentials = $true
+        $params = @{
+            Method    = 'Post'
+            ServerUrl = $this.ServerUrl
+            UriLeaf   = 'authorize'
+            Body      = @{
+                Username = $this.Credential.username
+                Password = $this.Credential.GetNetworkCredential().password
             }
         }
 
@@ -93,14 +83,12 @@ class TppSession {
 
     hidden [void] _init ([Hashtable] $initHash) {
 
-        if ( -not ($initHash.ServerUrl) ) {
-            throw "ServerUrl is required"
+        if ( -not ($initHash.ServerUrl -and $initHash.Credential) ) {
+            throw "ServerUrl and Credential are required"
         }
 
         $this.ServerUrl = $initHash.ServerUrl
-        if ( $initHash.Credential ) {
-            $this.Credential = $initHash.Credential
-        }
+        $this.Credential = $initHash.Credential
         $this.CustomField = $null
     }
 }
