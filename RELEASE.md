@@ -1,14 +1,1 @@
-- v1.0!
-- Add Integrated Authentication, a credential is no longer required
-- Add Write-TppLog with support for default and custom event groups
-- Add PassThru option for all 'New-' functions, returning TppObject
-- Standardize all enums with Tpp prefix
-- Make enums/classes available outside of the module scope, access these directly at the command line.  For example, [TppObject]::new('\ved\policy\object').
-- Fix finding by Stage, StageGreaterThan, and StageLessThan in Find-TppCertificate
-- Add error handling for Get-TppSystemStatus
-- Add Get-TppVersion
-- Rename Restore-TppCertificate to Invoke-TppCertificateRenewal
-- Lots of help/documentation updates
-- Breaking change: Update New-TppObject to simplify the attributes provided, now just pass a hashtable of object key/value pairs.
-- Better parameter support for New-TppCertificate with Name and CommonName
-- Rename Get-TppLog to Read-TppLog
+- fix validation in identity functions
