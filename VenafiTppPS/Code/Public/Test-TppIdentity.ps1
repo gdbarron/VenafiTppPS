@@ -51,9 +51,9 @@ function Test-TppIdentity {
 
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateScript( {
-                $_ -match '(AD|LDAP)+\S+:\w{32}$' -or $_ -match 'local:\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+                $_ -match '^(AD|LDAP)\+.+:{?\w{32}}?$' -or $_ -match 'local:{?\w{8}-\w{4}-\w{4}-\w{4}-\w{12}}?$'
             })]
-        [Alias('PrefixedUniversal')]
+        [Alias('PrefixedUniversal', 'Contact')]
         [string[]] $PrefixedUniversalId,
 
         [Parameter()]

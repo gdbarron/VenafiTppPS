@@ -21,7 +21,7 @@ PrefixedUniversalId
 PSCustomObject with the properties PrefixedUniversalId and Attribute
 
 .EXAMPLE
-Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:1234567890olikujyhtgrfedwsqa' | format-list
+Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:{1234567890olikujyhtgrfedwsqa}' | format-list
 PrefixedUniversalId : AD+mydomain.com:1234567890olikujyhtgrfedwsqa
 Attribute           : @{FullName=CN=greg,OU=Users,DC=mydomain,DC=com; IsContainer=False; IsGroup=False; Name=greg; Prefix=AD+mydomain.com;
                       PrefixedName=AD+mydomain.com:greg; PrefixedUniversal=AD+mydomain.com:1234567890olikujyhtgrfedwsqa; Universal=1234567890olikujyhtgrfedwsqa}
@@ -29,7 +29,7 @@ Attribute           : @{FullName=CN=greg,OU=Users,DC=mydomain,DC=com; IsContaine
 Get basic attributes
 
 .EXAMPLE
-Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:1234567890olikujyhtgrfedwsqa' -Attribute 'Surname'
+Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:{1234567890olikujyhtgrfedwsqa}' -Attribute 'Surname'
 PrefixedUniversalId                              Attribute
 -------------------                              ---------
 AD+mydomain.com:1234567890olikujyhtgrfedwsqa     @{Surname=Brownstein}
@@ -56,9 +56,9 @@ function Get-TppIdentityAttribute {
 
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateScript( {
-                $_ -match '(AD|LDAP)+\S+:\w{32}$' -or $_ -match 'local:\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+                $_ -match '^(AD|LDAP)\+.+:{?\w{32}}?$' -or $_ -match 'local:{?\w{8}-\w{4}-\w{4}-\w{4}-\w{12}}?$'
             })]
-        [Alias('PrefixedUniversal')]
+        [Alias('PrefixedUniversal', 'Contact')]
         [string[]] $PrefixedUniversalId,
 
         [Parameter()]
@@ -86,31 +86,26 @@ function Get-TppIdentityAttribute {
             $params.UriLeaf = 'Identity/ReadAttribute'
             $params.Body.Add('AttributeName', 'placeholder')
         }
+
     }
 
     process {
 
-        $PrefixedUniversalId.ForEach{
-
-            $thisId = $_
-
-            if ( -not (Test-TppIdentity -PrefixedUniversalId $thisId -ExistOnly) ) {
-                Write-Error "Id $thisId does not exist"
-                Continue
-            }
+        foreach ( $thisId in $PrefixedUniversalId ) {
 
             $params.Body.ID.PrefixedUniversal = $thisId
 
             if ( $PSBoundParameters.ContainsKey('Attribute') ) {
 
                 $attribHash = @{}
+                foreach ( $thisAttribute in $Attribute ) {
 
-                $Attribute.ForEach{
-                    $params.Body.AttributeName = $_
+                    $params.Body.AttributeName = $thisAttribute
 
                     $response = Invoke-TppRestMethod @params
-
-                    $attribHash.Add($_, $response.Attributes[0])
+                    if ( $response.Attributes ) {
+                        $attribHash.Add($thisAttribute, $response.Attributes[0])
+                    }
                 }
 
                 $attribsOut = [PSCustomObject] $attribHash
