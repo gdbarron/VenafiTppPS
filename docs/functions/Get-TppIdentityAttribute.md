@@ -17,7 +17,7 @@ Get attribute values for TPP identity objects.
 
 ### EXAMPLE 1
 ```
-Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:1234567890olikujyhtgrfedwsqa' | format-list
+Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:{1234567890olikujyhtgrfedwsqa}' | format-list
 ```
 
 PrefixedUniversalId : AD+mydomain.com:1234567890olikujyhtgrfedwsqa
@@ -28,7 +28,7 @@ Get basic attributes
 
 ### EXAMPLE 2
 ```
-Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:1234567890olikujyhtgrfedwsqa' -Attribute 'Surname'
+Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:{1234567890olikujyhtgrfedwsqa}' -Attribute 'Surname'
 ```
 
 PrefixedUniversalId                              Attribute
@@ -46,7 +46,7 @@ Use Find-TppIdentity to get the id.
 ```yaml
 Type: String[]
 Parameter Sets: (All)
-Aliases: PrefixedUniversal
+Aliases: PrefixedUniversal, Contact
 
 Required: True
 Position: 1
@@ -87,7 +87,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
