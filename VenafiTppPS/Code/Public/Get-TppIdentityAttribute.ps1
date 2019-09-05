@@ -56,7 +56,7 @@ function Get-TppIdentityAttribute {
 
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateScript( {
-                $_ -match '^(AD|LDAP)\+.+:{?\w{32}}?$' -or $_ -match 'local:{?\w{8}-\w{4}-\w{4}-\w{4}-\w{12}}?$'
+                $_ | Test-TppIdentity -ExistOnly
             })]
         [Alias('PrefixedUniversal', 'Contact')]
         [string[]] $PrefixedUniversalId,
@@ -97,7 +97,7 @@ function Get-TppIdentityAttribute {
 
             if ( $PSBoundParameters.ContainsKey('Attribute') ) {
 
-                $attribHash = @{}
+                $attribHash = @{ }
                 foreach ( $thisAttribute in $Attribute ) {
 
                     $params.Body.AttributeName = $thisAttribute
