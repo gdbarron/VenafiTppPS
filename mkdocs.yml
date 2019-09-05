@@ -9,6 +9,7 @@ pages:
   - Release Notes: RELEASE.md
   - Change Log: ChangeLog.md
   - Functions:
+    - Add-TppCertificateAssociation: functions/Add-TppCertificateAssociation.md
     - ConvertTo-TppGuid: functions/ConvertTo-TppGuid.md
     - ConvertTo-TppPath: functions/ConvertTo-TppPath.md
     - Find-TppCertificate: functions/Find-TppCertificate.md
