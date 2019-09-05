@@ -1,1 +1,4 @@
-- fix validation in identity functions
+- add Add-TppCertificateAssociation to associate a certificate to one or more application objects
+- update New-TppObject to use Add-TppCertificateAssociation when a certificate is provided
+- update New-TppCapiApplication to use the updated New-TppObject
+- update Get-TppIdentityAttribute to use Test-TppIdentity for validation
