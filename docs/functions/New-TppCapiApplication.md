@@ -5,11 +5,19 @@ Create a new CAPI application
 
 ## SYNTAX
 
+### NonIis (Default)
 ```
-New-TppCapiApplication -Path <String> -FriendlyName <String> [-Disable] -CertificatePath <String>
- [-Description <String>] -CredentialPath <String> [-WinRmPort <Int32>] [-UpdateIis] -WebSiteName <String>
- [-BindingIpAddress <IPAddress>] [-BindingPort <Int32>] [-BindingHostName <String>] [-CreateBinding <Boolean>]
+New-TppCapiApplication -Path <String> -CertificatePath <String> -CredentialPath <String>
+ [-FriendlyName <String>] [-Description <String>] [-WinRmPort <Int32>] [-Disable] [-ProvisionCertificate]
  [-PassThru] [-TppSession <TppSession>] [<CommonParameters>]
+```
+
+### UpdateIis
+```
+New-TppCapiApplication -Path <String> -CertificatePath <String> -CredentialPath <String>
+ [-FriendlyName <String>] [-Description <String>] [-WinRmPort <Int32>] [-Disable] [-UpdateIis]
+ -WebSiteName <String> [-BindingIpAddress <IPAddress>] [-BindingPort <Int32>] [-BindingHostName <String>]
+ [-CreateBinding <Boolean>] [-ProvisionCertificate] [-PassThru] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -27,7 +35,7 @@ PS C:\> {{ Add example code here }}
 ## PARAMETERS
 
 ### -Path
-DN path to the new object.
+Full path, including name, to the application to be created
 
 ```yaml
 Type: String
@@ -41,39 +49,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -FriendlyName
-CAPI Settings\Friendly Name
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Disable
-Set processing to disabled. 
-It is enabled by default.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -CertificatePath
-Path to the associated certificate
+Path to the certificate to associate to the new application
 
 ```yaml
 Type: String
@@ -81,21 +58,6 @@ Parameter Sets: (All)
 Aliases: CertificateDN
 
 Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Description
-{{ Fill Description Description }}
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -117,6 +79,36 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -FriendlyName
+Optional friendly name
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Description
+{{ Fill Description Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -WinRmPort
 {{ Fill WinRmPort Description }}
 
@@ -132,12 +124,28 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Disable
+Set processing to disabled. 
+It is enabled by default.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -UpdateIis
 {{ Fill UpdateIis Description }}
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: (All)
+Parameter Sets: UpdateIis
 Aliases:
 
 Required: True
@@ -152,7 +160,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: UpdateIis
 Aliases:
 
 Required: True
@@ -167,7 +175,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: IPAddress
-Parameter Sets: (All)
+Parameter Sets: UpdateIis
 Aliases:
 
 Required: False
@@ -182,7 +190,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: Int32
-Parameter Sets: (All)
+Parameter Sets: UpdateIis
 Aliases:
 
 Required: False
@@ -197,7 +205,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: UpdateIis
 Aliases:
 
 Required: False
@@ -212,6 +220,21 @@ Accept wildcard characters: False
 
 ```yaml
 Type: Boolean
+Parameter Sets: UpdateIis
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProvisionCertificate
+{{ Fill ProvisionCertificate Description }}
+
+```yaml
+Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
 
@@ -270,7 +293,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppCapiApplication.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppCapiApplication.ps1)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Set-TppAttribute.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Set-TppAttribute.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1)
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/](http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/)
 
