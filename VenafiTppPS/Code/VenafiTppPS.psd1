@@ -12,7 +12,7 @@
 RootModule = 'VenafiTppPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.2'
+ModuleVersion = '1.0.3'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -123,7 +123,10 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '- fix validation in identity functions'
+        ReleaseNotes = '- add Add-TppCertificateAssociation to associate a certificate to one or more application objects
+- update New-TppObject to use Add-TppCertificateAssociation when a certificate is provided
+- update New-TppCapiApplication to use the updated New-TppObject
+- update Get-TppIdentityAttribute to use Test-TppIdentity for validation'
 
         # Prerelease string of this module
         # Prerelease = ''
