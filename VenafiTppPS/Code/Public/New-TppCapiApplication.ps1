@@ -6,13 +6,13 @@ Create a new CAPI application
 Create a new CAPI application
 
 .PARAMETER Path
-DN path to the new object.
+Full path, including name, to the application to be created
 
 .PARAMETER FriendlyName
-CAPI Settings\Friendly Name
+Optional friendly name
 
 .PARAMETER CertificatePath
-Path to the associated certificate
+Path to the certificate to associate to the new application
 
 .PARAMETER CredentialPath
 Path to the associated credential which has rights to access the connected device
@@ -39,7 +39,7 @@ http://venafitppps.readthedocs.io/en/latest/functions/New-TppCapiApplication/
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppCapiApplication.ps1
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Set-TppAttribute.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/
@@ -53,7 +53,7 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function New-TppCapiApplication {
 
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'NonIis')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 
     param (
@@ -72,13 +72,6 @@ function New-TppCapiApplication {
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [String] $FriendlyName,
-
-        [Parameter()]
-        [Switch] $Disable,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
@@ -89,10 +82,6 @@ function New-TppCapiApplication {
             })]
         [Alias('CertificateDN')]
         [String] $CertificatePath,
-
-        [Parameter()]
-        [ValidateNotNullOrEmpty()]
-        [String] $Description,
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -109,7 +98,18 @@ function New-TppCapiApplication {
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
+        [String] $FriendlyName,
+
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [String] $Description,
+
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [Int] $WinRmPort,
+
+        [Parameter()]
+        [Switch] $Disable,
 
         [Parameter(Mandatory, ParameterSetName = 'UpdateIis')]
         [Switch] $UpdateIis,
@@ -135,6 +135,9 @@ function New-TppCapiApplication {
         [Bool] $CreateBinding,
 
         [Parameter()]
+        [switch] $ProvisionCertificate,
+
+        [Parameter()]
         [switch] $PassThru,
 
         [Parameter()]
@@ -155,14 +158,14 @@ function New-TppCapiApplication {
         throw "Credential object not found"
     }
 
-    if ( -not ($credentialObject | Where-Object {$_.Name -eq $credentialName -and $_.TypeName -like '*credential*'}) ) {
+    if ( -not ($credentialObject | Where-Object { $_.Name -eq $credentialName -and $_.TypeName -like '*credential*' }) ) {
         throw "CredentialDN is not a credential object"
     }
     # end of validation
 
     # start the new capi app work here
     $params = @{
-        DN        = $Path
+        Path      = $Path
         Class     = 'CAPI'
         Attribute = @{
             'Driver Name'   = 'appcapi'
@@ -171,6 +174,10 @@ function New-TppCapiApplication {
             'Certificate'   = $CertificatePath
         }
         PassThru  = $true
+    }
+
+    if ( $ProvisionCertificate ) {
+        $params.Attribute.Add('ProvisionCertificate', $true)
     }
 
     if ( $Disabled ) {
@@ -204,21 +211,7 @@ function New-TppCapiApplication {
 
     $response = New-TppObject @params
 
-    # update Consumers attribute on cert with DN of this new app
-    # required to make the "cross connection" between objects
-    $certUpdateParams = @{
-        Path          = $CertificatePath
-        AttributeName = 'Consumers'
-        Value         = $response.Path
-    }
-    $certUpdateResponse = Set-TppAttribute @certUpdateParams -NoClobber
-
-    if ( $certUpdateResponse.Success ) {
-        if ( $PassThru ) {
-            $response
-        }
-    }
-    else {
-        throw $certUpdateResponse.Error
+    if ( $PassThru ) {
+        $response
     }
 }

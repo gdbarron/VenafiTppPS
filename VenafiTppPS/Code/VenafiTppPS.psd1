@@ -57,10 +57,10 @@ PowerShellVersion = '5.0'
 # RequiredAssemblies = @()
 
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
-ScriptsToProcess = 'class\TppSession.ps1', 'class\TppPermission.ps1', 
-               'class\TppObject.ps1', 'enum\TppCertificateStage.ps1', 
-               'enum\TppConfigResult.ps1', 'enum\TppEventSeverity.ps1', 
-               'enum\TppIdentityType.ps1', 'enum\TppMetadataResult.ps1', 
+ScriptsToProcess = 'class\TppSession.ps1', 'class\TppPermission.ps1',
+               'class\TppObject.ps1', 'enum\TppCertificateStage.ps1',
+               'enum\TppConfigResult.ps1', 'enum\TppEventSeverity.ps1',
+               'enum\TppIdentityType.ps1', 'enum\TppMetadataResult.ps1',
                'enum\TppWorkflowResult.ps1', 'enum\TppEventGroup.ps1'
 
 # Type files (.ps1xml) to be loaded when importing this module
@@ -73,18 +73,18 @@ ScriptsToProcess = 'class\TppSession.ps1', 'class\TppPermission.ps1',
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'ConvertTo-TppGuid', 'ConvertTo-TppPath', 'Find-TppCertificate', 
-               'Find-TppIdentity', 'Find-TppObject', 'Get-TppAttribute', 
-               'Get-TppCertificate', 'Get-TppCertificateDetail', 
-               'Get-TppCustomField', 'Get-TppIdentityAttribute', 'Get-TppObject', 
-               'Get-TppPermission', 'Get-TppSystemStatus', 'Get-TppVersion', 
-               'Get-TppWorkflowTicket', 'Invoke-TppCertificateRenewal', 
-               'Move-TppObject', 'New-TppCapiApplication', 'New-TppCertificate', 
-               'New-TppObject', 'New-TppPolicy', 'New-TppSession', 'Read-TppLog', 
-               'Remove-TppCertificate', 'Remove-TppCertificateAssociation', 
-               'Rename-TppObject', 'Revoke-TppCertificate', 'Set-TppAttribute', 
-               'Set-TppPermission', 'Set-TppWorkflowTicketStatus', 
-               'Test-TppIdentity', 'Test-TppObject', 'Write-TppLog'
+FunctionsToExport = 'ConvertTo-TppGuid', 'ConvertTo-TppPath', 'Find-TppCertificate',
+               'Find-TppIdentity', 'Find-TppObject', 'Get-TppAttribute',
+               'Get-TppCertificate', 'Get-TppCertificateDetail',
+               'Get-TppCustomField', 'Get-TppIdentityAttribute', 'Get-TppObject',
+               'Get-TppPermission', 'Get-TppSystemStatus', 'Get-TppVersion',
+               'Get-TppWorkflowTicket', 'Invoke-TppCertificateRenewal',
+               'Move-TppObject', 'New-TppCapiApplication', 'New-TppCertificate',
+               'New-TppObject', 'New-TppPolicy', 'New-TppSession', 'Read-TppLog',
+               'Remove-TppCertificate', 'Remove-TppCertificateAssociation',
+               'Rename-TppObject', 'Revoke-TppCertificate', 'Set-TppAttribute',
+               'Set-TppPermission', 'Set-TppWorkflowTicketStatus',
+               'Test-TppIdentity', 'Test-TppObject', 'Write-TppLog', 'Add-TppCertificateAssociation'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
@@ -122,7 +122,11 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '- fix validation in identity functions'
+        ReleaseNotes = '
+        - add Add-TppCertificateAssociation to associate a certificate to one or more application objects
+        - update New-TppObject to use Add-TppCertificateAssociation when a certificate is provided
+        - update New-TppCapiApplication to use the updated New-TppObject
+        '
 
         # Prerelease string of this module
         # Prerelease = ''
