@@ -6,13 +6,12 @@ Create a new object
 ## SYNTAX
 
 ```
-New-TppObject [-Path] <String> [-Class] <String> [[-Attribute] <Hashtable>] [-PassThru]
+New-TppObject [-Path] <String> [-Class] <String> [-Attribute] <Hashtable> [-ProvisionCertificate] [-PassThru]
  [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Create a new object. 
-Generic use function if a specific function hasn't been created yet for the class.
+Generic use function to create a new object if a specific function hasn't been created yet for the class.
 
 ## EXAMPLES
 
@@ -40,7 +39,7 @@ Create a new Basic application and associate it to a device and certificate
 ## PARAMETERS
 
 ### -Path
-Full path for the object to be created.
+Full path, including name, for the object to be created.
 
 ```yaml
 Type: String
@@ -71,7 +70,7 @@ Accept wildcard characters: False
 ```
 
 ### -Attribute
-Hashtable with initial values for the new object. 
+Hashtable with initial values for the new object.
 These will be specific to the object class being created.
 
 ```yaml
@@ -79,9 +78,25 @@ Type: Hashtable
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 3
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProvisionCertificate
+If creating an application object, you can optionally push the certificate once the creation is complete.
+Only available if a 'Certificate' key containing the certificate path is provided for Attribute.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -133,6 +148,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 [http://venafitppps.readthedocs.io/en/latest/functions/New-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/New-TppObject/)
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppObject.ps1)
+
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1)
 
 [https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-create.php?tocpath=REST%20API%20reference%7CConfig%20programming%20interfaces%7C_____9](https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-create.php?tocpath=REST%20API%20reference%7CConfig%20programming%20interfaces%7C_____9)
 
