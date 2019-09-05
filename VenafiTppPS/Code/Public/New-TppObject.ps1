@@ -3,17 +3,22 @@
 Create a new object
 
 .DESCRIPTION
-Create a new object.  Generic use function if a specific function hasn't been created yet for the class.
+Generic use function to create a new object if a specific function hasn't been created yet for the class.
 
 .PARAMETER Path
-Full path for the object to be created.
+Full path, including name, for the object to be created.
 
 .PARAMETER Class
 Class name of the new object.
 See https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/Schema_Reference/r-SDK-CNattributesWhere.php for more info.
 
 .PARAMETER Attribute
-Hashtable with initial values for the new object.  These will be specific to the object class being created.
+Hashtable with initial values for the new object.
+These will be specific to the object class being created.
+
+.PARAMETER ProvisionCertificate
+If creating an application object, you can optionally push the certificate once the creation is complete.
+Only available if a 'Certificate' key containing the certificate path is provided for Attribute.
 
 .PARAMETER PassThru
 Return a TppObject representing the newly created object.
@@ -46,6 +51,9 @@ http://venafitppps.readthedocs.io/en/latest/functions/New-TppObject/
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppObject.ps1
 
 .LINK
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1
+
+.LINK
 https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-create.php?tocpath=REST%20API%20reference%7CConfig%20programming%20interfaces%7C_____9
 
 .LINK
@@ -54,7 +62,7 @@ https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/Schema_Reference/
 #>
 function New-TppObject {
 
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'NonApplicationObject')]
     [OutputType( [TppObject] )]
 
     param (
@@ -73,9 +81,12 @@ function New-TppObject {
         [Parameter(Mandatory)]
         [String] $Class,
 
-        [Parameter()]
+        [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [Hashtable] $Attribute,
+
+        [Parameter()]
+        [switch] $ProvisionCertificate,
 
         [Parameter()]
         [switch] $PassThru,
@@ -96,6 +107,10 @@ function New-TppObject {
         throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path $Path -Parent))
     }
 
+    if ( $ProvisionCertificate -and (-not $Attribute.Certificate) ) {
+        Write-Warning 'A ''Certificate'' key containing the certificate path must be provided for Attribute when using ProvisionCertificate, eg. -Attribute @{''Certificate''=''\Ved\Policy\mycert.com''}.  Certificate provisioning will not take place.'
+    }
+
     $params = @{
         TppSession = $TppSession
         Method     = 'Post'
@@ -110,7 +125,7 @@ function New-TppObject {
         # api requires a list of hashtables for nameattributelist
         # with 2 items per hashtable, with key names 'name' and 'value'
         # this is cumbersome for the user so allow them to pass a standard hashtable and convert it for them
-        $updatedAttribute = @($Attribute.GetEnumerator() | ForEach-Object {@{'Name' = $_.name; 'Value' = $_.value}})
+        $updatedAttribute = @($Attribute.GetEnumerator() | ForEach-Object { @{'Name' = $_.name; 'Value' = $_.value } })
         $params.Body.Add('NameAttributeList', $updatedAttribute)
     }
 
@@ -119,6 +134,18 @@ function New-TppObject {
     if ( $response.Result -eq [TppConfigResult]::Success ) {
 
         Write-Verbose "Successfully created $Class at $Path"
+
+        if ( $Attribute.Certificate ) {
+            $associateParams = @{
+                CertificatePath = $Attribute.Certificate
+                ApplicationPath = $response.Object.DN
+            }
+            if ( $ProvisionCertificate ) {
+                $associateParams.Add('ProvisionCertificate', $true)
+            }
+
+            Add-TppCertificateAssociation @associateParams
+        }
 
         if ( $PassThru ) {
 
