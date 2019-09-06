@@ -8,13 +8,15 @@ Enrolls or provisions a new certificate
 ### ByName (Default)
 ```
 New-TppCertificate -Name <String> [-CommonName <String>] -Path <String> -CertificateAuthorityPath <String>
- [-ManagementType <String>] [-PassThru] [-TppSession <TppSession>] [<CommonParameters>]
+ [-ManagementType <String>] [-SubjectAltName <Hashtable[]>] [-PassThru] [-TppSession <TppSession>] [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ### BySubject
 ```
 New-TppCertificate -CommonName <String> -Path <String> -CertificateAuthorityPath <String>
- [-ManagementType <String>] [-PassThru] [-TppSession <TppSession>] [<CommonParameters>]
+ [-ManagementType <String>] [-SubjectAltName <Hashtable[]>] [-PassThru] [-TppSession <TppSession>] [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -27,7 +29,7 @@ Enrolls or provisions a new certificate
 New-TppCertificate -Path '\ved\policy\folder' -Name 'mycert.com' -CertificateAuthorityDN '\ved\policy\CA Templates\my template'
 ```
 
-Create certifcate by name
+Create certificate by name
 
 ### EXAMPLE 2
 ```
@@ -36,6 +38,13 @@ New-TppCertificate -Path '\ved\policy\folder' -CommonName 'mycert.com' -Certific
 
 Create certificate using common name. 
 Return the created object.
+
+### EXAMPLE 3
+```
+New-TppCertificate -Path '\ved\policy\folder' -Name 'mycert.com' -CertificateAuthorityDN '\ved\policy\CA Templates\my template' -SubjectAltName @{'Email'='me@x.com'},@{'IPAddress'='1.2.3.4'}
+```
+
+Create certificate including subject alternate names
 
 ## PARAMETERS
 
@@ -136,6 +145,24 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -SubjectAltName
+A list of Subject Alternate Names.
+The value must be 1 or more hashtables with the SAN type and value.
+Acceptable SAN types are OtherName, Email, DNS, URI, and IPAddress.
+You can provide more than 1 of the same SAN type with multiple hashtables.
+
+```yaml
+Type: Hashtable[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -PassThru
 Return a TppObject representing the newly created certificate.
 
@@ -163,6 +190,37 @@ Aliases:
 Required: False
 Position: Named
 Default value: $Script:TppSession
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhatIf
+Shows what would happen if the cmdlet runs.
+The cmdlet is not run.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Confirm
+Prompts you for confirmation before running the cmdlet.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
