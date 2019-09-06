@@ -51,7 +51,7 @@ New-TppCertificate -Path '\ved\policy\folder' -CommonName 'mycert.com' -Certific
 Create certificate using common name.  Return the created object.
 
 .EXAMPLE
-New-TppCertificate -Path '\ved\policy\folder' -Name 'mycert.com' -CertificateAuthorityDN '\ved\policy\CA Templates\my template' -SubjectAltNames @{'Email'='me@x.com'},@{'IPAddress'='1.2.3.4'}
+New-TppCertificate -Path '\ved\policy\folder' -Name 'mycert.com' -CertificateAuthorityDN '\ved\policy\CA Templates\my template' -SubjectAltName @{'Email'='me@x.com'},@{'IPAddress'='1.2.3.4'}
 Create certifcate including subject alternate names
 
 .LINK
