@@ -24,6 +24,12 @@ The level of management that Trust Protection Platform applies to the certificat
 - Monitoring:  Allow Trust Protection Platform to monitor the certificate for expiration and renewal.
 - Unassigned: Certificates are neither enrolled or monitored by Trust Protection Platform.
 
+.PARAMETER SubjectAltName
+A list of Subject Alternate Names.
+The value must be 1 or more hashtables with the SAN type and value.
+Acceptable SAN types are OtherName, Email, DNS, URI, and IPAddress.
+You can provide more than 1 of the same SAN type with multiple hashtables.
+
 .PARAMETER PassThru
 Return a TppObject representing the newly created certificate.
 
@@ -38,12 +44,16 @@ TppObject, if PassThru is provided
 
 .EXAMPLE
 New-TppCertificate -Path '\ved\policy\folder' -Name 'mycert.com' -CertificateAuthorityDN '\ved\policy\CA Templates\my template'
+Create certificate by name
 
-Create certifcate by name
 .EXAMPLE
 New-TppCertificate -Path '\ved\policy\folder' -CommonName 'mycert.com' -CertificateAuthorityDN '\ved\policy\CA Templates\my template' -PassThru
-
 Create certificate using common name.  Return the created object.
+
+.EXAMPLE
+New-TppCertificate -Path '\ved\policy\folder' -Name 'mycert.com' -CertificateAuthorityDN '\ved\policy\CA Templates\my template' -SubjectAltName @{'Email'='me@x.com'},@{'IPAddress'='1.2.3.4'}
+Create certificate including subject alternate names
+
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppCertificate/
 
@@ -55,7 +65,7 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function New-TppCertificate {
-    [CmdletBinding(DefaultParameterSetName = 'ByName')]
+    [CmdletBinding(DefaultParameterSetName = 'ByName', SupportsShouldProcess)]
     [OutputType( [TppObject] )]
     param (
 
@@ -98,6 +108,9 @@ function New-TppCertificate {
         [String] $ManagementType,
 
         [Parameter()]
+        [Hashtable[]] $SubjectAltName,
+
+        [Parameter()]
         [switch] $PassThru,
 
         [Parameter()]
@@ -107,6 +120,58 @@ function New-TppCertificate {
     begin {
 
         $TppSession.Validate()
+
+        if ( $PSBoundParameters.ContainsKey('SubjectAltName') ) {
+
+            $errors = $SubjectAltName | ForEach-Object {
+                $_.GetEnumerator() | ForEach-Object {
+
+                    $thisKey = $_.Key
+                    $thisValue = $_.Value
+
+                    switch ($thisKey) {
+                        'OtherName' {
+                            # no validaton
+                        }
+
+                        'Email' {
+                            try {
+                                $null = [mailaddress]$thisValue
+                            }
+                            catch {
+                                ('''{0}'' is not a valid email' -f $thisValue)
+                            }
+                        }
+
+                        'DNS' {
+                            # no validaton
+                        }
+
+                        'URI' {
+                            # no validaton
+                        }
+
+                        'IPAddress' {
+                            try {
+                                $null = [ipaddress]$thisValue
+                            }
+                            catch {
+                                ('''{0}'' is not a valid IP Address' -f $thisValue)
+                            }
+                        }
+
+                        Default {
+                            # invalid type name provided
+                            ('''{0}'' is not a valid SAN type.  Valid values include OtherName, Email, DNS, URI, and IPAddress.' -f $thisKey)
+                        }
+                    }
+                }
+            }
+
+            if ( $errors ) {
+                throw $errors
+            }
+        }
     }
 
     process {
@@ -122,38 +187,55 @@ function New-TppCertificate {
             UseWebRequest = $true
         }
 
-        if ( $Name ) {
+        if ( $PSBoundParameters.ContainsKey('Name') ) {
             $params.Body.Add('ObjectName', $Name)
         }
 
-        if ( $CommonName ) {
+        if ( $PSBoundParameters.ContainsKey('CommonName') ) {
             $params.Body.Add('Subject', $CommonName)
         }
 
-        if ( $ManagementType ) {
+        if ( $PSBoundParameters.ContainsKey('ManagementType') ) {
             $params.Body.Add('ManagementType', $ManagementType)
         }
 
-        $response = Invoke-TppRestMethod @params
-        Write-Verbose ($response|Out-String)
-
-        switch ($response.StatusCode) {
-
-            '200' {
-                if ( $PassThru ) {
-                    $contentObject = $response.Content | ConvertFrom-Json
-                    $info = $contentObject.CertificateDN | ConvertTo-TppGuid -IncludeType
-                    [TppObject]@{
-                        Path     = $contentObject.CertificateDN
-                        Name     = Split-path $contentObject.CertificateDN -Leaf
-                        Guid     = $info.Guid
-                        TypeName = $info.TypeName
+        $newSan = @($SubjectAltName | ForEach-Object {
+                $_.GetEnumerator() | ForEach-Object {
+                    @{
+                        'TypeName' = $_.Key
+                        'Name'     = $_.Value
                     }
                 }
             }
+        )
 
-            default {
-                throw $response.StatusDescription
+        if ( $PSBoundParameters.ContainsKey('SubjectAltName') ) {
+            $params.Body.Add('SubjectAltNames', $newSan)
+        }
+
+        if ( $PSCmdlet.ShouldProcess($Path, 'Create new certificate') ) {
+
+            $response = Invoke-TppRestMethod @params
+            Write-Verbose ($response | Out-String)
+
+            switch ($response.StatusCode) {
+
+                '200' {
+                    if ( $PassThru ) {
+                        $contentObject = $response.Content | ConvertFrom-Json
+                        $info = $contentObject.CertificateDN | ConvertTo-TppGuid -IncludeType
+                        [TppObject]@{
+                            Path     = $contentObject.CertificateDN
+                            Name     = Split-path $contentObject.CertificateDN -Leaf
+                            Guid     = $info.Guid
+                            TypeName = $info.TypeName
+                        }
+                    }
+                }
+
+                default {
+                    throw $response.StatusDescription
+                }
             }
         }
     }
