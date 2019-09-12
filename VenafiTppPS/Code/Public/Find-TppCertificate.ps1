@@ -348,9 +348,6 @@ function Find-TppCertificate {
         [String[]] $ValidationState,
 
         [Parameter()]
-        [Switch] $Raw,
-
-        [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
 
