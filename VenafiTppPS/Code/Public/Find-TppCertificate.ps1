@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 Find certificates based on various attributes
 
@@ -430,16 +430,16 @@ function Find-TppCertificate {
                 $params.Body.Add( 'Thumbprint', $Thumbprint )
             }
             'IssueDate' {
-                $params.Body.Add( 'ValidFrom', $IssueDate.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
+                $params.Body.Add( 'ValidFrom', ($IssueDate | ConvertTo-UtcIso8601) )
             }
             'ExpireDate' {
-                $params.Body.Add( 'ValidTo', $ExpireDate.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
+                $params.Body.Add( 'ValidTo', ($ExpireDate | ConvertTo-UtcIso8601) )
             }
             'ExpireAfter' {
-                $params.Body.Add( 'ValidToGreater', $ExpireAfter.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") )
+                $params.Body.Add( 'ValidToGreater', ($ExpireAfter | ConvertTo-UtcIso8601) )
             }
             'ExpireBefore' {
-                $params.Body.Add( 'ValidToLess', $ExpireBefore.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") )
+                $params.Body.Add( 'ValidToLess', ($ExpireBefore | ConvertTo-UtcIso8601) )
             }
             'Enabled' {
                 $params.Body.Add( 'Disabled', [int] (-not $Enabled) )

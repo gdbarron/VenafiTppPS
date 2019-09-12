@@ -117,11 +117,11 @@ function Set-TppWorkflowTicketStatus {
             }
 
             if ( $PSBoundParameters.ContainsKey('ScheduledStart') ) {
-                $params.Body.Add( 'ScheduledStart', $ScheduledStart.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
+                $params.Body.Add( 'ScheduledStart', ($ScheduledStart | ConvertTo-UtcIso8601) )
             }
 
             if ( $PSBoundParameters.ContainsKey('ScheduledStop') ) {
-                $params.Body.Add( 'ScheduledStop', $ScheduledStop.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
+                $params.Body.Add( 'ScheduledStop', ($ScheduledStop | ConvertTo-UtcIso8601) )
             }
 
             $response = Invoke-TppRestMethod @params
