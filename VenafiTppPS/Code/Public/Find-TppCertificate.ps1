@@ -233,7 +233,9 @@ function Find-TppCertificate {
         [ValidateNotNullOrEmpty()]
         [guid] $Guid,
 
-        [Parameter()]
+        [Parameter(ParameterSetName = 'ByObject')]
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'ByGuid')]
         [Switch] $Recursive,
 
         [Parameter()]
