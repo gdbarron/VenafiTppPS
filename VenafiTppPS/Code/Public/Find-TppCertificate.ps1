@@ -206,6 +206,14 @@ function Find-TppCertificate {
     param (
 
         [Parameter(Mandatory, ParameterSetName = 'ByObject', ValueFromPipeline)]
+        [ValidateScript( {
+                if ( $_.TypeName -eq 'Policy' ) {
+                    $true
+                }
+                else {
+                    throw ("You provided an InputObject of type '{0}', but must be of type 'Policy'." -f $_.TypeName)
+                }
+            })]
         [TppObject] $InputObject,
 
         [Parameter(Mandatory, ParameterSetName = 'ByPath', ValueFromPipeline)]
