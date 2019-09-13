@@ -129,7 +129,7 @@ function New-TppObject {
         $params.Body.Add('NameAttributeList', $updatedAttribute)
     }
 
-    if ( $PSCmdlet.ShouldProcess($Path, 'Create Object') ) {
+    if ( $PSCmdlet.ShouldProcess($Path, ('Create {0} Object' -f $Class)) ) {
 
         $response = Invoke-TppRestMethod @params
 
