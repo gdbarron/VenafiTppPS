@@ -3,22 +3,69 @@
 Read entries from the TPP log
 
 .DESCRIPTION
-Read entries from the Tpp log
+Read entries from the TPP log
+
+.PARAMETER InputObject
+TppObject which represents a unique object to search for related records
+
+.PARAMETER Path
+Path to search for related records
+
+.PARAMETER Severity
+Filter records by severity
+
+.PARAMETER StartTime
+Start time of events
+
+.PARAMETER EndTime
+End time of events
+
+.PARAMETER Text1
+Filter matching results of Text1
+
+.PARAMETER Text2
+Filter matching results of Text2
+
+.PARAMETER Value1
+Filter matching results of Value1
+
+.PARAMETER Value2
+Filter matching results of Value2
 
 .PARAMETER Limit
-Specify the number of items to retrieve, starting with most recent
+Specify the number of items to retrieve, starting with most recent.  The default is 100 and there is no maximum.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-none
+InputObject
 
 .OUTPUTS
+PSCustomObject with properties:
+    ClientTimestamp
+    Component
+    ComponentId
+    ComponentSubsystem
+    Data
+    Grouping
+    Id
+    Name
+    ServerTimestamp
+    Severity
+    SourceIP
+    Text1
+    Text2
+    Value1
+    Value2
 
 .EXAMPLE
 Read-TppLog -Limit 10
 Get the most recent 10 log items
+
+.EXAMPLE
+$capiObject | Read-TppLog
+Find all events for a specific object
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Read-TppLog/
