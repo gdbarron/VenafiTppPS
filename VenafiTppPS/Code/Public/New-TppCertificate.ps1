@@ -104,8 +104,7 @@ function New-TppCertificate {
         [String] $CertificateAuthorityPath,
 
         [Parameter()]
-        [ValidateSet('Enrollment', 'Provisioning', 'Monitoring', 'Unassigned')]
-        [String] $ManagementType,
+        [TppManagementType] $ManagementType,
 
         [Parameter()]
         [Hashtable[]] $SubjectAltName,
