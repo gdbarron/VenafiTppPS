@@ -101,16 +101,16 @@ function Get-TppCertificateDetail {
     process {
 
         if ( $PSBoundParameters.ContainsKey('InputObject') ) {
-            $guid = $InputObject.Guid
+            $thisGuid = $InputObject.Guid
         }
         elseif ( $PSBoundParameters.ContainsKey('Path') ) {
-            $guid = $Path | ConvertTo-TppGuid
+            $thisGuid = $Path | ConvertTo-TppGuid
         }
         else {
-            # guid provided, we're good
+            $thisGuid = $Guid
         }
 
-        $params.UriLeaf = [System.Web.HttpUtility]::HtmlEncode("certificates/{$Guid}")
+        $params.UriLeaf = [System.Web.HttpUtility]::HtmlEncode("certificates/{$thisGuid}")
         $response = Invoke-TppRestMethod @params
 
         $selectProps = @{
