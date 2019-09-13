@@ -7,16 +7,17 @@ Find certificates based on various attributes
 
 ### NoPath (Default)
 ```
-Find-TppCertificate [-Recursive] [-Limit <Int32>] [-Country <String>] [-CommonName <String>] [-Issuer <String>]
+Find-TppCertificate [-Limit <Int32>] [-Country <String>] [-CommonName <String>] [-Issuer <String>]
  [-KeyAlgorithm <String[]>] [-KeySize <Int32[]>] [-KeySizeGreaterThan <Int32>] [-KeySizeLessThan <Int32>]
  [-Locale <String[]>] [-Organization <String[]>] [-OrganizationUnit <String[]>] [-State <String[]>]
  [-SanDns <String>] [-SanEmail <String>] [-SanIP <String>] [-SanUpn <String>] [-SanUri <String>]
  [-SerialNumber <String>] [-SignatureAlgorithm <String>] [-Thumbprint <String>] [-IssueDate <DateTime>]
  [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>] [-ExpireBefore <DateTime>] [-Enabled] [-InError <Boolean>]
  [-NetworkValidationEnabled <Boolean>] [-CreateDate <DateTime>] [-CreatedAfter <DateTime>]
- [-CreatedBefore <DateTime>] [-ManagementType <String[]>] [-PendingWorkflow] [-Stage <TppCertificateStage[]>]
- [-StageGreaterThan <TppCertificateStage>] [-StageLessThan <TppCertificateStage>] [-ValidationEnabled]
- [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
+ [-CreatedBefore <DateTime>] [-ManagementType <TppManagementType[]>] [-PendingWorkflow]
+ [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
+ [-StageLessThan <TppCertificateStage>] [-ValidationEnabled] [-ValidationState <String[]>]
+ [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### ByObject
@@ -28,10 +29,10 @@ Find-TppCertificate -InputObject <TppObject> [-Recursive] [-Limit <Int32>] [-Cou
  [-SanUpn <String>] [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>]
  [-Thumbprint <String>] [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>]
  [-ExpireBefore <DateTime>] [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>]
- [-CreateDate <DateTime>] [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <String[]>]
- [-PendingWorkflow] [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
- [-StageLessThan <TppCertificateStage>] [-ValidationEnabled] [-ValidationState <String[]>]
- [-TppSession <TppSession>] [<CommonParameters>]
+ [-CreateDate <DateTime>] [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>]
+ [-ManagementType <TppManagementType[]>] [-PendingWorkflow] [-Stage <TppCertificateStage[]>]
+ [-StageGreaterThan <TppCertificateStage>] [-StageLessThan <TppCertificateStage>] [-ValidationEnabled]
+ [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### ByPath
@@ -43,8 +44,8 @@ Find-TppCertificate -Path <String> [-Recursive] [-Limit <Int32>] [-Country <Stri
  [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>] [-Thumbprint <String>]
  [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>] [-ExpireBefore <DateTime>]
  [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>] [-CreateDate <DateTime>]
- [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <String[]>] [-PendingWorkflow]
- [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
+ [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <TppManagementType[]>]
+ [-PendingWorkflow] [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
  [-StageLessThan <TppCertificateStage>] [-ValidationEnabled] [-ValidationState <String[]>]
  [-TppSession <TppSession>] [<CommonParameters>]
 ```
@@ -58,8 +59,8 @@ Find-TppCertificate -Guid <Guid> [-Recursive] [-Limit <Int32>] [-Country <String
  [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>] [-Thumbprint <String>]
  [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>] [-ExpireBefore <DateTime>]
  [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>] [-CreateDate <DateTime>]
- [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <String[]>] [-PendingWorkflow]
- [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
+ [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <TppManagementType[]>]
+ [-PendingWorkflow] [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
  [-StageLessThan <TppCertificateStage>] [-ValidationEnabled] [-ValidationState <String[]>]
  [-TppSession <TppSession>] [<CommonParameters>]
 ```
@@ -71,43 +72,57 @@ Find certificates based on various attributes
 
 ### EXAMPLE 1
 ```
-Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01")
+Find-TppCertificate -ExpireBefore "2018-01-01"
 ```
 
 Find all certificates expiring before a certain date
 
 ### EXAMPLE 2
 ```
-Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01") -Limit 5
+Find-TppCertificate -ExpireBefore "2018-01-01" -Limit 5
 ```
 
 Find 5 certificates expiring before a certain date
 
 ### EXAMPLE 3
 ```
-Get-TppCertificateDetail -Path '\VED\Policy\My Policy'
+Find-TppCertificate -Path '\VED\Policy\My Policy'
 ```
 
 Find all certificates in a specific path
 
 ### EXAMPLE 4
 ```
-Get-TppCertificateDetail -Path '\VED\Policy\My Policy' -Recursive
+Find-TppCertificate -Issuer 'CN=Example Root CA, O=Venafi,Inc., L=Salt Lake City, S=Utah, C=US'
+```
+
+Find all certificates by issuer
+
+### EXAMPLE 5
+```
+Find-TppCertificate -Path '\VED\Policy\My Policy' -Recursive
 ```
 
 Find all certificates in a specific path and all subfolders
 
-### EXAMPLE 5
+### EXAMPLE 6
 ```
-Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01") -Limit 5 | Get-TppCertificateDetail
+Find-TppCertificate -ExpireBefore "2018-01-01" -Limit 5 | Get-TppCertificateDetail
 ```
 
 Get detailed certificate info on the first 5 certificates expiring before a certain date
 
+### EXAMPLE 7
+```
+Find-TppCertificate -ExpireBefore "2019-09-01" | Invoke-TppCertificateRenewal
+```
+
+Renew all certificates expiring before a certain date
+
 ## PARAMETERS
 
 ### -InputObject
-TppObject which represents a starting path
+TppObject of type 'Policy' which represents a starting path
 
 ```yaml
 Type: TppObject
@@ -156,7 +171,7 @@ Search recursively starting from the search path.
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: (All)
+Parameter Sets: ByObject, ByPath, ByGuid
 Aliases:
 
 Required: False
@@ -185,7 +200,6 @@ Accept wildcard characters: False
 
 ### -Country
 Find certificates by Country attribute of Subject DN.
-Example - US
 
 ```yaml
 Type: String
@@ -201,7 +215,6 @@ Accept wildcard characters: False
 
 ### -CommonName
 Find certificates by Common name attribute of Subject DN.
-Example - test.venafi.com
 
 ```yaml
 Type: String
@@ -217,10 +230,7 @@ Accept wildcard characters: False
 
 ### -Issuer
 Find certificates by issuer.
-Use the CN ,O, L, S, and C values from the certificate request.
-Surround the complete Issuer DN within double quotes (").
-If a value DN already contains double quotes, enclose the string in a second set of double quotes.
-Example - CN=Example Root CA, O=Venafi,Inc., L=Salt Lake City, S=Utah, C=US
+Use the CN, O, L, S, and C values from the certificate request.
 
 ```yaml
 Type: String
@@ -236,7 +246,6 @@ Accept wildcard characters: False
 
 ### -KeyAlgorithm
 Find certificates by algorithm for the public key.
-Example - 'RSA','DSA'
 
 ```yaml
 Type: String[]
@@ -252,7 +261,6 @@ Accept wildcard characters: False
 
 ### -KeySize
 Find certificates by public key size.
-Example - 1024,2048
 
 ```yaml
 Type: Int32[]
@@ -268,7 +276,6 @@ Accept wildcard characters: False
 
 ### -KeySizeGreaterThan
 Find certificates with a key size greater than the specified value.
-Example - 1024
 
 ```yaml
 Type: Int32
@@ -284,7 +291,6 @@ Accept wildcard characters: False
 
 ### -KeySizeLessThan
 Find certificates with a key size less than the specified value.
-Example: 1025
 
 ```yaml
 Type: Int32
@@ -300,7 +306,6 @@ Accept wildcard characters: False
 
 ### -Locale
 Find certificates by Locality/City attribute of Subject Distinguished Name (DN).
-Example - London
 
 ```yaml
 Type: String[]
@@ -316,7 +321,6 @@ Accept wildcard characters: False
 
 ### -Organization
 Find certificates by Organization attribute of Subject DN.
-Example - 'Venafi Inc.','BankABC'
 
 ```yaml
 Type: String[]
@@ -332,7 +336,6 @@ Accept wildcard characters: False
 
 ### -OrganizationUnit
 Find certificates by Organization Unit (OU).
-Example - 'Quality Assurance'
 
 ```yaml
 Type: String[]
@@ -348,7 +351,6 @@ Accept wildcard characters: False
 
 ### -State
 Find certificates by State/Province attribute of Subject DN.
-Example - 'New York', 'Georgia'
 
 ```yaml
 Type: String[]
@@ -364,7 +366,6 @@ Accept wildcard characters: False
 
 ### -SanDns
 Find certificates by Subject Alternate Name (SAN) Distinguished Name Server (DNS).
-Example - sso.venafi.com
 
 ```yaml
 Type: String
@@ -380,7 +381,6 @@ Accept wildcard characters: False
 
 ### -SanEmail
 Find certificates by SAN Email RFC822.
-Example - first.last@venafi.com
 
 ```yaml
 Type: String
@@ -396,7 +396,6 @@ Accept wildcard characters: False
 
 ### -SanIP
 Find certificates by SAN IP Address.
-Example - '10.20.30.40'
 
 ```yaml
 Type: String
@@ -412,7 +411,6 @@ Accept wildcard characters: False
 
 ### -SanUpn
 Find certificates by SAN User Principal Name (UPN) or OtherName.
-Example - My.Email@venafi.com
 
 ```yaml
 Type: String
@@ -428,7 +426,6 @@ Accept wildcard characters: False
 
 ### -SanUri
 Find certificates by SAN Uniform Resource Identifier (URI).
-Example - https://login.venafi.com
 
 ```yaml
 Type: String
@@ -444,7 +441,6 @@ Accept wildcard characters: False
 
 ### -SerialNumber
 Find certificates by Serial number.
-Example - 13279B74000000000053
 
 ```yaml
 Type: String
@@ -461,7 +457,6 @@ Accept wildcard characters: False
 ### -SignatureAlgorithm
 Find certificates by the algorithm used to sign the certificate (e.g.
 SHA1RSA).
-Example - 'sha1RSA','md5RSA','sha256RSA'
 
 ```yaml
 Type: String
@@ -477,7 +472,6 @@ Accept wildcard characters: False
 
 ### -Thumbprint
 Find certificates by one or more SHA-1 thumbprints.
-Example - 71E8672798C03842735293EF49425EF06C7FA8AB&
 
 ```yaml
 Type: String
@@ -493,7 +487,6 @@ Accept wildcard characters: False
 
 ### -IssueDate
 Find certificates by the date of issue.
-Example - \[DateTime\] '2017-10-24'
 
 ```yaml
 Type: DateTime
@@ -509,7 +502,6 @@ Accept wildcard characters: False
 
 ### -ExpireDate
 Find certificates by expiration date.
-Example - \[DateTime\] '2017-10-24'
 
 ```yaml
 Type: DateTime
@@ -525,8 +517,6 @@ Accept wildcard characters: False
 
 ### -ExpireAfter
 Find certificates that expire after a certain date.
-Specify YYYY-MM-DD or the ISO 8601 format, for example YYYY-MM-DDTHH:MM:SS.mmmmmmmZ.
-Example - \[DateTime\] '2017-10-24'
 
 ```yaml
 Type: DateTime
@@ -542,8 +532,6 @@ Accept wildcard characters: False
 
 ### -ExpireBefore
 Find certificates that expire before a certain date.
-Specify YYYY-MM-DD or the ISO 8601 format, for example YYYY-MM-DDTHH:MM:SS.mmmmmmmZ.
-Example - \[DateTime\] '2017-10-24'
 
 ```yaml
 Type: DateTime
@@ -573,7 +561,7 @@ Accept wildcard characters: False
 ```
 
 ### -InError
-Include only certificates by error state: No error or in an error state
+Only include certificates in an error state
 
 ```yaml
 Type: Boolean
@@ -588,7 +576,7 @@ Accept wildcard characters: False
 ```
 
 ### -NetworkValidationEnabled
-Include only certificates with network validation enabled or disabled
+Only include certificates with network validation enabled or disabled
 
 ```yaml
 Type: Boolean
@@ -651,9 +639,10 @@ Accept wildcard characters: False
 Find certificates with a Management type of Unassigned, Monitoring, Enrollment, or Provisioning
 
 ```yaml
-Type: String[]
+Type: TppManagementType[]
 Parameter Sets: (All)
 Aliases:
+Accepted values: Unassigned, Monitoring, Enrollment, Provisioning
 
 Required: False
 Position: Named
@@ -663,7 +652,7 @@ Accept wildcard characters: False
 ```
 
 ### -PendingWorkflow
-Include only certificates that have a pending workflow resolution (have an outstanding workflow ticket)
+Only include certificates that have a pending workflow resolution (have an outstanding workflow ticket)
 
 ```yaml
 Type: SwitchParameter
@@ -726,7 +715,7 @@ Accept wildcard characters: False
 ```
 
 ### -ValidationEnabled
-Include only certificates with validation enabled or disabled
+Only include certificates with validation enabled or disabled
 
 ```yaml
 Type: SwitchParameter
