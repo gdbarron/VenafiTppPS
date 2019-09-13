@@ -1,1 +1,6 @@
-- add Subject Alternate Name parameter to New-TppCertificate
+- add many search options to Read-TppLog
+- ensure the Recursive parameter of Find-TppCertificate can only be applied when providing a path
+- ensure InputObject property of Find-TppCertificate only accepts type Policy so we get a path
+- add TppManagementType enum
+- add private function to convert a date to UTC ISO 8601 format
+- cleanup help in Find-TppCertificate

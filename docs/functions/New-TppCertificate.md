@@ -8,15 +8,15 @@ Enrolls or provisions a new certificate
 ### ByName (Default)
 ```
 New-TppCertificate -Name <String> [-CommonName <String>] -Path <String> -CertificateAuthorityPath <String>
- [-ManagementType <String>] [-SubjectAltName <Hashtable[]>] [-PassThru] [-TppSession <TppSession>] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+ [-ManagementType <TppManagementType>] [-SubjectAltName <Hashtable[]>] [-PassThru] [-TppSession <TppSession>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### BySubject
 ```
 New-TppCertificate -CommonName <String> -Path <String> -CertificateAuthorityPath <String>
- [-ManagementType <String>] [-SubjectAltName <Hashtable[]>] [-PassThru] [-TppSession <TppSession>] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+ [-ManagementType <TppManagementType>] [-SubjectAltName <Hashtable[]>] [-PassThru] [-TppSession <TppSession>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -134,9 +134,10 @@ Automatically install or provision the certificate.
 - Unassigned: Certificates are neither enrolled or monitored by Trust Protection Platform.
 
 ```yaml
-Type: String
+Type: TppManagementType
 Parameter Sets: (All)
 Aliases:
+Accepted values: Unassigned, Monitoring, Enrollment, Provisioning
 
 Required: False
 Position: Named
