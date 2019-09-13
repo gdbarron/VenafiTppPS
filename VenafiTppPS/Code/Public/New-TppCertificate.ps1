@@ -222,7 +222,7 @@ function New-TppCertificate {
                 '200' {
                     if ( $PassThru ) {
                         $contentObject = $response.Content | ConvertFrom-Json
-                        $info = $contentObject.CertificateDN | ConvertTo-TppGuid -IncludeType
+                        $info = $contentObject.CertificateDN | ConvertTo-TppGuid -IncludeType -TppSession $TppSession
                         [TppObject]@{
                             Path     = $contentObject.CertificateDN
                             Name     = Split-path $contentObject.CertificateDN -Leaf

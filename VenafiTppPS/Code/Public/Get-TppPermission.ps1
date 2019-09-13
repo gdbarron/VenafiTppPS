@@ -137,10 +137,10 @@ function Get-TppPermission {
     process {
 
         if ( $PSBoundParameters.ContainsKey('Path') ) {
-            $InputObject = Get-TppObject -Path $Path
+            $InputObject = Get-TppObject -Path $Path -TppSession $TppSession
         }
         elseif ( $PSBoundParameters.ContainsKey('Guid') ) {
-            $InputObject = $Guid | ConvertTo-TppPath | Get-TppObject
+            $InputObject = $Guid | ConvertTo-TppPath -TppSession $TppSession | Get-TppObject -TppSession $TppSession
         }
 
 
@@ -205,7 +205,12 @@ function Get-TppPermission {
                 }
 
                 foreach ( $thisObject in $returnObject ) {
-                    $attribResponse = Get-TppIdentityAttribute -PrefixedUniversalId $thisObject.PrefixedUniversalId -Attribute $Attribute
+                    $attribParams = @{
+                        PrefixedUniversalId = $thisObject.PrefixedUniversalId
+                        Attribute           = $Attribute
+                        TppSession          = $TppSession
+                    }
+                    $attribResponse = Get-TppIdentityAttribute @attribParams
                     $thisObject.Attributes = $attribResponse.Attributes
                 }
             }

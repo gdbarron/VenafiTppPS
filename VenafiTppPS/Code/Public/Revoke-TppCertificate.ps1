@@ -160,9 +160,12 @@ function Revoke-TppCertificate {
                 }
             }
 
-            $updatedResponse = $response | Select-Object -Property * -ExcludeProperty 'Revoked', 'Requested', 'Success' | Where-Object {$_.psobject.Properties.name -ne "*"}
+            $updatedResponse = $response |
+            Select-Object -Property * -ExcludeProperty 'Revoked', 'Requested', 'Success' |
+            Where-Object { $_.psobject.Properties.name -ne "*" }
+
             if ( $updatedResponse ) {
-                $updatedResponse | Add-Member @{'Path' = $Path; 'Status' = $status} -PassThru
+                $updatedResponse | Add-Member @{'Path' = $Path; 'Status' = $status } -PassThru
             }
             else {
                 [PSCustomObject] @{
