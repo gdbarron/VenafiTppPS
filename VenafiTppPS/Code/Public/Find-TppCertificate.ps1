@@ -6,7 +6,7 @@ Find certificates based on various attributes
 Find certificates based on various attributes
 
 .PARAMETER InputObject
-TppObject which represents a starting path
+TppObject of type 'Policy' which represents a starting path
 
 .PARAMETER Path
 Starting path to search from
@@ -23,106 +23,81 @@ It is definitely recommended to filter on another property when searching with n
 
 .PARAMETER Country
 Find certificates by Country attribute of Subject DN.
-Example - US
 
 .PARAMETER CommonName
 Find certificates by Common name attribute of Subject DN.
-Example - test.venafi.com
 
 .PARAMETER Issuer
-Find certificates by issuer. Use the CN ,O, L, S, and C values from the certificate request.
-Surround the complete Issuer DN within double quotes (").
-If a value DN already contains double quotes, enclose the string in a second set of double quotes.
-Example - CN=Example Root CA, O=Venafi,Inc., L=Salt Lake City, S=Utah, C=US
+Find certificates by issuer. Use the CN, O, L, S, and C values from the certificate request.
 
 .PARAMETER KeyAlgorithm
 Find certificates by algorithm for the public key.
-Example - 'RSA','DSA'
 
 .PARAMETER KeySize
 Find certificates by public key size.
-Example - 1024,2048
 
 .PARAMETER KeySizeGreaterThan
 Find certificates with a key size greater than the specified value.
-Example - 1024
 
 .PARAMETER KeySizeLessThan
 Find certificates with a key size less than the specified value.
-Example: 1025
 
 .PARAMETER Locale
 Find certificates by Locality/City attribute of Subject Distinguished Name (DN).
-Example - London
 
 .PARAMETER Organization
 Find certificates by Organization attribute of Subject DN.
-Example - 'Venafi Inc.','BankABC'
 
 .PARAMETER OrganizationUnit
 Find certificates by Organization Unit (OU).
-Example - 'Quality Assurance'
 
 .PARAMETER State
 Find certificates by State/Province attribute of Subject DN.
-Example - 'New York', 'Georgia'
 
 .PARAMETER SanDns
 Find certificates by Subject Alternate Name (SAN) Distinguished Name Server (DNS).
-Example - sso.venafi.com
 
 .PARAMETER SanEmail
 Find certificates by SAN Email RFC822.
-Example - first.last@venafi.com
 
 .PARAMETER SanIP
 Find certificates by SAN IP Address.
-Example - '10.20.30.40'
 
 .PARAMETER SanUpn
 Find certificates by SAN User Principal Name (UPN) or OtherName.
-Example - My.Email@venafi.com
 
 .PARAMETER SanUri
 Find certificates by SAN Uniform Resource Identifier (URI).
-Example - https://login.venafi.com
 
 .PARAMETER SerialNumber
 Find certificates by Serial number.
-Example - 13279B74000000000053
 
 .PARAMETER SignatureAlgorithm
 Find certificates by the algorithm used to sign the certificate (e.g. SHA1RSA).
-Example - 'sha1RSA','md5RSA','sha256RSA'
 
 .PARAMETER Thumbprint
 Find certificates by one or more SHA-1 thumbprints.
-Example - 71E8672798C03842735293EF49425EF06C7FA8AB&
 
 .PARAMETER IssueDate
 Find certificates by the date of issue.
-Example - [DateTime] '2017-10-24'
 
 .PARAMETER ExpireDate
 Find certificates by expiration date.
-Example - [DateTime] '2017-10-24'
 
 .PARAMETER ExpireAfter
-Find certificates that expire after a certain date. Specify YYYY-MM-DD or the ISO 8601 format, for example YYYY-MM-DDTHH:MM:SS.mmmmmmmZ.
-Example - [DateTime] '2017-10-24'
+Find certificates that expire after a certain date.
 
 .PARAMETER ExpireBefore
-Find certificates that expire before a certain date. Specify YYYY-MM-DD or the ISO 8601 format, for example YYYY-MM-DDTHH:MM:SS.mmmmmmmZ.
-Example - [DateTime] '2017-10-24'
+Find certificates that expire before a certain date.
 
 .PARAMETER Enabled
 Include only certificates that are enabled or disabled
 
 .PARAMETER InError
-Include only certificates by error state: No error or in an error state
+Only include certificates in an error state
 
 .PARAMETER NetworkValidationEnabled
-Include only certificates with network validation enabled or disabled
+Only include certificates with network validation enabled or disabled
 
 .PARAMETER CreateDate
 Find certificates that were created at an exact date and time
@@ -137,7 +112,7 @@ Find certificate created before this date and time
 Find certificates with a Management type of Unassigned, Monitoring, Enrollment, or Provisioning
 
 .PARAMETER PendingWorkflow
-Include only certificates that have a pending workflow resolution (have an outstanding workflow ticket)
+Only include certificates that have a pending workflow resolution (have an outstanding workflow ticket)
 
 .PARAMETER Stage
 Find certificates by one or more stages in the certificate lifecycle
@@ -149,7 +124,7 @@ Find certificates with a stage greater than the specified stage (does not includ
 Find certificates with a stage less than the specified stage (does not include specified stage)
 
 .PARAMETER ValidationEnabled
-Include only certificates with validation enabled or disabled
+Only include certificates with validation enabled or disabled
 
 .PARAMETER ValidationState
 Find certificates with a validation state of Blank, Success, or Failure
@@ -164,24 +139,32 @@ InputObject, Path, Guid
 TppObject
 
 .EXAMPLE
-Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01")
+Find-TppCertificate -ExpireBefore "2018-01-01"
 Find all certificates expiring before a certain date
 
 .EXAMPLE
-Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01") -Limit 5
+Find-TppCertificate -ExpireBefore "2018-01-01" -Limit 5
 Find 5 certificates expiring before a certain date
 
 .EXAMPLE
-Get-TppCertificateDetail -Path '\VED\Policy\My Policy'
+Find-TppCertificate -Path '\VED\Policy\My Policy'
 Find all certificates in a specific path
 
 .EXAMPLE
-Get-TppCertificateDetail -Path '\VED\Policy\My Policy' -Recursive
+Find-TppCertificate -Issuer 'CN=Example Root CA, O=Venafi,Inc., L=Salt Lake City, S=Utah, C=US'
+Find all certificates by issuer
+
+.EXAMPLE
+Find-TppCertificate -Path '\VED\Policy\My Policy' -Recursive
 Find all certificates in a specific path and all subfolders
 
 .EXAMPLE
-Get-TppCertificateDetail -ExpireBefore ([DateTime] "2018-01-01") -Limit 5 | Get-TppCertificateDetail
+Find-TppCertificate -ExpireBefore "2018-01-01" -Limit 5 | Get-TppCertificateDetail
 Get detailed certificate info on the first 5 certificates expiring before a certain date
+
+.EXAMPLE
+Find-TppCertificate -ExpireBefore "2019-09-01" | Invoke-TppCertificateRenewal
+Renew all certificates expiring before a certain date
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Find-TppCertificate/
@@ -206,6 +189,14 @@ function Find-TppCertificate {
     param (
 
         [Parameter(Mandatory, ParameterSetName = 'ByObject', ValueFromPipeline)]
+        [ValidateScript( {
+                if ( $_.TypeName -eq 'Policy' ) {
+                    $true
+                }
+                else {
+                    throw ("You provided an InputObject of type '{0}', but must be of type 'Policy'." -f $_.TypeName)
+                }
+            })]
         [TppObject] $InputObject,
 
         [Parameter(Mandatory, ParameterSetName = 'ByPath', ValueFromPipeline)]
@@ -225,7 +216,9 @@ function Find-TppCertificate {
         [ValidateNotNullOrEmpty()]
         [guid] $Guid,
 
-        [Parameter()]
+        [Parameter(ParameterSetName = 'ByObject')]
+        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(ParameterSetName = 'ByGuid')]
         [Switch] $Recursive,
 
         [Parameter()]
@@ -331,8 +324,7 @@ function Find-TppCertificate {
         [datetime] $CreatedBefore,
 
         [Parameter()]
-        [ValidateSet('Unassigned', 'Monitoring', 'Enrollment', 'Provisioning')]
-        [String[]] $ManagementType,
+        [TppManagementType[]] $ManagementType,
 
         [Parameter()]
         [Switch] $PendingWorkflow,
@@ -366,12 +358,13 @@ function Find-TppCertificate {
             TppSession = $TppSession
             Method     = 'Get'
             UriLeaf    = 'certificates'
-            Body       = @{
-                'Limit' = $Limit
-            }
+            Body       = @{ }
         }
 
         switch ($PSBoundParameters.Keys) {
+            'Limit' {
+                $params.Body.Add('Limit', $Limit)
+            }
             'Country' {
                 $params.Body.Add( 'C', $Country )
             }
@@ -430,16 +423,16 @@ function Find-TppCertificate {
                 $params.Body.Add( 'Thumbprint', $Thumbprint )
             }
             'IssueDate' {
-                $params.Body.Add( 'ValidFrom', $IssueDate.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
+                $params.Body.Add( 'ValidFrom', ($IssueDate | ConvertTo-UtcIso8601) )
             }
             'ExpireDate' {
-                $params.Body.Add( 'ValidTo', $ExpireDate.ToUniversalTime().ToString( "yyyy-MM-ddTHH:mm:ss.fffffffZ" ) )
+                $params.Body.Add( 'ValidTo', ($ExpireDate | ConvertTo-UtcIso8601) )
             }
             'ExpireAfter' {
-                $params.Body.Add( 'ValidToGreater', $ExpireAfter.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") )
+                $params.Body.Add( 'ValidToGreater', ($ExpireAfter | ConvertTo-UtcIso8601) )
             }
             'ExpireBefore' {
-                $params.Body.Add( 'ValidToLess', $ExpireBefore.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") )
+                $params.Body.Add( 'ValidToLess', ($ExpireBefore | ConvertTo-UtcIso8601) )
             }
             'Enabled' {
                 $params.Body.Add( 'Disabled', [int] (-not $Enabled) )
@@ -457,7 +450,7 @@ function Find-TppCertificate {
                 $params.Body.Add( 'PendingWorkflow', '')
             }
             'Stage' {
-                $params.Body.Add( 'Stage', ($Stage | ForEach-Object {[TppCertificateStage]::$_.value__}) -join ',' )
+                $params.Body.Add( 'Stage', ($Stage | ForEach-Object { [TppCertificateStage]::$_.value__ }) -join ',' )
             }
             'StageGreaterThan' {
                 $params.Body.Add( 'StageGreater', [TppCertificateStage]::$StageGreaterThan.value__ )
@@ -477,22 +470,22 @@ function Find-TppCertificate {
     process {
 
         if ( $PSBoundParameters.ContainsKey('InputObject') ) {
-            $path = $InputObject.Path
+            $thisPath = $InputObject.Path
         }
         elseif ( $PSBoundParameters.ContainsKey('Path') ) {
-            # we have a path already, we're good
+            $thisPath = $Path
         }
         elseif ( $PSBoundParameters.ContainsKey('Guid') ) {
             # guid provided, get path
-            $path = $Guid | ConvertTo-TppPath
+            $thisPath = $Guid | ConvertTo-TppPath
         }
 
-        if ( $Path ) {
+        if ( $thisPath ) {
             if ( $PSBoundParameters.ContainsKey('Recursive') ) {
-                $params.Body.Add( 'ParentDnRecursive', $Path )
+                $params.Body.Add( 'ParentDnRecursive', $thisPath )
             }
             else {
-                $params.Body.Add( 'ParentDn', $Path )
+                $params.Body.Add( 'ParentDn', $thisPath )
             }
         }
 
