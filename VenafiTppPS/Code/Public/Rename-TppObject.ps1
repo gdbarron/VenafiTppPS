@@ -62,13 +62,13 @@ function Rename-TppObject {
     $TppSession.Validate()
 
     # ensure the object to rename already exists
-    if ( -not (Test-TppObject -Path $Path -ExistOnly) ) {
+    if ( -not (Test-TppObject -Path $Path -ExistOnly -TppSession $TppSession) ) {
         throw ("{0} does not exist" -f $Path)
     }
 
     # ensure the new object doesn't already exist
     $newDN = "{0}\{1}" -f (Split-Path $Path -Parent), $NewName
-    if ( Test-TppObject -Path $newDN -ExistOnly ) {
+    if ( Test-TppObject -Path $newDN -ExistOnly -TppSession $TppSession ) {
         throw ("{0} already exists" -f $newDN)
     }
 

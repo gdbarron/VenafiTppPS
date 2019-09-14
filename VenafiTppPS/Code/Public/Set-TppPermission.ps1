@@ -93,7 +93,7 @@ function Set-TppPermission {
         }
 
         $GUID.ForEach{
-            if ( -not (Test-TppObject -Guid $_ -ExistOnly) ) {
+            if ( -not (Test-TppObject -Guid $_ -ExistOnly -TppSession $TppSession) ) {
                 Write-Error ("Guid {0} does not exist" -f $_)
                 Continue
             }
@@ -103,7 +103,7 @@ function Set-TppPermission {
             $PrefixedUniversalId.ForEach{
                 $thisId = $_
 
-                if ( -not (Test-TppIdentity -PrefixedUniversalId $PrefixedUniversalId -ExistOnly) ) {
+                if ( -not (Test-TppIdentity -PrefixedUniversalId $PrefixedUniversalId -ExistOnly -TppSession $TppSession) ) {
                     Write-Error "Id $thisId does not exist"
                     Continue
                 }

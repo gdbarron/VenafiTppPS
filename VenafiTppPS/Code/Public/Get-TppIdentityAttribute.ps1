@@ -55,9 +55,6 @@ function Get-TppIdentityAttribute {
     param (
 
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [ValidateScript( {
-                $_ | Test-TppIdentity -ExistOnly
-            })]
         [Alias('PrefixedUniversal', 'Contact')]
         [string[]] $PrefixedUniversalId,
 
@@ -69,7 +66,7 @@ function Get-TppIdentityAttribute {
     )
 
     begin {
-        $TppSession.Validate()
+        # $TppSession.Validate()
 
         $params = @{
             TppSession = $TppSession
@@ -92,6 +89,11 @@ function Get-TppIdentityAttribute {
     process {
 
         foreach ( $thisId in $PrefixedUniversalId ) {
+
+            if ( -not ($PrefixedUniversalId | Test-TppIdentity -ExistOnly -TppSession $TppSession) ) {
+                Write-Error ('The id, {0}, does not exist' -f $PrefixedUniversalId)
+                continue
+            }
 
             $params.Body.ID.PrefixedUniversal = $thisId
 

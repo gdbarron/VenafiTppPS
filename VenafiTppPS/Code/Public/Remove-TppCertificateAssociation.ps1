@@ -127,7 +127,7 @@ function Remove-TppCertificateAssociation {
         # foreach ( $Path in $Path ) {
         $shouldProcessAction = "Remove associations"
 
-        if ( -not ($Path | Test-TppObject -ExistOnly) ) {
+        if ( -not ($Path | Test-TppObject -ExistOnly -TppSession $TppSession) ) {
             Write-Error ("Certificate path {0} does not exist" -f $Path)
             Continue
         }
@@ -147,7 +147,10 @@ function Remove-TppCertificateAssociation {
             }
 
             'RemoveAll*' {
-                $associatedApps = $Path | Get-TppAttribute -Attribute "Consumers" -EffectivePolicy | Select-Object -ExpandProperty Value
+                $associatedApps = $Path |
+                Get-TppAttribute -Attribute "Consumers" -EffectivePolicy -TppSession $TppSession |
+                Select-Object -ExpandProperty Value
+
                 if ( $associatedApps ) {
                     $params.Body.Add( 'ApplicationDN', @($associatedApps) )
                 } else {

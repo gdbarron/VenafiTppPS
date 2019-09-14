@@ -93,15 +93,17 @@ function Remove-TppCertificate {
             $guid = $InputObject.Guid
         }
         else {
-            $guid = $Path | ConvertTo-TppGuid
+            $guid = $Path | ConvertTo-TppGuid -TppSession $TppSession
         }
 
         # ensure either there are no associations or the force flag was provided
-        $associatedApps = $Guid | Get-TppAttribute -Attribute "Consumers" -EffectivePolicy | Select-Object -ExpandProperty Value
+        $associatedApps = $Guid |
+        Get-TppAttribute -Attribute "Consumers" -EffectivePolicy -TppSession $TppSession |
+        Select-Object -ExpandProperty Value
 
         if ( $associatedApps ) {
             if ( $Force ) {
-                $params.Add('Body', @{'ApplicationDN' = @($associatedApps)})
+                $params.Add('Body', @{'ApplicationDN' = @($associatedApps) })
             }
             else {
                 Write-Error ("Path '{0}' has associations and cannot be removed.  Provide -Force to override." -f $Path)
@@ -112,7 +114,7 @@ function Remove-TppCertificate {
         $params.UriLeaf = "Certificates/$Guid"
 
         if ( $PSCmdlet.ShouldProcess($Path, 'Remove certificate and all associations') ) {
-            Remove-TppCertificateAssociation -Path $Path -All
+            Remove-TppCertificateAssociation -Path $Path -All -TppSession $TppSession
             Invoke-TppRestMethod @params
         }
     }

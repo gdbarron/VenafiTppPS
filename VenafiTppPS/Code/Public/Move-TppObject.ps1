@@ -70,12 +70,12 @@ function Move-TppObject {
     $TppSession.Validate()
 
     # ensure the object to rename already exists
-    if ( -not (Test-TppObject -Path $SourcePath -ExistOnly) ) {
+    if ( -not (Test-TppObject -Path $SourcePath -ExistOnly -TppSession $TppSession) ) {
         throw ("Source path '{0}' does not exist" -f $SourcePath)
     }
 
     # ensure the new object doesn't already exist
-    if ( Test-TppObject -Path $TargetPath -ExistOnly ) {
+    if ( Test-TppObject -Path $TargetPath -ExistOnly -TppSession $TppSession) {
         throw ("Target path '{0}' already exists" -f $TargetPath)
     }
 
