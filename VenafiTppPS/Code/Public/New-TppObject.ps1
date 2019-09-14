@@ -62,7 +62,7 @@ https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/Schema_Reference/
 #>
 function New-TppObject {
 
-    [CmdletBinding(DefaultParameterSetName = 'NonApplicationObject')]
+    [CmdletBinding(DefaultParameterSetName = 'NonApplicationObject', SupportsShouldProcess)]
     [OutputType( [TppObject] )]
 
     param (
@@ -95,19 +95,19 @@ function New-TppObject {
         [TppSession] $TppSession = $Script:TppSession
     )
 
-    $TppSession.Validate()
+    # $TppSession.Validate()
 
     # ensure the object doesn't already exist
-    if ( Test-TppObject -Path $Path -ExistOnly ) {
+    if ( Test-TppObject -Path $Path -ExistOnly -TppSession $TppSession ) {
         throw ("{0} already exists" -f $Path)
     }
 
     # ensure the parent folder exists
-    if ( -not (Test-TppObject -Path (Split-Path $Path -Parent) -ExistOnly) ) {
+    if ( -not (Test-TppObject -Path (Split-Path $Path -Parent) -ExistOnly -TppSession $TppSession) ) {
         throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path $Path -Parent))
     }
 
-    if ( $ProvisionCertificate -and (-not $Attribute.Certificate) ) {
+    if ( $PSBoundParameters.ContainsKey('ProvisionCertificate') -and (-not $Attribute.Certificate) ) {
         Write-Warning 'A ''Certificate'' key containing the certificate path must be provided for Attribute when using ProvisionCertificate, eg. -Attribute @{''Certificate''=''\Ved\Policy\mycert.com''}.  Certificate provisioning will not take place.'
     }
 
@@ -129,9 +129,13 @@ function New-TppObject {
         $params.Body.Add('NameAttributeList', $updatedAttribute)
     }
 
-    $response = Invoke-TppRestMethod @params
+    if ( $PSCmdlet.ShouldProcess($Path, ('Create {0} Object' -f $Class)) ) {
 
-    if ( $response.Result -eq [TppConfigResult]::Success ) {
+        $response = Invoke-TppRestMethod @params
+
+        if ( $response.Result -ne [TppConfigResult]::Success ) {
+            Throw $response.Error
+        }
 
         Write-Verbose "Successfully created $Class at $Path"
 
@@ -140,11 +144,11 @@ function New-TppObject {
                 CertificatePath = $Attribute.Certificate
                 ApplicationPath = $response.Object.DN
             }
-            if ( $ProvisionCertificate ) {
+            if ( $PSBoundParameters.ContainsKey('ProvisionCertificate') ) {
                 $associateParams.Add('ProvisionCertificate', $true)
             }
 
-            Add-TppCertificateAssociation @associateParams
+            Add-TppCertificateAssociation @associateParams -TppSession $TppSession
         }
 
         if ( $PassThru ) {
@@ -158,8 +162,5 @@ function New-TppObject {
                 Guid     = $object.Guid
             }
         }
-    }
-    else {
-        Throw $response.Error
     }
 }

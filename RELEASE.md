@@ -1,6 +1,3 @@
-- add many search options to Read-TppLog
-- ensure the Recursive parameter of Find-TppCertificate can only be applied when providing a path
-- ensure InputObject property of Find-TppCertificate only accepts type Policy so we get a path
-- add TppManagementType enum
-- add private function to convert a date to UTC ISO 8601 format
-- cleanup help in Find-TppCertificate
+- fix session state not being preserved across internal function calls, thanks Kory B!
+- add Pipeline and ShouldProcess support to New-TppPolicy
+- add ShouldProcess support to New-TppObject

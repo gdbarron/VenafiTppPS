@@ -95,7 +95,7 @@ function Get-TppWorkflowTicket {
             $Path = $InputObject.Path
         }
         elseif ( $PSBoundParameters.ContainsKey('Guid') ) {
-            $Path = $Guid | ConvertTo-TppPath
+            $Path = $Guid | ConvertTo-TppPath -TppSession $TppSession
         }
         else {
             # we have the cert path we need to get the workflow tickets

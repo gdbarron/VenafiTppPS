@@ -18,7 +18,7 @@ Return a TppObject representing the newly created policy.
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-none
+Path
 
 .OUTPUTS
 TppObject, if PassThru provided
@@ -46,10 +46,11 @@ https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-
 #>
 function New-TppPolicy {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     [OutputType( [TppObject] )]
+
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -73,22 +74,33 @@ function New-TppPolicy {
         [TppSession] $TppSession = $Script:TppSession
     )
 
-    $TppSession.Validate()
+    begin {
+        # $TppSession.Validate()
 
-    $params = @{
-        Path     = $Path
-        Class    = 'Policy'
-        PassThru = $true
+        $params = @{
+            Path       = ''
+            Class      = 'Policy'
+            PassThru   = $true
+            TppSession = $TppSession
+        }
+
+        if ( $PSBoundParameters.ContainsKey('Description') ) {
+            $params.Add('Attribute', @{'Description' = $Description })
+        }
+
     }
 
-    if ( $Description ) {
-        $params.Add('Attribute', @{'Description' = $Description})
+    process {
+        $params.Path = $Path
+
+        if ( $PSCmdlet.ShouldProcess($Path, 'Create Policy') ) {
+
+            Write-Verbose ($params | Out-String)
+            $response = New-TppObject @params
+
+            if ( $PassThru ) {
+                $response
+            }
+        }
     }
-
-    $response = New-TppObject @params
-
-    if ( $PassThru ) {
-        $response
-    }
-
 }

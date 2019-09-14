@@ -146,13 +146,18 @@ function New-TppCapiApplication {
 
     $TppSession.Validate()
 
-    if ( -not (Test-TppObject -Path $CertificatePath -ExistOnly) ) {
+    if ( -not (Test-TppObject -Path $CertificatePath -ExistOnly -TppSession $TppSession) ) {
         throw ("The certificate {0} does not exist" -f $CertificatePath)
     }
 
     # ensure the credential exists and is actually of type credential
     $credentialName = (Split-Path $CredentialPath -Leaf)
-    $credentialObject = Find-TppObject -Path (Split-Path $CredentialPath -Parent) -Pattern $credentialName
+    $findParams = @{
+        Path       = (Split-Path $CredentialPath -Parent)
+        Pattern    = $credentialName
+        TppSession = $TppSession
+    }
+    $credentialObject = Find-TppObject @findParams
 
     if ( -not $credentialObject ) {
         throw "Credential object not found"
@@ -165,15 +170,16 @@ function New-TppCapiApplication {
 
     # start the new capi app work here
     $params = @{
-        Path      = $Path
-        Class     = 'CAPI'
-        Attribute = @{
+        Path       = $Path
+        Class      = 'CAPI'
+        Attribute  = @{
             'Driver Name'   = 'appcapi'
             'Friendly Name' = $FriendlyName
             'Credential'    = $CredentialPath
             'Certificate'   = $CertificatePath
         }
-        PassThru  = $true
+        PassThru   = $true
+        TppSession = $TppSession
     }
 
     if ( $ProvisionCertificate ) {

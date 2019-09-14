@@ -143,7 +143,7 @@ function Get-TppAttribute {
             }
 
             '*Guid' {
-                $pathToProcess = $Guid | ConvertTo-TppPath
+                $pathToProcess = $Guid | ConvertTo-TppPath -TppSession $TppSession
             }
         }
 
