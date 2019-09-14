@@ -477,7 +477,7 @@ function Find-TppCertificate {
         }
         elseif ( $PSBoundParameters.ContainsKey('Guid') ) {
             # guid provided, get path
-            $thisPath = $Guid | ConvertTo-TppPath
+            $thisPath = $Guid | ConvertTo-TppPath -TppSession $TppSession
         }
 
         if ( $thisPath ) {

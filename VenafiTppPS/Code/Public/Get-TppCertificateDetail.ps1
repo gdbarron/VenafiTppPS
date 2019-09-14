@@ -104,7 +104,7 @@ function Get-TppCertificateDetail {
             $thisGuid = $InputObject.Guid
         }
         elseif ( $PSBoundParameters.ContainsKey('Path') ) {
-            $thisGuid = $Path | ConvertTo-TppGuid
+            $thisGuid = $Path | ConvertTo-TppGuid -TppSession $TppSession
         }
         else {
             $thisGuid = $Guid
