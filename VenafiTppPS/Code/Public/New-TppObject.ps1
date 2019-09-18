@@ -99,7 +99,7 @@ function New-TppObject {
 
     # ensure the object doesn't already exist
     if ( Test-TppObject -Path $Path -ExistOnly -TppSession $TppSession ) {
-        throw ("{0} already exists" -f $Path)
+        throw ("New object to be created, {0}, already exists" -f $Path)
     }
 
     # ensure the parent folder exists
