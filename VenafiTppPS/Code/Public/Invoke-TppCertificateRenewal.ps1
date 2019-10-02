@@ -41,7 +41,10 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function Invoke-TppCertificateRenewal {
-    [CmdletBinding()]
+
+    [CmdletBinding(SupportsShouldProcess)]
+    [Alias('itcr')]
+
     param (
         [Parameter(Mandatory, ParameterSetName = 'ByObject', ValueFromPipeline)]
         [TppObject] $InputObject,
@@ -58,17 +61,6 @@ function Invoke-TppCertificateRenewal {
             })]
         [Alias('DN', 'CertificateDN')]
         [String] $Path,
-
-        # [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        # [ValidateNotNullOrEmpty()]
-        # [ValidateScript( {
-        #         if ( $_ | Test-TppDnPath ) {
-        #             $true
-        #         } else {
-        #             throw "'$_' is not a valid DN path"
-        #         }
-        #     })]
-        # [String] $CertificateDN,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -93,11 +85,14 @@ function Invoke-TppCertificateRenewal {
             $path = $InputObject.Path
         }
 
-        write-verbose "Renewing $Path..."
+        if ( $PSCmdlet.ShouldProcess($Path, 'Renew certificate') ) {
 
-        $params.Body.CertificateDN = $Path
-        $response = Invoke-TppRestMethod @params
+            write-verbose "Renewing $Path..."
 
-        $response | Add-Member @{'Path' = $Path} -PassThru
+            $params.Body.CertificateDN = $Path
+            $response = Invoke-TppRestMethod @params
+
+            $response | Add-Member @{'Path' = $Path } -PassThru
+        }
     }
 }
