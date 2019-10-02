@@ -61,8 +61,7 @@ ScriptsToProcess = 'class\TppSession.ps1', 'class\TppPermission.ps1',
                'class\TppObject.ps1', 'enum\TppCertificateStage.ps1',
                'enum\TppConfigResult.ps1', 'enum\TppEventSeverity.ps1',
                'enum\TppIdentityType.ps1', 'enum\TppMetadataResult.ps1',
-               'enum\TppWorkflowResult.ps1', 'enum\TppEventGroup.ps1',
-               'enum\TppManagementType.ps1'
+               'enum\TppWorkflowResult.ps1', 'enum\TppManagementType.ps1'
 
 # Type files (.ps1xml) to be loaded when importing this module
 # TypesToProcess = @()

@@ -3,20 +3,17 @@
 Write entries to the TPP log
 
 .DESCRIPTION
-Write entries to the TPP Default SQL Channel log.  Requires an event group and event.
-Default and custom event groups are supported.
+Write entries to the log for custom event groups.
+It is not permitted to write to the default log.
 
 .PARAMETER EventGroup
-Default event group.
-
-.PARAMETER CustomEventGroup
 Custom Event Group ID, 4 characters.
 
 .PARAMETER EventId
-Event ID from within the EventGroup or CustomEventGroup provided.  Only provide the 4 character event id, do not precede with group ID.
+Event ID from within the EventGroup provided.  Only provide the 4 character event id, do not precede with group ID.
 
 .PARAMETER Component
-The item this event is associated with.  Typically, this is the Path (DN) of the object.
+Path to the item this event is associated with
 
 .PARAMETER Severity
 Severity of the event
@@ -52,13 +49,7 @@ none
 none
 
 .EXAMPLE
-Write-TppLog -EventGroup WebSDKRESTAPI -EventId '0001' -Component '\ved\policy\mycert.com'
-
-Log an event to a default group
-
-.EXAMPLE
 Write-TppLog -EventGroup '0200' -EventId '0001' -Component '\ved\policy\mycert.com'
-
 Log an event to a custom group
 
 .LINK
@@ -75,13 +66,12 @@ https://support.venafi.com/hc/en-us/articles/360003460191-Info-Venafi-Trust-Prot
 
 #>
 function Write-TppLog {
-    [CmdletBinding(DefaultParameterSetName = 'DefaultGroup')]
+
+    [CmdletBinding()]
+
     param (
 
-        [Parameter(Mandatory, ParameterSetName = 'DefaultGroup')]
-        [TppEventGroup] $EventGroup,
-
-        [Parameter(Mandatory, ParameterSetName = 'CustomGroup')]
+        [Parameter(Mandatory)]
         [ValidateLength(4, 4)]
         [string] $CustomEventGroup,
 
@@ -126,15 +116,8 @@ function Write-TppLog {
 
     $TppSession.Validate()
 
-    if ( $PSCmdlet.ParameterSetName -eq 'DefaultGroup' ) {
-        $thisEventGroup = $TppEventGroupHash.($EventGroup.ToString())
-    }
-    else {
-        $thisEventGroup = $CustomEventGroup
-    }
-
     # the event id is the group id coupled with the event id
-    $fullEventId = "$thisEventGroup$EventId"
+    $fullEventId = "$CustomEventGroup$EventId"
 
     # convert the hex based eventid to decimal equivalent
     $decEventId = [System.Convert]::ToInt64($fullEventId, 16)
@@ -144,7 +127,7 @@ function Write-TppLog {
         Method     = 'Post'
         UriLeaf    = 'Log'
         Body       = @{
-            GroupID   = $thisEventGroup
+            GroupID   = $CustomEventGroup
             ID        = $decEventId
             Component = $Component
         }
