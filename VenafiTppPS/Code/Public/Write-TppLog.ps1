@@ -6,7 +6,7 @@ Write entries to the TPP log
 Write entries to the log for custom event groups.
 It is not permitted to write to the default log.
 
-.PARAMETER EventGroup
+.PARAMETER CustomEventGroup
 Custom Event Group ID, 4 characters.
 
 .PARAMETER EventId
