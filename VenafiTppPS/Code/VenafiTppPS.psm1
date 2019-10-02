@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 PowerShell module to access the features of Venafi Trust Protection Platform REST API
 
@@ -31,11 +31,19 @@ Export-ModuleMember -variable TppSupportedVersion
 $Script:TppSession = New-Object 'TppSession'
 Export-ModuleMember -variable TppSession
 
-Set-Alias -Name 'ConvertTo-TppDN' -Value 'ConvertTo-TppPath'
-Set-Alias -Name 'Get-TppWorkflowDetail' -Value 'Get-TppWorkflowTicket'
-Set-Alias -Name 'Get-TppIdentity' -Value 'Find-TppIdentity'
-Set-Alias -Name 'Restore-TppCertificate' -Value 'Invoke-TppCertificateRenewal'
-Set-Alias -Name 'Get-TppLog' -Value 'Read-TppLog'
+$aliases = @{
+    'ConvertTo-TppDN'        = 'ConvertTo-TppPath'
+    'Get-TppWorkflowDetail'  = 'Get-TppWorkflowTicket'
+    'Get-TppIdentity'        = 'Find-TppIdentity'
+    'Restore-TppCertificate' = 'Invoke-TppCertificateRenewal'
+    'Get-TppLog'             = 'Read-TppLog'
+    'fto'                    = 'Find-TppObject'
+    'ftc'                    = 'Find-TppCertificate'
+    'itcr'                   = 'Invoke-TppCertificateRenewal'
+}
+$aliases.GetEnumerator() | ForEach-Object {
+    Set-Alias -Name $_.Key -Value $_.Value
+}
 Export-ModuleMember -Alias *
 
 $TppEventGroupHash = @{
