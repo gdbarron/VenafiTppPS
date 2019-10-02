@@ -22,19 +22,19 @@ InputObject or Path
 
 .OUTPUTS
 PSCustomObject with the following properties:
-    CertificateDN - Certificate path
+    Path - Certificate path
     Success - A value of true indicates that the renewal request was successfully submitted and
     granted.
     Error - Indicates any errors that occurred. Not returned when successful
 
 .EXAMPLE
-Invoke-TppCertificateRenewal -CertificateDN '\VED\Policy\My folder\app.mycompany.com'
+Invoke-TppCertificateRenewal -Path '\VED\Policy\My folder\app.mycompany.com'
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Restore-TppCertificate/
+http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificateRenewal/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Restore-TppCertificate.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Invoke-TppCertificateRenewal.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-renew.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____9
