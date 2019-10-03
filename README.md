@@ -4,17 +4,20 @@
 [![Documentation Status](https://readthedocs.org/projects/venafitppps/badge/?version=latest)](https://venafitppps.readthedocs.io/en/latest/?badge=latest)
 
 ## Documentation
+
 Documentation can be found at [http://venafitppps.readthedocs.io](http://venafitppps.readthedocs.io) or by using built-in PowerShell help.  Every effort has been made to document each parameter and provide good examples.
 
 ## Platforms
-| OS             | PowerShell Version | Status  |
+
+| OS             | PowerShell Version Tested | Status  |
 | -------------- |--------------------| -----|
-| Windows        | 5.1                | Working! |
-| Windows        | Core 6.2.3         | Working! |
-| MacOS          | Core 6.2.3         | Working! |
-| Linux (Ubuntu) | Core 6.2.3         | Working! |
+| Windows        | 5.1                | **Working!** |
+| Windows        | Core 6.2.3         | **Working!** |
+| MacOS          | Core 6.2.3         | **Working!** |
+| Linux (Ubuntu 18.04) | Core 6.2.3         | **Working!** |
 
 ## Usage
+
 After loading the module, create a new session with
 
 ```powershell
@@ -47,7 +50,7 @@ $cert | Read-TppLog
 ```
 
 You can also have multiple sessions at once, either to the same server with different credentials or different servers.
-This can be helpful to determine the difference between what different users can see or perhaps compare folder structures across environments.  The below will compare the objects one user can see vs. another.
+This can be helpful to determine the difference between what different users can access or perhaps compare folder structures across environments.  The below will compare the objects one user can see vs. another.
 
 ```powershell
 # assume you've created 1 session already as shown above...
@@ -67,4 +70,5 @@ Compare-Object -ReferenceObject $all -DifferenceObject $all2 -Property Path
 ```
 
 ## Contributing
+
 Please feel free to log an issue for any new features you would like, bugs you come across, or just simply a question.  I am happy to have people contribute to the codebase as well.
