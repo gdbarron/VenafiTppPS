@@ -31,7 +31,7 @@ Searches the subordinates of the object specified in Path.
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-None
+Path
 
 .OUTPUTS
 TppObject
@@ -87,14 +87,15 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 function Find-TppObject {
 
     [CmdletBinding()]
+    [Alias('fto')]
     [OutputType( [TppObject] )]
 
     param (
-        [Parameter(Mandatory, ParameterSetName = 'FindByPath')]
-        [Parameter(Mandatory, ParameterSetName = 'FindByClassAndPath')]
+        [Parameter(Mandatory, ParameterSetName = 'FindByPath', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'FindByClassAndPath', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                if ( $_ | Test-TppDnPath ) {
+                if ( $_ | Test-TppDnPath -AllowRoot ) {
                     $true
                 }
                 else {
@@ -130,90 +131,95 @@ function Find-TppObject {
         [TppSession] $TppSession = $Script:TppSession
     )
 
-    $TppSession.Validate()
+    begin {
 
-    Write-Verbose $PsCmdlet.ParameterSetName
+        $TppSession.Validate()
 
-    $params = @{
-        TppSession = $TppSession
-        Method     = 'Post'
-        UriLeaf    = 'placeholder'
-        Body       = @{}
-    }
+        Write-Verbose $PsCmdlet.ParameterSetName
 
-    Switch -Wildcard ($PsCmdlet.ParameterSetName) {
-        'FindByAttribute' {
-            $params.UriLeaf = 'config/find'
+        $params = @{
+            TppSession = $TppSession
+            Method     = 'Post'
+            UriLeaf    = 'placeholder'
+            Body       = @{ }
         }
 
-        'FindByPath' {
-            $params.UriLeaf = 'config/enumerate'
+        Switch -Wildcard ($PsCmdlet.ParameterSetName) {
+            'FindByAttribute' {
+                $params.UriLeaf = 'config/find'
+            }
+
+            'FindByPath' {
+                $params.UriLeaf = 'config/enumerate'
+            }
+
+            'FindByPattern' {
+                $params.UriLeaf = 'config/enumerate'
+                $params.Body.Add( 'ObjectDN', '\VED' )
+                $params.Body.Add( 'Recursive', 'true' )
+            }
+
+            'FindByClass*' {
+                $params.UriLeaf = 'config/FindObjectsOfClass'
+            }
         }
 
-        'FindByPattern' {
-            $params.UriLeaf = 'config/enumerate'
-            $params.Body.Add( 'ObjectDN', '\VED' )
+        # add filters
+        if ( $PSBoundParameters.ContainsKey('Pattern') ) {
+            $params.Body.Add( 'Pattern', $Pattern )
+        }
+
+        if ( $PSBoundParameters.ContainsKey('Attribute') ) {
+            $params.Body.Add( 'AttributeNames', $Attribute )
+        }
+
+        if ( $PSBoundParameters.ContainsKey('Recursive') ) {
             $params.Body.Add( 'Recursive', 'true' )
         }
+    }
 
-        'FindByClass*' {
-            $params.UriLeaf = 'config/FindObjectsOfClass'
+    process {
+        if ( $PSBoundParameters.ContainsKey('Path') ) {
+            $params.Body['ObjectDN'] = $Path
         }
-    }
 
-    # add filters
-    if ( $PSBoundParameters.ContainsKey('Pattern') ) {
-        $params.Body.Add( 'Pattern', $Pattern )
-    }
+        if ( $PSBoundParameters.ContainsKey('Class') ) {
+            # the rest api doesn't have the ability to search for multiple classes and path at the same time
+            # loop through classes to get around this
+            $params.Body['Class'] = ''
+            $objects = $Class.ForEach{
+                $thisClass = $_
+                $params.Body.Class = $thisClass
 
-    if ( $PSBoundParameters.ContainsKey('Attribute') ) {
-        $params.Body.Add( 'AttributeNames', $Attribute )
-    }
+                $response = Invoke-TppRestMethod @params
 
-    if ( $PSBoundParameters.ContainsKey('Recursive') ) {
-        $params.Body.Add( 'Recursive', 'true' )
-    }
-
-    if ( $PSBoundParameters.ContainsKey('Path') ) {
-        $params.Body.Add( 'ObjectDN', $Path )
-    }
-
-    if ( $PSBoundParameters.ContainsKey('Class') ) {
-        # the rest api doesn't have the ability to search for multiple classes and path at the same time
-        # loop through classes to get around this
-        $params.Body.Add('Class', '')
-        $objects = $Class.ForEach{
-            $thisClass = $_
-            $params.Body.Class = $thisClass
-
+                if ( $response.Result -eq [TppConfigResult]::Success ) {
+                    $response.Objects
+                }
+                else {
+                    Write-Error ('Retrieval of class {0} failed with error {1}' -f $thisClass, $response.Error)
+                    Continue
+                }
+            }
+        }
+        else {
             $response = Invoke-TppRestMethod @params
 
             if ( $response.Result -eq [TppConfigResult]::Success ) {
-                $response.Objects
+                $objects = $response.Objects
             }
             else {
-                Write-Error ('Retrieval of class {0} failed with error {1}' -f $thisClass, $response.Error)
-                Continue
+                Write-Error $response.Error
             }
         }
-    }
-    else {
-        $response = Invoke-TppRestMethod @params
 
-        if ( $response.Result -eq [TppConfigResult]::Success ) {
-            $objects = $response.Objects
-        }
-        else {
-            Write-Error $response.Error
-        }
-    }
-
-    foreach ($object in $objects) {
-        [TppObject] @{
-            Name     = $object.Name
-            TypeName = $object.TypeName
-            Path     = $object.DN
-            Guid     = $object.Guid
+        foreach ($object in $objects) {
+            [TppObject] @{
+                Name     = $object.Name
+                TypeName = $object.TypeName
+                Path     = $object.DN
+                Guid     = $object.Guid
+            }
         }
     }
 }

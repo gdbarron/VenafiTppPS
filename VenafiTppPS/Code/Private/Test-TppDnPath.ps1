@@ -4,10 +4,18 @@ function Test-TppDnPath {
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
-        [string[]] $Path
+        [string[]] $Path,
+
+        [Parameter()]
+        [switch] $AllowRoot
     )
 
     process {
-        $_ -match '(^\\VED)(\\[^\\]+)+$'
+        if ( $PSBoundParameters.ContainsKey('AllowRoot') ) {
+            $_ -match '(^\\VED)(\\.+)*$'
+        }
+        else {
+            $_ -match '(^\\VED)(\\.+)+$'
+        }
     }
 }

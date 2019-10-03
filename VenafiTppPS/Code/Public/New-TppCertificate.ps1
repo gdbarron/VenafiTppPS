@@ -69,14 +69,6 @@ function New-TppCertificate {
     [OutputType( [TppObject] )]
     param (
 
-        [Parameter(Mandatory, ParameterSetName = 'ByName')]
-        [String] $Name,
-
-        [Parameter(ParameterSetName = 'ByName')]
-        [Parameter(Mandatory, ParameterSetName = 'BySubject')]
-        [Alias('Subject')]
-        [String] $CommonName,
-
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
@@ -90,7 +82,15 @@ function New-TppCertificate {
         [Alias('PolicyDN')]
         [String] $Path,
 
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ParameterSetName = 'ByName')]
+        [String] $Name,
+
+        [Parameter(ParameterSetName = 'ByName')]
+        [Parameter(Mandatory, ParameterSetName = 'BySubject')]
+        [Alias('Subject')]
+        [String] $CommonName,
+
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -176,18 +176,21 @@ function New-TppCertificate {
     process {
 
         $params = @{
-            TppSession    = $TppSession
-            Method        = 'Post'
-            UriLeaf       = 'certificates/request'
-            Body          = @{
+            TppSession = $TppSession
+            Method     = 'Post'
+            UriLeaf    = 'certificates/request'
+            Body       = @{
                 PolicyDN = $Path
-                CADN     = $CertificateAuthorityPath
             }
-            UseWebRequest = $true
+            # UseWebRequest = $true
         }
 
         if ( $PSBoundParameters.ContainsKey('Name') ) {
             $params.Body.Add('ObjectName', $Name)
+        }
+
+        if ( $PSBoundParameters.ContainsKey('CertificateAuthorityPath') ) {
+            $params.Body.Add('CADN', $CertificateAuthorityPath)
         }
 
         if ( $PSBoundParameters.ContainsKey('CommonName') ) {
@@ -195,46 +198,35 @@ function New-TppCertificate {
         }
 
         if ( $PSBoundParameters.ContainsKey('ManagementType') ) {
-            $params.Body.Add('ManagementType', $ManagementType)
+            $params.Body.Add('ManagementType', [enum]::GetName([TppManagementType], $ManagementType))
         }
 
-        $newSan = @($SubjectAltName | ForEach-Object {
-                $_.GetEnumerator() | ForEach-Object {
-                    @{
-                        'TypeName' = $_.Key
-                        'Name'     = $_.Value
+        if ( $PSBoundParameters.ContainsKey('SubjectAltName') ) {
+            $newSan = @($SubjectAltName | ForEach-Object {
+                    $_.GetEnumerator() | ForEach-Object {
+                        @{
+                            'TypeName' = $_.Key
+                            'Name'     = $_.Value
+                        }
                     }
                 }
-            }
-        )
-
-        if ( $PSBoundParameters.ContainsKey('SubjectAltName') ) {
+            )
             $params.Body.Add('SubjectAltNames', $newSan)
         }
 
         if ( $PSCmdlet.ShouldProcess($Path, 'Create new certificate') ) {
 
-            $response = Invoke-TppRestMethod @params
-            Write-Verbose ($response | Out-String)
+            try {
+                $response = Invoke-TppRestMethod @params
+                Write-Verbose ($response | Out-String)
 
-            switch ($response.StatusCode) {
-
-                '200' {
-                    if ( $PassThru ) {
-                        $contentObject = $response.Content | ConvertFrom-Json
-                        $info = $contentObject.CertificateDN | ConvertTo-TppGuid -IncludeType -TppSession $TppSession
-                        [TppObject]@{
-                            Path     = $contentObject.CertificateDN
-                            Name     = Split-path $contentObject.CertificateDN -Leaf
-                            Guid     = $info.Guid
-                            TypeName = $info.TypeName
-                        }
-                    }
+                if ( $PassThru ) {
+                    $response.CertificateDN | Get-TppObject
                 }
-
-                default {
-                    throw $response.StatusDescription
-                }
+            }
+            catch {
+                Write-Error $_
+                continue
             }
         }
     }

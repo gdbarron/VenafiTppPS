@@ -22,26 +22,29 @@ InputObject or Path
 
 .OUTPUTS
 PSCustomObject with the following properties:
-    CertificateDN - Certificate path
+    Path - Certificate path
     Success - A value of true indicates that the renewal request was successfully submitted and
     granted.
     Error - Indicates any errors that occurred. Not returned when successful
 
 .EXAMPLE
-Invoke-TppCertificateRenewal -CertificateDN '\VED\Policy\My folder\app.mycompany.com'
+Invoke-TppCertificateRenewal -Path '\VED\Policy\My folder\app.mycompany.com'
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Restore-TppCertificate/
+http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificateRenewal/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Restore-TppCertificate.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Invoke-TppCertificateRenewal.ps1
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-renew.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____9
 
 #>
 function Invoke-TppCertificateRenewal {
-    [CmdletBinding()]
+
+    [CmdletBinding(SupportsShouldProcess)]
+    [Alias('itcr')]
+
     param (
         [Parameter(Mandatory, ParameterSetName = 'ByObject', ValueFromPipeline)]
         [TppObject] $InputObject,
@@ -58,17 +61,6 @@ function Invoke-TppCertificateRenewal {
             })]
         [Alias('DN', 'CertificateDN')]
         [String] $Path,
-
-        # [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        # [ValidateNotNullOrEmpty()]
-        # [ValidateScript( {
-        #         if ( $_ | Test-TppDnPath ) {
-        #             $true
-        #         } else {
-        #             throw "'$_' is not a valid DN path"
-        #         }
-        #     })]
-        # [String] $CertificateDN,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -93,11 +85,14 @@ function Invoke-TppCertificateRenewal {
             $path = $InputObject.Path
         }
 
-        write-verbose "Renewing $Path..."
+        if ( $PSCmdlet.ShouldProcess($Path, 'Renew certificate') ) {
 
-        $params.Body.CertificateDN = $Path
-        $response = Invoke-TppRestMethod @params
+            write-verbose "Renewing $Path..."
 
-        $response | Add-Member @{'Path' = $Path} -PassThru
+            $params.Body.CertificateDN = $Path
+            $response = Invoke-TppRestMethod @params
+
+            $response | Add-Member @{'Path' = $Path } -PassThru
+        }
     }
 }

@@ -3,20 +3,17 @@
 Write entries to the TPP log
 
 .DESCRIPTION
-Write entries to the TPP Default SQL Channel log.  Requires an event group and event.
-Default and custom event groups are supported.
-
-.PARAMETER EventGroup
-Default event group.
+Write entries to the log for custom event groups.
+It is not permitted to write to the default log.
 
 .PARAMETER CustomEventGroup
 Custom Event Group ID, 4 characters.
 
 .PARAMETER EventId
-Event ID from within the EventGroup or CustomEventGroup provided.  Only provide the 4 character event id, do not precede with group ID.
+Event ID from within the EventGroup provided.  Only provide the 4 character event id, do not precede with group ID.
 
 .PARAMETER Component
-The item this event is associated with.  Typically, this is the Path (DN) of the object.
+Path to the item this event is associated with
 
 .PARAMETER Severity
 Severity of the event
@@ -52,13 +49,7 @@ none
 none
 
 .EXAMPLE
-Write-TppLog -EventGroup WebSDKRESTAPI -EventId '0001' -Component '\ved\policy\mycert.com'
-
-Log an event to a default group
-
-.EXAMPLE
-Write-TppLog -EventGroup '0200' -EventId '0001' -Component '\ved\policy\mycert.com'
-
+Write-TppLog -CustomEventGroup '0200' -EventId '0001' -Component '\ved\policy\mycert.com'
 Log an event to a custom group
 
 .LINK
@@ -75,11 +66,12 @@ https://support.venafi.com/hc/en-us/articles/360003460191-Info-Venafi-Trust-Prot
 
 #>
 function Write-TppLog {
-    [CmdletBinding(DefaultParameterSetName = 'DefaultGroup')]
+
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'DefaultGroup')]
     param (
 
         [Parameter(Mandatory, ParameterSetName = 'DefaultGroup')]
-        [TppEventGroup] $EventGroup,
+        [string] $EventGroup,
 
         [Parameter(Mandatory, ParameterSetName = 'CustomGroup')]
         [ValidateLength(4, 4)]
@@ -124,17 +116,14 @@ function Write-TppLog {
         [TppSession] $TppSession = $Script:TppSession
     )
 
+    if ( $PSCmdlet.ParameterSetName -eq 'DefaultGroup' ) {
+        throw 'Writing to built-in event groups is no longer supported by Venafi.  You can write to custom event groups.'
+    }
+
     $TppSession.Validate()
 
-    if ( $PSCmdlet.ParameterSetName -eq 'DefaultGroup' ) {
-        $thisEventGroup = $TppEventGroupHash.($EventGroup.ToString())
-    }
-    else {
-        $thisEventGroup = $CustomEventGroup
-    }
-
     # the event id is the group id coupled with the event id
-    $fullEventId = "$thisEventGroup$EventId"
+    $fullEventId = "$CustomEventGroup$EventId"
 
     # convert the hex based eventid to decimal equivalent
     $decEventId = [System.Convert]::ToInt64($fullEventId, 16)
@@ -144,7 +133,7 @@ function Write-TppLog {
         Method     = 'Post'
         UriLeaf    = 'Log'
         Body       = @{
-            GroupID   = $thisEventGroup
+            GroupID   = $CustomEventGroup
             ID        = $decEventId
             Component = $Component
         }
@@ -182,10 +171,12 @@ function Write-TppLog {
         $params.Body.Add('Value2', $Value2)
     }
 
-    $response = Invoke-TppRestMethod @params
+    if ( $PSCmdlet.ShouldProcess($Component, 'Write log entry') ) {
 
-    if ( $response.LogResult -eq 1 ) {
-        throw "Writing to the TPP log failed.  Ensure you have View permission and Read permission to the default SQL channel object."
+        $response = Invoke-TppRestMethod @params
+
+        if ( $response.LogResult -eq 1 ) {
+            throw "Writing to the TPP log failed.  Ensure you have View permission and Read permission to the default SQL channel object."
+        }
     }
-
 }

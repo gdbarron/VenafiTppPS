@@ -6,7 +6,11 @@ Create a new CAPI application
 Create a new CAPI application
 
 .PARAMETER Path
-Full path, including name, to the application to be created
+Full path, including name, to the application to be created.  The application must be created under a device.
+Alternatively, provide the path to the device and provide ApplicationName.
+
+.PARAMETER ApplicationName
+1 or more application names to create.  Path must be a path to a device.
 
 .PARAMETER FriendlyName
 Optional friendly name
@@ -20,6 +24,13 @@ Path to the associated credential which has rights to access the connected devic
 .PARAMETER Disable
 Set processing to disabled.  It is enabled by default.
 
+.PARAMETER ProvisionCertificate
+Push the certificate to the application.  CertificatePath must be provided.
+
+.PARAMETER SkipExistenceCheck
+By default, the paths for the new application, certifcate, and credential will be validated for existence.
+Specify this switch to bypass this check.
+
 .PARAMETER PassThru
 Return a TppObject representing the newly created capi app.
 
@@ -27,7 +38,7 @@ Return a TppObject representing the newly created capi app.
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-none
+Path
 
 .OUTPUTS
 TppObject, if PassThru provided
@@ -39,13 +50,13 @@ http://venafitppps.readthedocs.io/en/latest/functions/New-TppCapiApplication/
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppCapiApplication.ps1
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppObject.ps1
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/
+http://venafitppps.readthedocs.io/en/latest/functions/Find-TppCertificate/
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Find-TppObject/
+http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/
 
 .LINK
 https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-create.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____9
@@ -53,11 +64,11 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function New-TppCapiApplication {
 
-    [CmdletBinding(DefaultParameterSetName = 'NonIis')]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'NonIis')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -67,10 +78,13 @@ function New-TppCapiApplication {
                     throw "'$_' is not a valid DN path"
                 }
             })]
-        [Alias('DN')]
         [string] $Path,
 
-        [Parameter(Mandatory)]
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string[]] $ApplicationName,
+
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -83,7 +97,7 @@ function New-TppCapiApplication {
         [Alias('CertificateDN')]
         [String] $CertificatePath,
 
-        [Parameter(Mandatory)]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -111,31 +125,31 @@ function New-TppCapiApplication {
         [Parameter()]
         [Switch] $Disable,
 
-        [Parameter(Mandatory, ParameterSetName = 'UpdateIis')]
-        [Switch] $UpdateIis,
-
-        [Parameter(Mandatory, ParameterSetName = 'UpdateIis')]
+        [Parameter(Mandatory, ParameterSetName = 'Iis')]
         [ValidateNotNullOrEmpty()]
         [String] $WebSiteName,
 
-        [Parameter(ParameterSetName = 'UpdateIis')]
+        [Parameter(ParameterSetName = 'Iis')]
         [ValidateNotNullOrEmpty()]
         [ipaddress] $BindingIpAddress,
 
-        [Parameter(ParameterSetName = 'UpdateIis')]
+        [Parameter(ParameterSetName = 'Iis')]
         [ValidateNotNullOrEmpty()]
         [Int] $BindingPort,
 
-        [Parameter(ParameterSetName = 'UpdateIis')]
+        [Parameter(ParameterSetName = 'Iis')]
         [ValidateNotNullOrEmpty()]
         [String] $BindingHostName,
 
-        [Parameter(ParameterSetName = 'UpdateIis')]
+        [Parameter(ParameterSetName = 'Iis')]
         [ValidateNotNullOrEmpty()]
         [Bool] $CreateBinding,
 
         [Parameter()]
         [switch] $ProvisionCertificate,
+
+        [Parameter()]
+        [switch] $SkipExistenceCheck,
 
         [Parameter()]
         [switch] $PassThru,
@@ -144,80 +158,134 @@ function New-TppCapiApplication {
         [TppSession] $TppSession = $Script:TppSession
     )
 
-    $TppSession.Validate()
+    begin {
 
-    if ( -not (Test-TppObject -Path $CertificatePath -ExistOnly -TppSession $TppSession) ) {
-        throw ("The certificate {0} does not exist" -f $CertificatePath)
-    }
+        $TppSession.Validate()
 
-    # ensure the credential exists and is actually of type credential
-    $credentialName = (Split-Path $CredentialPath -Leaf)
-    $findParams = @{
-        Path       = (Split-Path $CredentialPath -Parent)
-        Pattern    = $credentialName
-        TppSession = $TppSession
-    }
-    $credentialObject = Find-TppObject @findParams
-
-    if ( -not $credentialObject ) {
-        throw "Credential object not found"
-    }
-
-    if ( -not ($credentialObject | Where-Object { $_.Name -eq $credentialName -and $_.TypeName -like '*credential*' }) ) {
-        throw "CredentialDN is not a credential object"
-    }
-    # end of validation
-
-    # start the new capi app work here
-    $params = @{
-        Path       = $Path
-        Class      = 'CAPI'
-        Attribute  = @{
-            'Driver Name'   = 'appcapi'
-            'Friendly Name' = $FriendlyName
-            'Credential'    = $CredentialPath
-            'Certificate'   = $CertificatePath
+        if ( $PSBoundParameters.ContainsKey('ProvisionCertificate') -and (-not $PSBoundParameters.ContainsKey('CertificatePath')) ) {
+            throw 'A CertificatePath must be provided when using ProvisionCertificate'
         }
-        PassThru   = $true
-        TppSession = $TppSession
-    }
 
-    if ( $ProvisionCertificate ) {
-        $params.Attribute.Add('ProvisionCertificate', $true)
-    }
+        if ( -not $PSBoundParameters.ContainsKey('SkipExistenceCheck') ) {
 
-    if ( $Disabled ) {
-        $params.Attribute.Add('Disabled', '1')
-    }
+            if ( $PSBoundParameters.ContainsKey('CertificatePath') ) {
+                $certPath = (Split-Path $CertificatePath -Parent)
+                $certName = (Split-Path $CertificatePath -Leaf)
+                $certObject = Find-TppCertificate -Path $certPath -TppSession $TppSession
 
-    if ( $UpdateIis ) {
-        $params.Attribute.Add(
-            @{
-                'Update IIS'    = '1'
-                'Web Site Name' = $WebSiteName
+                if ( -not $certObject -or ($certName -notin $certObject.Name) ) {
+                    throw ('A certificate object could not be found at ''{0}''' -f $CertificatePath)
+                }
             }
-        )
+
+            # ensure the credential exists and is actually of type credential
+            if ( $PSBoundParameters.ContainsKey('CredentialPath') ) {
+
+                $credObject = Get-TppObject -Path $CredentialPath -TppSession $TppSession
+
+                if ( -not $credObject -or $credObject.TypeName -notlike '*credential*' ) {
+                    throw ('A credential object could not be found at ''{0}''' -f $CredentialPath)
+                }
+            }
+        }
+
+        $params = @{
+            Path       = ''
+            Class      = 'CAPI'
+            Attribute  = @{
+                'Driver Name' = 'appcapi'
+            }
+            PassThru   = $true
+            TppSession = $TppSession
+        }
+
+        if ( $PSBoundParameters.ContainsKey('FriendlyName') ) {
+            $params.Attribute.Add('Friendly Name', $FriendlyName)
+        }
+
+        if ( $PSBoundParameters.ContainsKey('CertificatePath') ) {
+            $params.Attribute.Add('Certificate', $CertificatePath)
+        }
+
+        if ( $PSBoundParameters.ContainsKey('CredentialPath') ) {
+            $params.Attribute.Add('Credential', $CredentialPath)
+        }
+
+        if ( $PSBoundParameters.ContainsKey('ProvisionCertificate') ) {
+            $params.Attribute.Add('ProvisionCertificate', $true)
+        }
+
+        if ( $PSBoundParameters.ContainsKey('Disabled') ) {
+            $params.Attribute.Add('Disabled', '1')
+        }
+
+        if ( $PSBoundParameters.ContainsKey('WebSiteName') ) {
+            $params.Attribute.Add('Update IIS', '1')
+            $params.Attribute.Add('Web Site Name', $WebSiteName)
+        }
 
         if ( $PSBoundParameters.ContainsKey('BindingIpAddress') ) {
             $params.Attribute.Add('Binding IP Address', $BindingIpAddress.ToString())
         }
 
-        if ( $BindingPort ) {
+        if ( $PSBoundParameters.ContainsKey('BindingPort') ) {
             $params.Attribute.Add('Binding Port', $BindingPort)
         }
 
-        if ( $BindingHostName ) {
+        if ( $PSBoundParameters.ContainsKey('BindingHostName') ) {
             $params.Attribute.Add('Hostname', $BindingHostName)
         }
 
-        if ( $CreateBinding ) {
+        if ( $PSBoundParameters.ContainsKey('CreateBinding') ) {
             $params.Attribute.Add('Create Binding', $CreateBinding)
         }
     }
 
-    $response = New-TppObject @params
+    process {
 
-    if ( $PassThru ) {
-        $response
+        if ( -not $PSBoundParameters.ContainsKey('SkipExistenceCheck') ) {
+
+            # ensure the parent path exists and is of type device
+            if ( $PSBoundParameters.ContainsKey('ApplicationName') ) {
+                $devicePath = $Path
+            }
+            else {
+                $devicePath = (Split-Path $Path -Parent)
+            }
+
+            $device = Get-TppObject -Path $devicePath -TppSession $TppSession
+
+            if ( $device ) {
+                if ( $device.TypeName -ne 'Device' ) {
+                    throw ('A device object could not be found at ''{0}''' -f $devicePath)
+                }
+            }
+            else {
+                throw ('No object was found at the parent path ''{0}''' -f $devicePath)
+            }
+        }
+
+        if ( $PSBoundParameters.ContainsKey('ApplicationName') ) {
+            $appPaths = $ApplicationName | ForEach-Object {
+                $Path + "\$_"
+            }
+        }
+        else {
+            $appPaths = @($Path)
+        }
+
+        foreach ($thisPath in $appPaths) {
+
+            $params.Path = $thisPath
+
+            if ( $PSCmdlet.ShouldProcess($thisPath, 'Create CAPI application Object') ) {
+
+                $response = New-TppObject @params
+
+                if ( $PassThru ) {
+                    $response
+                }
+            }
+        }
     }
 }
