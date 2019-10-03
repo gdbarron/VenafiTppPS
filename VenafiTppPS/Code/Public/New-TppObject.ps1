@@ -81,7 +81,7 @@ function New-TppObject {
         [Parameter(Mandatory)]
         [String] $Class,
 
-        [Parameter(Mandatory)]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [Hashtable] $Attribute,
 
@@ -99,7 +99,7 @@ function New-TppObject {
 
     # ensure the object doesn't already exist
     if ( Test-TppObject -Path $Path -ExistOnly -TppSession $TppSession ) {
-        throw ("{0} already exists" -f $Path)
+        throw ("New object to be created, {0}, already exists" -f $Path)
     }
 
     # ensure the parent folder exists
@@ -121,7 +121,7 @@ function New-TppObject {
         }
     }
 
-    if ( $Attribute ) {
+    if ( $PSBoundParameters.ContainsKey('Attribute') ) {
         # api requires a list of hashtables for nameattributelist
         # with 2 items per hashtable, with key names 'name' and 'value'
         # this is cumbersome for the user so allow them to pass a standard hashtable and convert it for them

@@ -202,7 +202,7 @@ function Find-TppCertificate {
         [Parameter(Mandatory, ParameterSetName = 'ByPath', ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                if ( $_ | Test-TppDnPath ) {
+                if ( $_ | Test-TppDnPath -AllowRoot ) {
                     $true
                 }
                 else {
@@ -358,13 +358,12 @@ function Find-TppCertificate {
             TppSession = $TppSession
             Method     = 'Get'
             UriLeaf    = 'certificates'
-            Body       = @{ }
+            Body       = @{
+                Limit = $Limit
+            }
         }
 
         switch ($PSBoundParameters.Keys) {
-            'Limit' {
-                $params.Body.Add('Limit', $Limit)
-            }
             'Country' {
                 $params.Body.Add( 'C', $Country )
             }
