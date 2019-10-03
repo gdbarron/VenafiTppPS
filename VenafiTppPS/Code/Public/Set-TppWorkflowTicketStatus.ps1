@@ -52,7 +52,7 @@ https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function Set-TppWorkflowTicketStatus {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
 
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
@@ -107,7 +107,7 @@ function Set-TppWorkflowTicketStatus {
                 Method     = 'Post'
                 UriLeaf    = 'Workflow/Ticket/UpdateStatus'
                 Body       = @{
-                    'GUID' = $thisGuid
+                    'GUID'   = $thisGuid
                     'Status' = $Status
                 }
             }
@@ -124,10 +124,13 @@ function Set-TppWorkflowTicketStatus {
                 $params.Body.Add( 'ScheduledStop', ($ScheduledStop | ConvertTo-UtcIso8601) )
             }
 
-            $response = Invoke-TppRestMethod @params
+            if ( $PSCmdlet.ShouldProcess($params.Body.GUID, 'Set workflow ticket status') ) {
 
-            if ( -not ($response.Result -eq [TppWorkflowResult]::Success) ) {
-                throw ("Error setting workflow ticket status, error is {0}" -f [enum]::GetName([TppWorkflowResult], $response.Result))
+                $response = Invoke-TppRestMethod @params
+
+                if ( -not ($response.Result -eq [TppWorkflowResult]::Success) ) {
+                    throw ("Error setting workflow ticket status, error is {0}" -f [enum]::GetName([TppWorkflowResult], $response.Result))
+                }
             }
         }
     }
