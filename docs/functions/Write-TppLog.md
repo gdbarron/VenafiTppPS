@@ -7,35 +7,29 @@ Write entries to the TPP log
 
 ### DefaultGroup (Default)
 ```
-Write-TppLog -EventGroup <TppEventGroup> -EventId <String> -Component <String> [-Severity <TppEventSeverity>]
+Write-TppLog -EventGroup <String> -EventId <String> -Component <String> [-Severity <TppEventSeverity>]
  [-SourceIp <IPAddress>] [-ComponentID <Int32>] [-ComponentSubsystem <String>] [-Text1 <String>]
- [-Text2 <String>] [-Value1 <Int32>] [-Value2 <Int32>] [-TppSession <TppSession>] [<CommonParameters>]
+ [-Text2 <String>] [-Value1 <Int32>] [-Value2 <Int32>] [-TppSession <TppSession>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### CustomGroup
 ```
 Write-TppLog -CustomEventGroup <String> -EventId <String> -Component <String> [-Severity <TppEventSeverity>]
  [-SourceIp <IPAddress>] [-ComponentID <Int32>] [-ComponentSubsystem <String>] [-Text1 <String>]
- [-Text2 <String>] [-Value1 <Int32>] [-Value2 <Int32>] [-TppSession <TppSession>] [<CommonParameters>]
+ [-Text2 <String>] [-Value1 <Int32>] [-Value2 <Int32>] [-TppSession <TppSession>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Write entries to the TPP Default SQL Channel log. 
-Requires an event group and event.
-Default and custom event groups are supported.
+Write entries to the log for custom event groups.
+It is not permitted to write to the default log.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Write-TppLog -EventGroup WebSDKRESTAPI -EventId '0001' -Component '\ved\policy\mycert.com'
-```
-
-Log an event to a default group
-
-### EXAMPLE 2
-```
-Write-TppLog -EventGroup '0200' -EventId '0001' -Component '\ved\policy\mycert.com'
+Write-TppLog -CustomEventGroup '0200' -EventId '0001' -Component '\ved\policy\mycert.com'
 ```
 
 Log an event to a custom group
@@ -43,13 +37,12 @@ Log an event to a custom group
 ## PARAMETERS
 
 ### -EventGroup
-Default event group.
+{{ Fill EventGroup Description }}
 
 ```yaml
-Type: TppEventGroup
+Type: String
 Parameter Sets: DefaultGroup
 Aliases:
-Accepted values: Logging, VenafiConfiguration, VenafiSecretStore, VenafiCredentials, VenafiPermissions, Vagent, VenafiDiscovery, Identity, VenafiCertificateManager, VenafiWorkflow, VenafiCertificateCore, AdminUI, VenafiCertificateAuthority, VenafiPlatform, VenafiSSHWorkflow, VenafiEncryption, VenafiMonitoring, VenafiValidationService, VenafiCredentialMonitoring, LogClient, VenafiReporter, VenafiMonitor, NetworkDeviceEnrollment, Aperture, CertificateRevocation, SSHManagerServiceModule, VenafiCAImport, SSHManagerClientRestModule, UserPortal, CertificateReports, ClientRestService, VenafiTrustNetIntegration, VenafiOnboardDiscovery, WebSDKRESTAPI, VenafiCloudInstanceMonitoring, ACMEService, VenafiSoftwareEncryption, VenafiHardwareEncryption, IdentityAD, IdentityLocal, IdentityLDAP, LogMsSql, LogSplunk, LogAdaptable, MicrosoftCA, SymantecMPKI, RedhatCA, EntrustDotNet, UniCERT, Thawte, RSA, GeoTrustCA, DigiCertCA, OpenSSLCA, GlobalSignMSSLCA, GeoTrustEnterpriseCA, OpenTrustPKICA, SelfsignedCA, TrustwaveCA, QuoVadisCA, HydrantIdCA, ComodoCCMCA, GeoTrustTrueFlexCA, Xolphin, AmazonCA, Adaptable, Apache, GlobalSecurityKit, IIS6, X509Certificate, VenafiSSH, VenafiHTTP, VenafiSQL, Pkcs12, Application, IIS5, CiscoACE, CiscoCSS, JavaKeystore, iPlanet, NetScaler, VAMnShield, DataPower, TealeafPCA, PEM, F5LTMAdvanced, Basic, ImpervaMX, A10AXTM, Layer7SSG, JuniperSAS, ConnectDirect, BlueCoat, PaloAlto, AmazonApp, AzureKeyVault, Common, RiverbedSteelHead, AdaptableApp, CAPI, AgentKeystore, AgentSsh, Migration, AWSEC2CloudInstanceMonitoringDriver, CyberArk, VenafiTools, Tracing
 
 Required: True
 Position: Named
@@ -74,7 +67,7 @@ Accept wildcard characters: False
 ```
 
 ### -EventId
-Event ID from within the EventGroup or CustomEventGroup provided. 
+Event ID from within the EventGroup provided. 
 Only provide the 4 character event id, do not precede with group ID.
 
 ```yaml
@@ -90,8 +83,7 @@ Accept wildcard characters: False
 ```
 
 ### -Component
-The item this event is associated with. 
-Typically, this is the Path (DN) of the object.
+Path to the item this event is associated with
 
 ```yaml
 Type: String
@@ -242,6 +234,37 @@ Aliases:
 Required: False
 Position: Named
 Default value: $Script:TppSession
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhatIf
+Shows what would happen if the cmdlet runs.
+The cmdlet is not run.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Confirm
+Prompts you for confirmation before running the cmdlet.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

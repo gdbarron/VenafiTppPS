@@ -7,17 +7,19 @@ Create a new CAPI application
 
 ### NonIis (Default)
 ```
-New-TppCapiApplication -Path <String> -CertificatePath <String> -CredentialPath <String>
- [-FriendlyName <String>] [-Description <String>] [-WinRmPort <Int32>] [-Disable] [-ProvisionCertificate]
- [-PassThru] [-TppSession <TppSession>] [<CommonParameters>]
+New-TppCapiApplication -Path <String> [-ApplicationName <String[]>] [-CertificatePath <String>]
+ [-CredentialPath <String>] [-FriendlyName <String>] [-Description <String>] [-WinRmPort <Int32>] [-Disable]
+ [-ProvisionCertificate] [-SkipExistenceCheck] [-PassThru] [-TppSession <TppSession>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
-### UpdateIis
+### Iis
 ```
-New-TppCapiApplication -Path <String> -CertificatePath <String> -CredentialPath <String>
- [-FriendlyName <String>] [-Description <String>] [-WinRmPort <Int32>] [-Disable] [-UpdateIis]
+New-TppCapiApplication -Path <String> [-ApplicationName <String[]>] [-CertificatePath <String>]
+ [-CredentialPath <String>] [-FriendlyName <String>] [-Description <String>] [-WinRmPort <Int32>] [-Disable]
  -WebSiteName <String> [-BindingIpAddress <IPAddress>] [-BindingPort <Int32>] [-BindingHostName <String>]
- [-CreateBinding <Boolean>] [-ProvisionCertificate] [-PassThru] [-TppSession <TppSession>] [<CommonParameters>]
+ [-CreateBinding <Boolean>] [-ProvisionCertificate] [-SkipExistenceCheck] [-PassThru]
+ [-TppSession <TppSession>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -35,14 +37,32 @@ PS C:\> {{ Add example code here }}
 ## PARAMETERS
 
 ### -Path
-Full path, including name, to the application to be created
+Full path, including name, to the application to be created. 
+The application must be created under a device.
+Alternatively, provide the path to the device and provide ApplicationName.
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases: DN
+Aliases:
 
 Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByPropertyName, ByValue)
+Accept wildcard characters: False
+```
+
+### -ApplicationName
+1 or more application names to create. 
+Path must be a path to a device.
+
+```yaml
+Type: String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -57,7 +77,7 @@ Type: String
 Parameter Sets: (All)
 Aliases: CertificateDN
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -72,7 +92,7 @@ Type: String
 Parameter Sets: (All)
 Aliases: CredentialDN
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -140,27 +160,12 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -UpdateIis
-{{ Fill UpdateIis Description }}
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: UpdateIis
-Aliases:
-
-Required: True
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -WebSiteName
 {{ Fill WebSiteName Description }}
 
 ```yaml
 Type: String
-Parameter Sets: UpdateIis
+Parameter Sets: Iis
 Aliases:
 
 Required: True
@@ -175,7 +180,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: IPAddress
-Parameter Sets: UpdateIis
+Parameter Sets: Iis
 Aliases:
 
 Required: False
@@ -190,7 +195,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: Int32
-Parameter Sets: UpdateIis
+Parameter Sets: Iis
 Aliases:
 
 Required: False
@@ -205,7 +210,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String
-Parameter Sets: UpdateIis
+Parameter Sets: Iis
 Aliases:
 
 Required: False
@@ -220,7 +225,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: Boolean
-Parameter Sets: UpdateIis
+Parameter Sets: Iis
 Aliases:
 
 Required: False
@@ -231,7 +236,24 @@ Accept wildcard characters: False
 ```
 
 ### -ProvisionCertificate
-{{ Fill ProvisionCertificate Description }}
+Push the certificate to the application. 
+CertificatePath must be provided.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -SkipExistenceCheck
+By default, the paths for the new application, certifcate, and credential will be validated for existence.
+Specify this switch to bypass this check.
 
 ```yaml
 Type: SwitchParameter
@@ -276,12 +298,43 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -WhatIf
+Shows what would happen if the cmdlet runs.
+The cmdlet is not run.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Confirm
+Prompts you for confirmation before running the cmdlet.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
-### none
+### Path
 ## OUTPUTS
 
 ### TppObject, if PassThru provided
@@ -293,11 +346,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppCapiApplication.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppCapiApplication.ps1)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppObject.ps1)
 
-[http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/](http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObjectsExists/)
+[http://venafitppps.readthedocs.io/en/latest/functions/Find-TppCertificate/](http://venafitppps.readthedocs.io/en/latest/functions/Find-TppCertificate/)
 
-[http://venafitppps.readthedocs.io/en/latest/functions/Find-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/Find-TppObject/)
+[http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/)
 
 [https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-create.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____9](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-create.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____9)
 

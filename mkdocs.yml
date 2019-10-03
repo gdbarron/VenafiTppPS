@@ -29,6 +29,7 @@ pages:
     - Move-TppObject: functions/Move-TppObject.md
     - New-TppCapiApplication: functions/New-TppCapiApplication.md
     - New-TppCertificate: functions/New-TppCertificate.md
+    - New-TppDevice: functions/New-TppDevice.md
     - New-TppObject: functions/New-TppObject.md
     - New-TppPolicy: functions/New-TppPolicy.md
     - New-TppSession: functions/New-TppSession.md

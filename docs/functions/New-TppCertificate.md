@@ -7,14 +7,14 @@ Enrolls or provisions a new certificate
 
 ### ByName (Default)
 ```
-New-TppCertificate -Name <String> [-CommonName <String>] -Path <String> -CertificateAuthorityPath <String>
+New-TppCertificate -Path <String> -Name <String> [-CommonName <String>] [-CertificateAuthorityPath <String>]
  [-ManagementType <TppManagementType>] [-SubjectAltName <Hashtable[]>] [-PassThru] [-TppSession <TppSession>]
  [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### BySubject
 ```
-New-TppCertificate -CommonName <String> -Path <String> -CertificateAuthorityPath <String>
+New-TppCertificate -Path <String> -CommonName <String> [-CertificateAuthorityPath <String>]
  [-ManagementType <TppManagementType>] [-SubjectAltName <Hashtable[]>] [-PassThru] [-TppSession <TppSession>]
  [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
@@ -47,6 +47,22 @@ New-TppCertificate -Path '\ved\policy\folder' -Name 'mycert.com' -CertificateAut
 Create certificate including subject alternate names
 
 ## PARAMETERS
+
+### -Path
+The folder DN path for the new certificate.
+If the value is missing, use the system default
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: PolicyDN
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -Name
 Name of the certifcate. 
@@ -92,22 +108,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Path
-The folder DN path for the new certificate.
-If the value is missing, use the system default
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: PolicyDN
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -CertificateAuthorityPath
 {{ Fill CertificateAuthorityPath Description }}
 
@@ -116,7 +116,7 @@ Type: String
 Parameter Sets: (All)
 Aliases: CertificateAuthorityDN
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False

@@ -7,12 +7,14 @@ Renew a certificate
 
 ### ByObject
 ```
-Invoke-TppCertificateRenewal -InputObject <TppObject> [-TppSession <TppSession>] [<CommonParameters>]
+Invoke-TppCertificateRenewal -InputObject <TppObject> [-TppSession <TppSession>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### ByPath
 ```
-Invoke-TppCertificateRenewal -Path <String> [-TppSession <TppSession>] [<CommonParameters>]
+Invoke-TppCertificateRenewal -Path <String> [-TppSession <TppSession>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -28,7 +30,7 @@ to the certificate object being renewed.
 
 ### EXAMPLE 1
 ```
-Invoke-TppCertificateRenewal -CertificateDN '\VED\Policy\My folder\app.mycompany.com'
+Invoke-TppCertificateRenewal -Path '\VED\Policy\My folder\app.mycompany.com'
 ```
 
 ## PARAMETERS
@@ -79,6 +81,37 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -WhatIf
+Shows what would happen if the cmdlet runs.
+The cmdlet is not run.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Confirm
+Prompts you for confirmation before running the cmdlet.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
@@ -88,7 +121,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
-###     CertificateDN - Certificate path
+###     Path - Certificate path
 ###     Success - A value of true indicates that the renewal request was successfully submitted and
 ###     granted.
 ###     Error - Indicates any errors that occurred. Not returned when successful
@@ -96,9 +129,9 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## RELATED LINKS
 
-[http://venafitppps.readthedocs.io/en/latest/functions/Restore-TppCertificate/](http://venafitppps.readthedocs.io/en/latest/functions/Restore-TppCertificate/)
+[http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificateRenewal/](http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificateRenewal/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Restore-TppCertificate.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Restore-TppCertificate.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Invoke-TppCertificateRenewal.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Invoke-TppCertificateRenewal.ps1)
 
 [https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-renew.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____9](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-renew.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____9)
 
