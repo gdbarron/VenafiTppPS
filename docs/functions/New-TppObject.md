@@ -6,7 +6,7 @@ Create a new object
 ## SYNTAX
 
 ```
-New-TppObject [-Path] <String> [-Class] <String> [-Attribute] <Hashtable> [-ProvisionCertificate] [-PassThru]
+New-TppObject [-Path] <String> [-Class] <String> [[-Attribute] <Hashtable>] [-ProvisionCertificate] [-PassThru]
  [[-TppSession] <TppSession>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
@@ -78,7 +78,7 @@ Type: Hashtable
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: 3
 Default value: None
 Accept pipeline input: False
