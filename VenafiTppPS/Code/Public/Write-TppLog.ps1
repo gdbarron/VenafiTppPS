@@ -49,7 +49,7 @@ none
 none
 
 .EXAMPLE
-Write-TppLog -EventGroup '0200' -EventId '0001' -Component '\ved\policy\mycert.com'
+Write-TppLog -CustomEventGroup '0200' -EventId '0001' -Component '\ved\policy\mycert.com'
 Log an event to a custom group
 
 .LINK
@@ -70,6 +70,9 @@ function Write-TppLog {
     [CmdletBinding()]
 
     param (
+
+        [Parameter()]
+        [string] $EventGroup,
 
         [Parameter(Mandatory)]
         [ValidateLength(4, 4)]
@@ -113,6 +116,10 @@ function Write-TppLog {
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
+
+    if ( $PSBoundParameters.ContainsKey('EventGroup') ) {
+        throw 'Writing to built-in event groups is no longer supported by Venafi'
+    }
 
     $TppSession.Validate()
 
