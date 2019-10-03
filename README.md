@@ -7,7 +7,7 @@
 
 Documentation can be found at [http://venafitppps.readthedocs.io](http://venafitppps.readthedocs.io) or by using built-in PowerShell help.  Every effort has been made to document each parameter and provide good examples.
 
-## Platforms
+## Supported Platforms
 
 | OS             | PowerShell Version Tested | Status  |
 | -------------- |--------------------| -----|

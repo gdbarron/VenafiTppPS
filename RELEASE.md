@@ -1,4 +1,4 @@
-- Linux support added
+- Add Linux support
 - Add New-TppDevice
 - New-TppCapiApplication
     - Add ProvisionCertificate parameter to provision a certificate when the application is created
