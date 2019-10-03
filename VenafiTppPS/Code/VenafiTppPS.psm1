@@ -22,7 +22,7 @@ foreach ( $folder in $folders) {
     }
 }
 
-$publicFiles = Get-ChildItem -Path $PSScriptRoot\public\*.ps1 -Recurse -ErrorAction SilentlyContinue
+$publicFiles = Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -Recurse -ErrorAction SilentlyContinue
 Export-ModuleMember -Function $publicFiles.Basename
 
 $Script:TppSupportedVersion = ConvertFrom-Json (Get-Content "$PSScriptRoot\Config\SupportedVersion.json" -Raw)

@@ -4,7 +4,15 @@
 [![Documentation Status](https://readthedocs.org/projects/venafitppps/badge/?version=latest)](https://venafitppps.readthedocs.io/en/latest/?badge=latest)
 
 ## Documentation
-Documentation can be found at [http://venafitppps.readthedocs.io](http://venafitppps.readthedocs.io)
+Documentation can be found at [http://venafitppps.readthedocs.io](http://venafitppps.readthedocs.io) or by using built-in PowerShell help.  Every effort has been made to document each parameter and provide good examples.
+
+## Platforms
+| OS             | PowerShell Version | Status  |
+| -------------- |--------------------| -----|
+| Windows        | 5.1                | Working! |
+| Windows        | Core 6.2.3         | Working! |
+| MacOS          | Core 6.2.3         | Working! |
+| Linux (Ubuntu) | Core 6.2.3         | Working! |
 
 ## Usage
 After loading the module, create a new session with
