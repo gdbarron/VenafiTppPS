@@ -50,8 +50,10 @@ https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function New-TppSession {
+
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'WindowsIntegrated')]
     [OutputType('TppSession')]
-    [CmdletBinding(DefaultParameterSetName = 'WindowsIntegrated')]
+
     param(
         [Parameter(Mandatory)]
         [string] $ServerUrl,
@@ -85,18 +87,22 @@ function New-TppSession {
     }
 
     $newSession = [TppSession] @{
-        ServerUrl  = $ServerUrl
+        ServerUrl = $ServerUrl
     }
 
     if ( $PsCmdlet.ParameterSetName -ne 'WindowsIntegrated' ) {
         $newSession.Credential = $sessionCredential
     }
 
-    $newSession.Connect()
+    if ( $PSCmdlet.ShouldProcess($ServerUrl, 'New session') ) {
 
-    if ( $PassThru ) {
-        $newSession
-    } else {
-        $Script:TppSession = $newSession
+        $newSession.Connect()
+
+        if ( $PassThru ) {
+            $newSession
+        }
+        else {
+            $Script:TppSession = $newSession
+        }
     }
 }
