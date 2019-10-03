@@ -67,14 +67,13 @@ https://support.venafi.com/hc/en-us/articles/360003460191-Info-Venafi-Trust-Prot
 #>
 function Write-TppLog {
 
-    [CmdletBinding()]
-
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'DefaultGroup')]
     param (
 
-        [Parameter()]
+        [Parameter(Mandatory, ParameterSetName = 'DefaultGroup')]
         [string] $EventGroup,
 
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ParameterSetName = 'CustomGroup')]
         [ValidateLength(4, 4)]
         [string] $CustomEventGroup,
 
@@ -117,8 +116,8 @@ function Write-TppLog {
         [TppSession] $TppSession = $Script:TppSession
     )
 
-    if ( $PSBoundParameters.ContainsKey('EventGroup') ) {
-        throw 'Writing to built-in event groups is no longer supported by Venafi'
+    if ( $PSCmdlet.ParameterSetName -eq 'DefaultGroup' ) {
+        throw 'Writing to built-in event groups is no longer supported by Venafi.  You can write to custom event groups.'
     }
 
     $TppSession.Validate()
@@ -172,10 +171,12 @@ function Write-TppLog {
         $params.Body.Add('Value2', $Value2)
     }
 
-    $response = Invoke-TppRestMethod @params
+    if ( $PSCmdlet.ShouldProcess($Component, 'Write log entry') ) {
 
-    if ( $response.LogResult -eq 1 ) {
-        throw "Writing to the TPP log failed.  Ensure you have View permission and Read permission to the default SQL channel object."
+        $response = Invoke-TppRestMethod @params
+
+        if ( $response.LogResult -eq 1 ) {
+            throw "Writing to the TPP log failed.  Ensure you have View permission and Read permission to the default SQL channel object."
+        }
     }
-
 }
