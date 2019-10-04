@@ -8,7 +8,7 @@ Describe 'Testing against PSSA rules' {
             Try {
                 write-output "Processing $import.fullname"
                 $analysis = Invoke-ScriptAnalyzer -Path $import.fullname
-                $scriptAnalyzerRules = Get-ScriptAnalyzerRule
+                $scriptAnalyzerRules = Get-ScriptAnalyzerRule | Where-Object { $_.RuleName -ne 'PSUseOutputTypeCorrectly' }
 
                 forEach ($rule in $scriptAnalyzerRules) {
                     It "Should pass $rule" {

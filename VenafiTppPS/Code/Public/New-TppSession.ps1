@@ -52,7 +52,6 @@ https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 function New-TppSession {
 
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'WindowsIntegrated')]
-    [OutputType('TppSession')]
 
     param(
         [Parameter(Mandatory)]

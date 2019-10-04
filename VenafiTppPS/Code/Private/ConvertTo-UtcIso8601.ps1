@@ -21,7 +21,6 @@ System.String
 function ConvertTo-UtcIso8601 {
 
     [CmdletBinding()]
-    [OutputType( [System.String] )]
 
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

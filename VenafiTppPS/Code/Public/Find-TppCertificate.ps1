@@ -185,7 +185,7 @@ https://msdn.microsoft.com/en-us/library/system.web.httputility(v=vs.110).aspx
 function Find-TppCertificate {
 
     [CmdletBinding(DefaultParameterSetName = 'NoPath')]
-    [OutputType( [TppObject] )]
+
     param (
 
         [Parameter(Mandatory, ParameterSetName = 'ByObject', ValueFromPipeline)]
