@@ -7,18 +7,19 @@ Create a new Venafi TPP session
 
 ### WindowsIntegrated (Default)
 ```
-New-TppSession -ServerUrl <String> [-PassThru] [<CommonParameters>]
+New-TppSession -ServerUrl <String> [-PassThru] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### Credential
 ```
-New-TppSession -ServerUrl <String> -Credential <PSCredential> [-PassThru] [<CommonParameters>]
+New-TppSession -ServerUrl <String> -Credential <PSCredential> [-PassThru] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### UsernamePassword
 ```
-New-TppSession -ServerUrl <String> -Username <String> -SecurePassword <SecureString> [-PassThru]
- [<CommonParameters>]
+New-TppSession -ServerUrl <String> -Username <String> -SecurePassword <SecureString> [-PassThru] [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -121,6 +122,37 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhatIf
+Shows what would happen if the cmdlet runs.
+The cmdlet is not run.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Confirm
+Prompts you for confirmation before running the cmdlet.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
