@@ -24,7 +24,6 @@ ConvertTo-TppGuid -Guid 'xyxyxyxy-xyxy-xyxy-xyxy-xyxyxyxyxyxy'
 function ConvertTo-TppGuid {
 
     [CmdletBinding()]
-    [OutputType( [System.Guid] )]
 
     param (
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]

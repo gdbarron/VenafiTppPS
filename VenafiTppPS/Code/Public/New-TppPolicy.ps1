@@ -47,7 +47,6 @@ https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-
 function New-TppPolicy {
 
     [CmdletBinding(SupportsShouldProcess)]
-    [OutputType( [TppObject] )]
 
     param (
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]

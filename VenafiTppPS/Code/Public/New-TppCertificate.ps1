@@ -65,8 +65,9 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function New-TppCertificate {
+
     [CmdletBinding(DefaultParameterSetName = 'ByName', SupportsShouldProcess)]
-    [OutputType( [TppObject] )]
+
     param (
 
         [Parameter(Mandatory)]

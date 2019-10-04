@@ -29,8 +29,9 @@ https://docs.venafi.com/Docs/18.4SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function Get-TppVersion {
+
     [CmdletBinding()]
-    [OutputType( [System.Version] )]
+
     param (
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession

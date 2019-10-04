@@ -35,7 +35,6 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 function Get-TppObject {
 
     [CmdletBinding()]
-    [OutputType( [TppObject] )]
 
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
