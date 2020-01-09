@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+    <Controls>
+        <Control>
+            <Name>CimPSDriveFormatControl</Name>
+            <CustomControl>
+                <CustomEntries>
+                    <CustomEntry>
+                        <CustomItem>
+                            <Frame>
+                                <LeftIndent>4</LeftIndent>
+                                <CustomItem>
+                                    <Text>Path: </Text>
+                                    <ExpressionBinding>
+                                        <ScriptBlock>$leafName = Split-Path $_.Path -Leaf; $_.Path.Replace(("\{0}" -f $leafName), "")</ScriptBlock>
+                                    </ExpressionBinding>
+                                    <NewLine/>
+                                </CustomItem>
+                            </Frame>
+                        </CustomItem>
+                    </CustomEntry>
+                </CustomEntries>
+            </CustomControl>
+        </Control>
+    </Controls>
+    <ViewDefinitions>
+        <View>
+            <Name>TppClassObjectDefaultView</Name>
+            <ViewSelectedBy>
+                <TypeName>TppClassObject</TypeName>
+            </ViewSelectedBy>
+            <GroupBy>
+                <PropertyName>Path</PropertyName>
+                <!-- <CustomControlName>CimPSDriveFormatControl</CustomControlName> -->
+            </GroupBy>
+            <TableControl>
+                <AutoSize/>
+                <TableHeaders>
+                    <TableColumnHeader>
+                        <Label>Name</Label>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <Wrap/>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+    </ViewDefinitions>
+</Configuration>
