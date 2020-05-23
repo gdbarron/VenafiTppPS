@@ -19,6 +19,7 @@ These will be specific to the object class being created.
 .PARAMETER ProvisionCertificate
 If creating an application object, you can optionally push the certificate once the creation is complete.
 Only available if a 'Certificate' key containing the certificate path is provided for Attribute.
+Please note, this feature was added in v18.3.
 
 .PARAMETER PassThru
 Return a TppObject representing the newly created object.
@@ -94,17 +95,17 @@ function New-TppObject {
         [TppSession] $TppSession = $Script:TppSession
     )
 
-    # $TppSession.Validate()
+    $TppSession.Validate()
 
     # ensure the object doesn't already exist
-    if ( Test-TppObject -Path $Path -ExistOnly -TppSession $TppSession ) {
-        throw ("New object to be created, {0}, already exists" -f $Path)
-    }
+    # if ( Test-TppObject -Path $Path -ExistOnly -TppSession $TppSession ) {
+    #     throw ("New object to be created, {0}, already exists" -f $Path)
+    # }
 
     # ensure the parent folder exists
-    if ( -not (Test-TppObject -Path (Split-Path -Path $Path -Parent) -ExistOnly -TppSession $TppSession) ) {
-        throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path -Path $Path -Parent))
-    }
+    # if ( -not (Test-TppObject -Path (Split-Path -Path $Path -Parent) -ExistOnly -TppSession $TppSession) ) {
+    #     throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path -Path $Path -Parent))
+    # }
 
     if ( $PSBoundParameters.ContainsKey('ProvisionCertificate') -and (-not $Attribute.Certificate) ) {
         Write-Warning 'A ''Certificate'' key containing the certificate path must be provided for Attribute when using ProvisionCertificate, eg. -Attribute @{''Certificate''=''\Ved\Policy\mycert.com''}.  Certificate provisioning will not take place.'
