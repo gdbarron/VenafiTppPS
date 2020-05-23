@@ -52,11 +52,13 @@ try {
     Try importing the PSD manually in a local powershell session to verify the cause of this error (import-powershelldatafile <psd1 file>) $_"
 }
 
-[version]$version = $Manifest.ModuleVersion
-Write-Output "Old Version - $Version"
-# Add one to the build of the version number
-[version]$NewVersion = "{0}.{1}.{2}" -f $Version.Major, $Version.Minor, ($Version.Build + 1)
+# [version]$version = $Manifest.ModuleVersion
+# Write-Output "Old Version - $Version"
+# # Add one to the build of the version number
+# [version]$NewVersion = "{0}.{1}.{2}" -f $Version.Major, $Version.Minor, ($Version.Build + 1)
+$newVersion = [version] $env:BUILD_BUILDNUMBER
 Write-Output "New Version - $NewVersion"
+
 
 # Load the module, read the exported functions and aliases, update the psd1
 $FunctionFiles = Get-ChildItem ".\$ModuleName\code\Public\*.ps1" |
