@@ -102,8 +102,8 @@ function New-TppObject {
     }
 
     # ensure the parent folder exists
-    if ( -not (Test-TppObject -Path (Split-Path $Path -Parent) -ExistOnly -TppSession $TppSession) ) {
-        throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path $Path -Parent))
+    if ( -not (Test-TppObject -Path (Split-Path -Path $Path -Parent) -ExistOnly -TppSession $TppSession) ) {
+        throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path -Path $Path -Parent))
     }
 
     if ( $PSBoundParameters.ContainsKey('ProvisionCertificate') -and (-not $Attribute.Certificate) ) {

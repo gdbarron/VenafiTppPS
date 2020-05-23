@@ -13,7 +13,7 @@ TppObject which represents a unique object
 Path to the certificate object to retrieve
 
 .PARAMETER Format
-The format of the returned certificate.
+The format of the returned certificate.  Valid formats include Base64, Base64 (PKCS #8), DER, JKS, PKCS #7, PKCS #12.
 
 .PARAMETER OutPath
 Folder path to save the certificate to.  The name of the file will be determined automatically.
@@ -44,12 +44,10 @@ $certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp'
 Get one or more certificates
 
 .EXAMPLE
-
 $certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain
 Get one or more certificates with the certificate chain included
 
 .EXAMPLE
-
 $certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain -FriendlyName 'MyFriendlyName'
 Get one or more certificates with the certificate chain included and friendly name attribute specified
 
@@ -86,8 +84,7 @@ function Get-TppCertificate {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid path"
                 }
             })]
@@ -103,8 +100,7 @@ function Get-TppCertificate {
         [ValidateScript( {
                 if (Test-Path $_ -PathType Container) {
                     $true
-                }
-                else {
+                } else {
                     Throw "Output path '$_' does not exist"
                 }
             })]
@@ -137,10 +133,44 @@ function Get-TppCertificate {
             Method     = 'Post'
             UriLeaf    = 'certificates/retrieve'
             Body       = @{
-                CertificateDN = $Path
-                Format        = $Format
+                Format = $Format
             }
         }
+
+        if ($IncludePrivateKey) {
+
+            # validate format to be able to export the private key
+            if ( $Format -in @("Base64", "DER", "PKCS #7") ) {
+                throw "Format '$Format' does not support private keys"
+            }
+
+            $params.Body.IncludePrivateKey = $true
+            $plainTextPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePassword))
+            $params.Body.Password = $plainTextPassword
+        }
+
+        if ($Format -in @("Base64 (PKCS #8)", "DER", "PKCS #7")) {
+            if (-not ([string]::IsNullOrEmpty($FriendlyName))) {
+                throw "Only Base64, JKS, PKCS #12 formats support FriendlyName parameter"
+            }
+        } else {
+            if ($Format -ieq 'JKS' -and [string]::IsNullOrEmpty($FriendlyName)) {
+                throw "JKS format requires FriendlyName parameter to be set"
+            }
+        }
+
+        if (-not [string]::IsNullOrEmpty($FriendlyName)) {
+            $params.Body.FriendlyName = $FriendlyName
+        }
+
+        if ($IncludeChain) {
+            if ( $Format -in @("Base64 (PKCS #8)", "DER") ) {
+                throw "IncludeChain is only supported when Format is Base64, JKS, PKCS #7, or PKCS #12"
+            }
+
+            $params.Body.IncludeChain = $true
+        }
+
     }
 
     process {
@@ -151,57 +181,16 @@ function Get-TppCertificate {
 
         $params.Body.CertificateDN = $Path
 
-        if ($IncludePrivateKey) {
-
-            # validate format to be able to export the private key
-            if ( $Format -in @("Base64 (PKCS #8)", "DER", "PKCS #7") ) {
-                Write-Error "Format '$Format' does not support private keys"
-                Return
-            }
-
-            $params.Body.Add('IncludePrivateKey', $true)
-            $plainTextPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePassword))
-            $params.Body.Add('Password', $plainTextPassword)
-        }
-
-        if ($Format -in @("Base64 (PKCS #8)", "DER", "PKCS #7")) {
-            if (-not ([string]::IsNullOrEmpty($FriendlyName))) {
-                Write-Error "Only Base64, JKS, PKCS #12 formats support FriendlyName parameter"
-                Return
-            }
-        }
-        else {
-            if ($Format -ieq 'JKS' -and [string]::IsNullOrEmpty($FriendlyName)) {
-                Write-Error "JKS format requires FriendlyName parameter to be set"
-                Return
-            }
-        }
-
-        if (-not [string]::IsNullOrEmpty($FriendlyName)) {
-            $params.Body.Add('FriendlyName', $FriendlyName)
-        }
-
-        if ($IncludeChain) {
-            if ($Format -in @("Base64 (PKCS #8)", "DER"))
-            {
-                Write-Error "IncludeChain is only supported when Format is Base64, JKS, PKCS #7, or PKCS #12"
-                Return
-            }
-
-            $params.Body.Add('IncludeChain', $true)
-        }
-
         $response = Invoke-TppRestMethod @params
 
         if ( $PSBoundParameters.ContainsKey('OutPath') ) {
             if ( $response.PSobject.Properties.name -contains "CertificateData" ) {
-                $outFile = join-path $OutPath ($response.FileName)
+                $outFile = Join-Path $OutPath ($response.FileName)
                 $bytes = [Convert]::FromBase64String($response.CertificateData)
                 [IO.File]::WriteAllBytes($outFile, $bytes)
-                write-verbose ('Saved {0} of format {1}' -f $outFile, $response.Format)
+                Write-Verbose ('Saved {0} of format {1}' -f $outFile, $response.Format)
             }
-        }
-        else {
+        } else {
             $response
         }
     }
