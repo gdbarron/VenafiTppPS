@@ -21,6 +21,9 @@ Search recursively starting from the search path.
 Limit how many items are returned.  Default is 0 for no limit.
 It is definitely recommended to filter on another property when searching with no limit.
 
+.PARAMETER Offset
+The number of results to skip.
+
 .PARAMETER Country
 Find certificates by Country attribute of Subject DN.
 
@@ -147,6 +150,10 @@ Find-TppCertificate -ExpireBefore "2018-01-01" -Limit 5
 Find 5 certificates expiring before a certain date
 
 .EXAMPLE
+Find-TppCertificate -ExpireBefore "2018-01-01" -Limit 5 -Offset 2
+Find 5 certificates expiring before a certain date, starting at the 3rd certificate found.
+
+.EXAMPLE
 Find-TppCertificate -Path '\VED\Policy\My Policy'
 Find all certificates in a specific path
 
@@ -223,6 +230,9 @@ function Find-TppCertificate {
 
         [Parameter()]
         [int] $Limit = 0,
+
+        [Parameter()]
+        [int] $Offset,
 
         [Parameter()]
         [Alias('C')]
@@ -364,6 +374,9 @@ function Find-TppCertificate {
         }
 
         switch ($PSBoundParameters.Keys) {
+            'Offset' {
+                $params.Body.Add( 'Offset', $Offset )
+            }
             'Country' {
                 $params.Body.Add( 'C', $Country )
             }

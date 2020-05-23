@@ -12,10 +12,10 @@ function Test-TppDnPath {
 
     process {
         if ( $PSBoundParameters.ContainsKey('AllowRoot') ) {
-            $_ -match '(^\\VED)(\\.+)*$'
+            $_ -match '^[\\|//]VED([\\|//].+)*$'
         }
         else {
-            $_ -match '(^\\VED)(\\.+)+$'
+            $_ -match '^[\\|//]VED([\\|//].+)+$'
         }
     }
 }
