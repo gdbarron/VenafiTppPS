@@ -111,7 +111,8 @@ Accept wildcard characters: False
 ```
 
 ### -Format
-The format of the returned certificate.
+The format of the returned certificate. 
+Valid formats include Base64, Base64 (PKCS #8), DER, JKS, PKCS #7, PKCS #12.
 
 ```yaml
 Type: String
