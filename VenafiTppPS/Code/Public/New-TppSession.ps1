@@ -58,50 +58,100 @@ function New-TppSession {
         [string] $ServerUrl,
 
         [Parameter(Mandatory, ParameterSetName = 'Credential')]
+        [Parameter(Mandatory, ParameterSetName = 'OAuth')]
         [System.Management.Automation.PSCredential] $Credential,
 
-        [Parameter(Mandatory, ParameterSetName = 'UsernamePassword')]
-        [ValidateNotNullOrEmpty()]
-        [string] $Username,
+        # [Parameter(Mandatory, ParameterSetName = 'UsernamePassword')]
+        # [ValidateNotNullOrEmpty()]
+        # [string] $Username,
 
-        [Parameter(Mandatory, ParameterSetName = 'UsernamePassword')]
-        [ValidateNotNullOrEmpty()]
-        [Security.SecureString] $SecurePassword,
+        # [Parameter(Mandatory, ParameterSetName = 'UsernamePassword')]
+        # [ValidateNotNullOrEmpty()]
+        # [Security.SecureString] $SecurePassword,
+
+        [Parameter(Mandatory, ParameterSetName = 'OAuth')]
+        [string] $ClientId,
+
+        [Parameter(ParameterSetName = 'OAuth')]
+        [hashtable] $Scope,
+
+        [Parameter(ParameterSetName = 'OAuth')]
+        [string] $State,
 
         [Parameter()]
         [switch] $PassThru
     )
 
+    # add prefix if just server name was provided
+    if ( $ServerUrl -notlike 'https://*') {
+        $ServerUrl = 'https://{0}' -f $ServerUrl
+    }
+
     Switch ($PsCmdlet.ParameterSetName)	{
 
         "Credential" {
-            $sessionCredential = $Credential
+            $newSession = [TppSession] @{
+                ServerUrl = $ServerUrl
+            }
+
+            if ( $PsCmdlet.ParameterSetName -ne 'WindowsIntegrated' ) {
+                $newSession.Credential = $Credential
+            }
+
+            if ( $PSCmdlet.ShouldProcess($ServerUrl, 'New session') ) {
+
+                $newSession.Connect()
+
+                if ( $PassThru ) {
+                    $newSession
+                } else {
+                    $Script:TppSession = $newSession
+                }
+            }
         }
 
-        "UsernamePassword" {
-            # build a credential object to attached to the session object
-            $sessionCredential = New-Object System.Management.Automation.PSCredential ($Username, $SecurePassword)
+        'OAuth' {
+
+            $params = @{
+                Method    = 'Post'
+                ServerUrl = $ServerUrl
+                UriRoot   = 'vedauth'
+                UriLeaf   = 'authorize/oauth'
+                Body      = @{
+                    client_id = $ClientId
+                    username  = $Credential.username
+                    password  = $Credential.GetNetworkCredential().password
+                }
+            }
+
+            if ( $Scope ) {
+                $params.Body.scope = $Scope
+            }
+
+            if ( $State ) {
+                $params.Body.state = $State
+            }
+
+            $response = Invoke-TppRestMethod @params
+            $response
+            # $this.APIKey = $response.ApiKey
+            # $this.ValidUntil = $response.ValidUntil
+
+            # # get custom fields
+            # if ( -not $this.CustomField ) {
+            #     $allFields = (Get-TppCustomField -TppSession $this -Class 'X509 Certificate').Items
+            #     $deviceFields = (Get-TppCustomField -TppSession $this -Class 'Device').Items
+            #     $allFields += $deviceFields | Where-Object { $_.Guid -notin $allFields.Guid }
+            #     $this.CustomField = $allFields
+            # }
+
         }
+
+        # "UsernamePassword" {
+        #     # build a credential object to attached to the session object
+        #     $sessionCredential = New-Object System.Management.Automation.PSCredential ($Username, $SecurePassword)
+        # }
 
     }
 
-    $newSession = [TppSession] @{
-        ServerUrl = $ServerUrl
-    }
-
-    if ( $PsCmdlet.ParameterSetName -ne 'WindowsIntegrated' ) {
-        $newSession.Credential = $sessionCredential
-    }
-
-    if ( $PSCmdlet.ShouldProcess($ServerUrl, 'New session') ) {
-
-        $newSession.Connect()
-
-        if ( $PassThru ) {
-            $newSession
-        }
-        else {
-            $Script:TppSession = $newSession
-        }
-    }
 }

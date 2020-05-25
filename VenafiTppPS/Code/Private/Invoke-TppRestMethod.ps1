@@ -39,6 +39,9 @@ function Invoke-TppRestMethod {
         [ValidateSet("Get", "Post", "Patch", "Put", "Delete")]
         [String] $Method,
 
+        [Parameter()]
+        [String] $UriRoot = 'vedsdk',
+
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [String] $UriLeaf,
@@ -71,7 +74,7 @@ function Invoke-TppRestMethod {
         }
     }
 
-    $uri = Join-UriPath @($ServerUrl, "vedsdk", $UriLeaf)
+    $uri = Join-UriPath @($ServerUrl, $UriRoot, $UriLeaf)
 
     if ( $Header ) {
         $hdr += $Header
