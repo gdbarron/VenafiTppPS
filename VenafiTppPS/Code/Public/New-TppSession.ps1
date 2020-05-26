@@ -45,14 +45,14 @@ https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function New-TppSession {
 
-    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'KeyWindowsIntegrated')]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'TokenWindowsIntegrated')]
 
     param(
         [Parameter(Mandatory)]
         [string] $ServerUrl,
 
         [Parameter(Mandatory, ParameterSetName = 'KeyCredential')]
-        [Parameter(Mandatory, ParameterSetName = 'Token')]
+        [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
         [System.Management.Automation.PSCredential] $Credential,
 
         # [Parameter(Mandatory, ParameterSetName = 'UsernamePassword')]
@@ -63,14 +63,21 @@ function New-TppSession {
         # [ValidateNotNullOrEmpty()]
         # [Security.SecureString] $SecurePassword,
 
-        [Parameter(Mandatory, ParameterSetName = 'Token')]
+        [Parameter(Mandatory, ParameterSetName = 'TokenWindowsIntegrated')]
+        [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
         [string] $ClientId,
 
-        [Parameter(ParameterSetName = 'Token')]
+        [Parameter(ParameterSetName = 'TokenWindowsIntegrated')]
+        [Parameter(ParameterSetName = 'TokenOAuth')]
         [hashtable] $Scope,
 
-        [Parameter(ParameterSetName = 'Token')]
+        [Parameter(ParameterSetName = 'TokenWindowsIntegrated')]
+        [Parameter(ParameterSetName = 'TokenOAuth')]
         [string] $State,
+
+        [Parameter(Mandatory, ParameterSetName = 'KeyWindowsIntegrated')]
+        [Parameter(Mandatory, ParameterSetName = 'KeyCredential')]
+        [switch] $UseKeyAuth,
 
         [Parameter()]
         [switch] $PassThru
@@ -85,29 +92,35 @@ function New-TppSession {
         ServerUrl = $ServerUrl
     }
 
-    Switch -Wildcard ($PsCmdlet.ParameterSetName)	{
+    if ( $PSCmdlet.ShouldProcess($ServerUrl, 'New session') ) {
+        Switch -Wildcard ($PsCmdlet.ParameterSetName)	{
 
-        "Key*" {
+            "Key*" {
 
-            if ( $PsCmdlet.ParameterSetName -eq 'KeyCredential' ) {
-                $newSession.Connect($Credential)
-            } else {
-                # integrated
-                $newSession.Connect()
+                if ( $PsCmdlet.ParameterSetName -eq 'KeyCredential' ) {
+                    $newSession.Connect($Credential)
+                } else {
+                    # integrated
+                    $newSession.Connect()
+                }
+
             }
 
+            'Token*' {
+                if ( $PsCmdlet.ParameterSetName -eq 'TokenOAuth' ) {
+                    $newSession.Connect($Credential, $ClientId, $Scope, $State)
+                } else {
+                    # integrated
+                    $newSession.Connect($ClientId, $Scope, $State)
+                }
+
+            }
         }
 
-        'Token' {
-
-            $newSession.Connect($Credential, $ClientId, $Scope, $State)
+        if ( $PassThru ) {
+            $newSession
+        } else {
+            $Script:TppSession = $newSession
         }
     }
-
-    if ( $PassThru ) {
-        $newSession
-    } else {
-        $Script:TppSession = $newSession
-    }
-
 }

@@ -199,8 +199,7 @@ function Find-TppCertificate {
         [ValidateScript( {
                 if ( $_.TypeName -eq 'Policy' ) {
                     $true
-                }
-                else {
+                } else {
                     throw ("You provided an InputObject of type '{0}', but must be of type 'Policy'." -f $_.TypeName)
                 }
             })]
@@ -211,8 +210,7 @@ function Find-TppCertificate {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath -AllowRoot ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -483,21 +481,18 @@ function Find-TppCertificate {
 
         if ( $PSBoundParameters.ContainsKey('InputObject') ) {
             $thisPath = $InputObject.Path
-        }
-        elseif ( $PSBoundParameters.ContainsKey('Path') ) {
+        } elseif ( $PSBoundParameters.ContainsKey('Path') ) {
             $thisPath = $Path
-        }
-        elseif ( $PSBoundParameters.ContainsKey('Guid') ) {
+        } elseif ( $PSBoundParameters.ContainsKey('Guid') ) {
             # guid provided, get path
             $thisPath = $Guid | ConvertTo-TppPath -TppSession $TppSession
         }
 
         if ( $thisPath ) {
             if ( $PSBoundParameters.ContainsKey('Recursive') ) {
-                $params.Body.Add( 'ParentDnRecursive', $thisPath )
-            }
-            else {
-                $params.Body.Add( 'ParentDn', $thisPath )
+                $params.Body.ParentDnRecursive = $thisPath
+            } else {
+                $params.Body.ParentDn = $thisPath
             }
         }
 
