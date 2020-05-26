@@ -75,9 +75,12 @@ class TppSession {
     [void] Connect(
         [PSCredential] $Credential,
         [string] $ClientId,
-        [hashtable] $Scope,
+        [string] $Scope,
         [string] $State
     ) {
+
+        [datetime] $origin = '1970-01-01 00:00:00'
+
         if ( -not ($this.ServerUrl) ) {
             throw "You must provide a value for ServerUrl"
         }
@@ -110,13 +113,18 @@ class TppSession {
 
         $response = Invoke-TppRestMethod @params
 
-        $this.Expires = $response.Expires
+        Write-Verbose ($response | Out-String)
+
+        $this.Expires = $origin.AddSeconds($response.Expires)
         $this.Token = [PSCustomObject]@{
             AccessToken  = $response.access_token
-            RefreshToken = $response.RefreshToken
+            RefreshToken = $response.refresh_token
+            Scope        = $response.scope
+            Identity     = $response.identity
+            TokenType    = $response.token_type
         }
 
-        $this.GetTppCustomFieldOnConnect()
+        # $this.GetTppCustomFieldOnConnect()
     }
 
     # connect for key based

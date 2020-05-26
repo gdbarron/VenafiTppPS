@@ -45,7 +45,7 @@ https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function New-TppSession {
 
-    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'KeyWindowsIntegrated')]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'KeyIntegrated')]
 
     param(
         [Parameter(Mandatory)]
@@ -63,15 +63,15 @@ function New-TppSession {
         # [ValidateNotNullOrEmpty()]
         # [Security.SecureString] $SecurePassword,
 
-        [Parameter(Mandatory, ParameterSetName = 'TokenWindowsIntegrated')]
+        [Parameter(Mandatory, ParameterSetName = 'TokenIntegrated')]
         [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
         [string] $ClientId,
 
-        [Parameter(ParameterSetName = 'TokenWindowsIntegrated')]
-        [Parameter(ParameterSetName = 'TokenOAuth')]
-        [hashtable] $Scope,
+        [Parameter(Mandatory, ParameterSetName = 'TokenIntegrated')]
+        [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
+        [string] $Scope,
 
-        [Parameter(ParameterSetName = 'TokenWindowsIntegrated')]
+        [Parameter(ParameterSetName = 'TokenIntegrated')]
         [Parameter(ParameterSetName = 'TokenOAuth')]
         [string] $State,
 
