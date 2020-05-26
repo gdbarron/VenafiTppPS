@@ -71,7 +71,7 @@ class TppSession {
         }
     }
 
-    # connect for token
+    # connect for token based auth
     [void] Connect(
         [PSCredential] $Credential,
         [string] $ClientId,
@@ -86,12 +86,18 @@ class TppSession {
             Method    = 'Post'
             ServerUrl = $this.ServerUrl
             UriRoot   = 'vedauth'
-            UriLeaf   = 'authorize/oauth'
             Body      = @{
                 client_id = $ClientId
-                username  = $Credential.username
-                password  = $Credential.GetNetworkCredential().password
             }
+        }
+
+        if ( $Credential ) {
+            $params.UriLeaf = 'authorize/oauth'
+            $params.Body.username = $Credential.UserName
+            $params.Body.password = $Credential.GetNetworkCredential().Password
+        } else {
+            $params.UriLeaf = 'authorize/integrated'
+            $params.UseDefaultCredentials = $true
         }
 
         if ( $Scope ) {
@@ -113,7 +119,7 @@ class TppSession {
         $this.GetTppCustomFieldOnConnect()
     }
 
-    # connect for credential
+    # connect for key based
     [void] Connect(
         [PSCredential] $Credential
     ) {
@@ -122,13 +128,20 @@ class TppSession {
         }
 
         $params = @{
-            Method    = 'Post'
             ServerUrl = $this.ServerUrl
-            UriLeaf   = 'authorize'
-            Body      = @{
-                Username = $Credential.username
-                Password = $Credential.GetNetworkCredential().password
+        }
+
+        if ( $Credential ) {
+            $params.Method = 'Post'
+            $params.UriLeaf = 'authorize'
+            $params.Body = @{
+                Username = $Credential.UserName
+                Password = $Credential.GetNetworkCredential().Password
             }
+        } else {
+            $params.Method = 'Get'
+            $params.UriLeaf = 'authorize/integrated'
+            $params.UseDefaultCredentials = $true
         }
 
         $response = Invoke-TppRestMethod @params
@@ -138,45 +151,7 @@ class TppSession {
             Credential = $Credential
         }
 
-        # get custom fields
-        if ( -not $this.CustomField ) {
-            $allFields = (Get-TppCustomField -TppSession $this -Class 'X509 Certificate').Items
-            $deviceFields = (Get-TppCustomField -TppSession $this -Class 'Device').Items
-            $allFields += $deviceFields | Where-Object { $_.Guid -notin $allFields.Guid }
-            $this.CustomField = $allFields
-        }
-
-        # $this.Version = (Get-TppSystemStatus -TppSession $this) | Select-Object -First 1 -ExpandProperty version
-
-    }
-
-    # connect for integrated
-    [void] Connect() {
-        if ( -not ($this.ServerUrl) ) {
-            throw "You must provide a value for ServerUrl"
-        }
-
-        $params = @{
-            Method                = 'Get'
-            ServerUrl             = $this.ServerUrl
-            UriLeaf               = 'authorize/integrated'
-            UseDefaultCredentials = $true
-        }
-
-        $response = Invoke-TppRestMethod @params
-        $this.Expires = $response.ValidUntil
-        $this.Key = [pscustomobject] @{
-            ApiKey     = $response.ApiKey
-            Credential = $null
-        }
-
-        # get custom fields
-        if ( -not $this.CustomField ) {
-            $allFields = (Get-TppCustomField -TppSession $this -Class 'X509 Certificate').Items
-            $deviceFields = (Get-TppCustomField -TppSession $this -Class 'Device').Items
-            $allFields += $deviceFields | Where-Object { $_.Guid -notin $allFields.Guid }
-            $this.CustomField = $allFields
-        }
+        $this.GetTppCustomFieldOnConnect()
 
         # $this.Version = (Get-TppSystemStatus -TppSession $this) | Select-Object -First 1 -ExpandProperty version
 

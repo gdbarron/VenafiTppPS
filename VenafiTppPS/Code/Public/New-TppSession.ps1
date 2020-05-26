@@ -45,7 +45,7 @@ https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function New-TppSession {
 
-    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'TokenWindowsIntegrated')]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'KeyWindowsIntegrated')]
 
     param(
         [Parameter(Mandatory)]
@@ -75,10 +75,6 @@ function New-TppSession {
         [Parameter(ParameterSetName = 'TokenOAuth')]
         [string] $State,
 
-        [Parameter(Mandatory, ParameterSetName = 'KeyWindowsIntegrated')]
-        [Parameter(Mandatory, ParameterSetName = 'KeyCredential')]
-        [switch] $UseKeyAuth,
-
         [Parameter()]
         [switch] $PassThru
     )
@@ -92,6 +88,8 @@ function New-TppSession {
         ServerUrl = $ServerUrl
     }
 
+    Write-Verbose ('Parameter set: {0}' -f $PSCmdlet.ParameterSetName)
+
     if ( $PSCmdlet.ShouldProcess($ServerUrl, 'New session') ) {
         Switch -Wildcard ($PsCmdlet.ParameterSetName)	{
 
@@ -101,7 +99,7 @@ function New-TppSession {
                     $newSession.Connect($Credential)
                 } else {
                     # integrated
-                    $newSession.Connect()
+                    $newSession.Connect($null)
                 }
 
             }
@@ -111,7 +109,7 @@ function New-TppSession {
                     $newSession.Connect($Credential, $ClientId, $Scope, $State)
                 } else {
                     # integrated
-                    $newSession.Connect($ClientId, $Scope, $State)
+                    $newSession.Connect($null, $ClientId, $Scope, $State)
                 }
 
             }
