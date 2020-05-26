@@ -4,13 +4,22 @@ Create a new Venafi TPP session
 
 .DESCRIPTION
 Authenticates a user and creates a new session with which future calls can be made.
-Windows Integrated authentication is the default.
+Key based credential and integrated are supported as well as token-based integrated and oauth.
 
 .PARAMETER ServerUrl
 URL for the Venafi server.
 
 .PARAMETER Credential
 PSCredential object utilizing the same credentials as used for the web front-end
+
+.PARAMETER ClientId
+Applcation Id as configured in Venafi
+
+.PARAMETER Scope
+Hashtable with Scopes and privilege restrictions
+
+.PARAMETER State
+A session state, redirect URL, or random string to prevent Cross-Site Request Forgery (CSRF) attacks
 
 .PARAMETER PassThru
 Optionally, send the session object to the pipeline instead of script scope.
@@ -25,6 +34,10 @@ Connect using Windows Integrated authentication and store the session object in 
 .EXAMPLE
 New-TppSession -ServerUrl https://venafitpp.mycompany.com -Credential $cred
 Connect to the TPP server and store the session object in the script scope
+
+.EXAMPLE
+New-TppSession -ServerUrl https://venafitpp.mycompany.com -ClientId MyApp -Scope @{'certificate'='manage'}
+Connect using token-based Windows Integrated authentication
 
 .EXAMPLE
 $sess = New-TppSession -ServerUrl https://venafitpp.mycompany.com -Credential $cred -PassThru
@@ -69,7 +82,7 @@ function New-TppSession {
 
         [Parameter(Mandatory, ParameterSetName = 'TokenIntegrated')]
         [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
-        [string] $Scope,
+        [hashtable] $Scope,
 
         [Parameter(ParameterSetName = 'TokenIntegrated')]
         [Parameter(ParameterSetName = 'TokenOAuth')]
@@ -105,11 +118,20 @@ function New-TppSession {
             }
 
             'Token*' {
+                $scopeString = @(
+                    $Scope.GetEnumerator() | ForEach-Object {
+                        if ($_.Value) {
+                            '{0}:{1}' -f $_.Key, $_.Value
+                        } else {
+                            $_.Key
+                        }
+                    }
+                ) -join ';'
                 if ( $PsCmdlet.ParameterSetName -eq 'TokenOAuth' ) {
-                    $newSession.Connect($Credential, $ClientId, $Scope, $State)
+                    $newSession.Connect($Credential, $ClientId, $scopeString, $State)
                 } else {
                     # integrated
-                    $newSession.Connect($null, $ClientId, $Scope, $State)
+                    $newSession.Connect($null, $ClientId, $scopeString, $State)
                 }
 
             }

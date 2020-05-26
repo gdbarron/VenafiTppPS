@@ -124,6 +124,9 @@ class TppSession {
             TokenType    = $response.token_type
         }
 
+        # $this.Token.Identity = $this.Token.Identity | Get-TppIdentityAttribute -TppSession $this | Select-Object -ExpandProperty PrefixedName
+
+        # TODO: can't assume scope covers the below, need to update functions which rely on this
         # $this.GetTppCustomFieldOnConnect()
     }
 
