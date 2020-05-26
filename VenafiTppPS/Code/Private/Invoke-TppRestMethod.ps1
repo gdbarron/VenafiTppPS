@@ -83,6 +83,9 @@ function Invoke-TppRestMethod {
             }
         } else {
             # token
+            $hdr = @{
+                'Authorization' = 'Bearer {0}' -f $TppSession.Token.AccessToken
+            }
         }
     }
 
