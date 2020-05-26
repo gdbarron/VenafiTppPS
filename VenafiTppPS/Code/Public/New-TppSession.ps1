@@ -12,12 +12,6 @@ URL for the Venafi server.
 .PARAMETER Credential
 PSCredential object utilizing the same credentials as used for the web front-end
 
-.PARAMETER Username
-Username to authenticate to ServerUrl with
-
-.PARAMETER SecurePassword
-SecureString password to authenticate to ServerUrl with
-
 .PARAMETER PassThru
 Optionally, send the session object to the pipeline instead of script scope.
 
@@ -51,14 +45,14 @@ https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function New-TppSession {
 
-    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'WindowsIntegrated')]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'KeyWindowsIntegrated')]
 
     param(
         [Parameter(Mandatory)]
         [string] $ServerUrl,
 
-        [Parameter(Mandatory, ParameterSetName = 'Credential')]
-        [Parameter(Mandatory, ParameterSetName = 'OAuth')]
+        [Parameter(Mandatory, ParameterSetName = 'KeyCredential')]
+        [Parameter(Mandatory, ParameterSetName = 'Token')]
         [System.Management.Automation.PSCredential] $Credential,
 
         # [Parameter(Mandatory, ParameterSetName = 'UsernamePassword')]
@@ -69,89 +63,51 @@ function New-TppSession {
         # [ValidateNotNullOrEmpty()]
         # [Security.SecureString] $SecurePassword,
 
-        [Parameter(Mandatory, ParameterSetName = 'OAuth')]
+        [Parameter(Mandatory, ParameterSetName = 'Token')]
         [string] $ClientId,
 
-        [Parameter(ParameterSetName = 'OAuth')]
+        [Parameter(ParameterSetName = 'Token')]
         [hashtable] $Scope,
 
-        [Parameter(ParameterSetName = 'OAuth')]
+        [Parameter(ParameterSetName = 'Token')]
         [string] $State,
 
         [Parameter()]
         [switch] $PassThru
     )
 
-    # add prefix if just server name was provided
+    # add prefix if just server url was provided
     if ( $ServerUrl -notlike 'https://*') {
         $ServerUrl = 'https://{0}' -f $ServerUrl
     }
 
-    Switch ($PsCmdlet.ParameterSetName)	{
+    $newSession = [TppSession] @{
+        ServerUrl = $ServerUrl
+    }
 
-        "Credential" {
-            $newSession = [TppSession] @{
-                ServerUrl = $ServerUrl
-            }
+    Switch -Wildcard ($PsCmdlet.ParameterSetName)	{
 
-            if ( $PsCmdlet.ParameterSetName -ne 'WindowsIntegrated' ) {
-                $newSession.Credential = $Credential
-            }
+        "Key*" {
 
-            if ( $PSCmdlet.ShouldProcess($ServerUrl, 'New session') ) {
-
+            if ( $PsCmdlet.ParameterSetName -eq 'KeyCredential' ) {
+                $newSession.Connect($Credential)
+            } else {
+                # integrated
                 $newSession.Connect()
-
-                if ( $PassThru ) {
-                    $newSession
-                } else {
-                    $Script:TppSession = $newSession
-                }
             }
-        }
-
-        'OAuth' {
-
-            $params = @{
-                Method    = 'Post'
-                ServerUrl = $ServerUrl
-                UriRoot   = 'vedauth'
-                UriLeaf   = 'authorize/oauth'
-                Body      = @{
-                    client_id = $ClientId
-                    username  = $Credential.username
-                    password  = $Credential.GetNetworkCredential().password
-                }
-            }
-
-            if ( $Scope ) {
-                $params.Body.scope = $Scope
-            }
-
-            if ( $State ) {
-                $params.Body.state = $State
-            }
-
-            $response = Invoke-TppRestMethod @params
-            $response
-            # $this.APIKey = $response.ApiKey
-            # $this.ValidUntil = $response.ValidUntil
-
-            # # get custom fields
-            # if ( -not $this.CustomField ) {
-            #     $allFields = (Get-TppCustomField -TppSession $this -Class 'X509 Certificate').Items
-            #     $deviceFields = (Get-TppCustomField -TppSession $this -Class 'Device').Items
-            #     $allFields += $deviceFields | Where-Object { $_.Guid -notin $allFields.Guid }
-            #     $this.CustomField = $allFields
-            # }
 
         }
 
-        # "UsernamePassword" {
-        #     # build a credential object to attached to the session object
-        #     $sessionCredential = New-Object System.Management.Automation.PSCredential ($Username, $SecurePassword)
-        # }
+        'Token' {
 
+            $newSession.Connect($Credential, $ClientId, $Scope, $State)
+        }
+    }
+
+    if ( $PassThru ) {
+        $newSession
+    } else {
+        $Script:TppSession = $newSession
     }
 
 }

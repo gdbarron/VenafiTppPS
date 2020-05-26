@@ -68,8 +68,13 @@ function Invoke-TppRestMethod {
     Switch ($PsCmdlet.ParameterSetName)	{
         "Session" {
             $ServerUrl = $TppSession.ServerUrl
-            $hdr = @{
-                "X-Venafi-Api-Key" = $TppSession.ApiKey
+
+            if ( $TppSession.Key ) {
+                $hdr = @{
+                    "X-Venafi-Api-Key" = $TppSession.Key.ApiKey
+                }
+            } else {
+                # token
             }
         }
     }
@@ -99,18 +104,16 @@ function Invoke-TppRestMethod {
         $params.Add('UseDefaultCredentials', $true)
     }
 
-    Write-Verbose ($params | ConvertTo-Json | out-string)
+    Write-Verbose ($params | ConvertTo-Json | Out-String)
 
     if ( $PSBoundParameters.ContainsKey('UseWebRequest') ) {
         Write-Debug "Using Invoke-WebRequest"
         try {
             Invoke-WebRequest @params
-        }
-        catch {
+        } catch {
             $_.Exception.Response
         }
-    }
-    else {
+    } else {
         Write-Debug "Using Invoke-RestMethod"
         Invoke-RestMethod @params
     }
