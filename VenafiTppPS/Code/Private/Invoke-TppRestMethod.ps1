@@ -92,6 +92,7 @@ function Invoke-TppRestMethod {
         if ( $Method -ne 'Get' ) {
             $restBody = ConvertTo-Json $Body -depth 5
         }
+        # $restBody = ConvertTo-Json $Body -depth 5
     }
 
     $params = @{

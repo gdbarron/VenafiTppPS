@@ -23,12 +23,12 @@ class TppSession {
             throw "You must first connect to the TPP server with New-TppSession"
         }
 
-        if ( $this.Key ) {
 
-            # if we know the session is still valid, don't bother checking with the server
-            # add a couple of seconds so we don't get caught making the call as it expires
-            Write-Verbose ("Expires: {0}, Current (+2s): {1}" -f $this.Expires, (Get-Date).ToUniversalTime().AddSeconds(2))
-            if ( $this.Expires -lt (Get-Date).ToUniversalTime().AddSeconds(2) ) {
+        # if we know the session is still valid, don't bother checking with the server
+        # add a couple of seconds so we don't get caught making the call as it expires
+        Write-Verbose ("Expires: {0}, Current (+2s): {1}" -f $this.Expires, (Get-Date).ToUniversalTime().AddSeconds(2))
+        if ( $this.Expires -lt (Get-Date).ToUniversalTime().AddSeconds(2) ) {
+            if ( $this.Key ) {
 
                 try {
                     $params = @{
@@ -54,10 +54,44 @@ class TppSession {
                         throw $_
                     }
                 }
-            }
-        } else {
-            # token
+            } else {
+                # token
 
+                if ( $this.Token.RefreshUntil -and $this.Token.RefreshUntil -lt (Get-Date) ) {
+                    throw "The refresh token has expired.  You must create a new session with New-TppSession."
+                }
+
+                if ( $this.Token.RefreshToken ) {
+
+                    $params = @{
+                        Method    = 'Post'
+                        ServerUrl = $this.ServerUrl
+                        UriRoot   = 'vedauth'
+                        UriLeaf   = 'authorize/token'
+                        Body      = @{
+                            refresh_token = $this.Token.RefreshToken
+                            client_id     = $this.Token.ClientId
+                        }
+                    }
+                    $response = Invoke-TppRestMethod @params
+
+                    Write-Verbose ($response | Out-String)
+
+                    $this.Expires = ([datetime] '1970-01-01 00:00:00').AddSeconds($response.expires)
+                    $this.Token = [PSCustomObject]@{
+                        AccessToken  = $response.access_token
+                        RefreshToken = $response.refresh_token
+                        Scope        = $response.scope
+                        Identity     = $this.Token.Identity
+                        ClientId     = $this.Token.ClientId
+                        TokenType    = $response.token_type
+                        RefreshUntil = ([datetime] '1970-01-01 00:00:00').AddSeconds($response.refresh_until)
+                    }
+
+                } else {
+                    throw "The token has expired and no refresh token exists.  You must create a new session with New-TppSession."
+                }
+            }
         }
     }
 
@@ -78,8 +112,6 @@ class TppSession {
         [string] $Scope,
         [string] $State
     ) {
-
-        [datetime] $origin = '1970-01-01 00:00:00'
 
         if ( -not ($this.ServerUrl) ) {
             throw "You must provide a value for ServerUrl"
@@ -115,13 +147,14 @@ class TppSession {
 
         Write-Verbose ($response | Out-String)
 
-        $this.Expires = $origin.AddSeconds($response.Expires)
+        $this.Expires = ([datetime] '1970-01-01 00:00:00').AddSeconds($response.Expires)
         $this.Token = [PSCustomObject]@{
             AccessToken  = $response.access_token
             RefreshToken = $response.refresh_token
             Scope        = $response.scope
             Identity     = $response.identity
             TokenType    = $response.token_type
+            ClientId     = $ClientId
         }
 
         # $this.Token.Identity = $this.Token.Identity | Get-TppIdentityAttribute -TppSession $this | Select-Object -ExpandProperty PrefixedName
