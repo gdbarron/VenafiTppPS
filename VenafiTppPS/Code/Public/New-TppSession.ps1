@@ -18,6 +18,9 @@ Applcation Id as configured in Venafi
 .PARAMETER Scope
 Hashtable with Scopes and privilege restrictions
 
+.PARAMETER IncludeAllScope
+Include all scopes, when authenticating via token, instead of selecting individual ones.  Be careful with this.
+
 .PARAMETER State
 A session state, redirect URL, or random string to prevent Cross-Site Request Forgery (CSRF) attacks
 
@@ -80,13 +83,17 @@ function New-TppSession {
         [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
         [string] $ClientId,
 
-        [Parameter(Mandatory, ParameterSetName = 'TokenIntegrated')]
-        [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
-        [hashtable] $Scope,
+        [Parameter(ParameterSetName = 'TokenIntegrated')]
+        [Parameter(ParameterSetName = 'TokenOAuth')]
+        [hashtable] $Scope = @{'any' = $null },
 
         [Parameter(ParameterSetName = 'TokenIntegrated')]
         [Parameter(ParameterSetName = 'TokenOAuth')]
         [string] $State,
+
+        [Parameter(ParameterSetName = 'TokenIntegrated')]
+        [Parameter(ParameterSetName = 'TokenOAuth')]
+        [switch] $IncludeAllScope,
 
         [Parameter()]
         [switch] $PassThru
@@ -103,6 +110,11 @@ function New-TppSession {
 
     Write-Verbose ('Parameter set: {0}' -f $PSCmdlet.ParameterSetName)
 
+    # including this check here instead of parameter sets as it would have created too many imo
+    if ( $PSBoundParameters.ContainsKey('Scope') -and $IncludeAllScope ) {
+        throw 'Scope and IncludeAllScope cannot both be provided'
+    }
+
     if ( $PSCmdlet.ShouldProcess($ServerUrl, 'New session') ) {
         Switch -Wildcard ($PsCmdlet.ParameterSetName)	{
 
@@ -118,8 +130,21 @@ function New-TppSession {
             }
 
             'Token*' {
+                if ( $PSBoundParameters.ContainsKey('Scope') ) {
+                    $scopeHash = $Scope
+                } else {
+                    $scopeHash = @{
+                        'agent'         = 'delete'
+                        'certificate'   = 'delete,discover,manage,revoke'
+                        'configuration' = 'delete,manage'
+                        'restricted'    = 'delete,manage'
+                        'security'      = 'delete,manage'
+                        'ssh'           = 'approve,delete,discover,manage'
+                        'statistics'    = $null
+                    }
+                }
                 $scopeString = @(
-                    $Scope.GetEnumerator() | ForEach-Object {
+                    $scopeHash.GetEnumerator() | ForEach-Object {
                         if ($_.Value) {
                             '{0}:{1}' -f $_.Key, $_.Value
                         } else {
