@@ -25,7 +25,7 @@ function Invoke-TppRestMethod {
     [CmdletBinding(DefaultParameterSetName = 'Session')]
     param (
         [Parameter(Mandatory, ParameterSetName = 'Session')]
-        # [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty()]
         [TppSession] $TppSession,
 
         [Parameter(Mandatory, ParameterSetName = 'URL')]
@@ -66,14 +66,6 @@ function Invoke-TppRestMethod {
     # }
 
     if ( $PsCmdlet.ParameterSetName -eq 'Session' ) {
-
-        # this should never occur as the module inits the variable
-        # but if TppSession ever gets wiped, this will catch it
-        # if ( -not $TppSession ) {
-        #     throw "You must first connect to the TPP server with New-TppSession"
-        # }
-
-        # $TppSession.Validate()
 
         $ServerUrl = $TppSession.ServerUrl
 
