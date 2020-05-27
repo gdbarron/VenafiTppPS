@@ -74,8 +74,7 @@ function Revoke-TppCertificate {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -126,15 +125,15 @@ function Revoke-TppCertificate {
         }
 
         if ( $Reason ) {
-            $params.Body.Add('Reason', $Reason)
+            $params.Body.Reason = $Reason
         }
 
         if ( $Comments ) {
-            $params.Body.Add('Comments', $Comments)
+            $params.Body.Comments = $Comments
         }
 
         if ( $Disable ) {
-            $params.Body.Add('Disable', $true)
+            $params.Body.Disable = $true
         }
 
         if ( $PSCmdlet.ShouldProcess($Path, 'Revoke certificate') ) {
@@ -150,12 +149,10 @@ function Revoke-TppCertificate {
             # determine status that makes sense since API returns Success in addition to Revoked/Requested
             if ( $response.Error ) {
                 $status = "Error"
-            }
-            else {
+            } else {
                 if ( $response.Revoked ) {
                     $status = 'Revoked'
-                }
-                else {
+                } else {
                     $status = 'InProgress'
                 }
             }
@@ -166,8 +163,7 @@ function Revoke-TppCertificate {
 
             if ( $updatedResponse ) {
                 $updatedResponse | Add-Member @{'Path' = $Path; 'Status' = $status } -PassThru
-            }
-            else {
+            } else {
                 [PSCustomObject] @{
                     'Path'   = $Path
                     'Status' = $status

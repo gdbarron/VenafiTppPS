@@ -113,15 +113,15 @@ function Set-TppWorkflowTicketStatus {
             }
 
             if ( $PSBoundParameters.ContainsKey('Explanation') ) {
-                $params.Body.Add('Explanation', $Explanation)
+                $params.Body.Explanation = $Explanation
             }
 
             if ( $PSBoundParameters.ContainsKey('ScheduledStart') ) {
-                $params.Body.Add( 'ScheduledStart', ($ScheduledStart | ConvertTo-UtcIso8601) )
+                $params.Body.ScheduledStart = ($ScheduledStart | ConvertTo-UtcIso8601)
             }
 
             if ( $PSBoundParameters.ContainsKey('ScheduledStop') ) {
-                $params.Body.Add( 'ScheduledStop', ($ScheduledStop | ConvertTo-UtcIso8601) )
+                $params.Body.ScheduledStop = ($ScheduledStop | ConvertTo-UtcIso8601)
             }
 
             if ( $PSCmdlet.ShouldProcess($params.Body.GUID, 'Set workflow ticket status') ) {

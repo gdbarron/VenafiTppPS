@@ -106,14 +106,13 @@ function Get-TppIdentityAttribute {
 
                     $response = Invoke-TppRestMethod @params
                     if ( $response.Attributes ) {
-                        $attribHash.Add($thisAttribute, $response.Attributes[0])
+                        $attribHash.$thisAttribute = $response.Attributes[0]
                     }
                 }
 
                 $attribsOut = [PSCustomObject] $attribHash
 
-            }
-            else {
+            } else {
                 $response = Invoke-TppRestMethod @params
                 $attribsOut = $response.Id
             }
