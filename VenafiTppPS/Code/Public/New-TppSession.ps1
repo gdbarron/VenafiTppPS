@@ -4,22 +4,24 @@ Create a new Venafi TPP session
 
 .DESCRIPTION
 Authenticates a user and creates a new session with which future calls can be made.
-Key based credential and integrated are supported as well as token-based integrated and oauth.
+Key based username/password and windows integrated are supported as well as token-based integrated and oauth.
+Note, key-based authentication will be fully deprecated in v20.4.
 
 .PARAMETER ServerUrl
 URL for the Venafi server.
 
 .PARAMETER Credential
-PSCredential object utilizing the same credentials as used for the web front-end
+Username and password used for key and token-based authentication.  Not required for integrated authentication.
 
 .PARAMETER ClientId
-Applcation Id as configured in Venafi
+Applcation Id configured in Venafi for token-based authentication
 
 .PARAMETER Scope
-Hashtable with Scopes and privilege restrictions
+Hashtable with Scopes and privilege restrictions.
+The key is the scope and the value is one or more privilege restrictions separated by commas.
 
 .PARAMETER IncludeAllScope
-Include all scopes, when authenticating via token, instead of selecting individual ones.  Be careful with this.
+Include all scopes and privilege restrictions when authenticating via token, instead of selecting individual ones.
 
 .PARAMETER State
 A session state, redirect URL, or random string to prevent Cross-Site Request Forgery (CSRF) attacks
@@ -31,20 +33,28 @@ Optionally, send the session object to the pipeline instead of script scope.
 TppSession, if PassThru is provided
 
 .EXAMPLE
-New-TppSession -ServerUrl https://venafitpp.mycompany.com
-Connect using Windows Integrated authentication and store the session object in the script scope
+New-TppSession -ServerUrl venafitpp.mycompany.com
+Create key-based session using Windows Integrated authentication
 
 .EXAMPLE
-New-TppSession -ServerUrl https://venafitpp.mycompany.com -Credential $cred
-Connect to the TPP server and store the session object in the script scope
+New-TppSession -ServerUrl venafitpp.mycompany.com -Credential $cred
+Create key-based session using Windows Integrated authentication
 
 .EXAMPLE
-New-TppSession -ServerUrl https://venafitpp.mycompany.com -ClientId MyApp -Scope @{'certificate'='manage'}
-Connect using token-based Windows Integrated authentication
+New-TppSession -ServerUrl venafitpp.mycompany.com -ClientId MyApp
+Connect using token-based Windows Integrated authentication with the 'any' scope
 
 .EXAMPLE
-$sess = New-TppSession -ServerUrl https://venafitpp.mycompany.com -Credential $cred -PassThru
-Connect to the TPP server and return the session object
+New-TppSession -ServerUrl venafitpp.mycompany.com -ClientId MyApp -Scope @{'certificate'='manage'}
+Create token-based session using Windows Integrated authentication with a certain scope and privilege restriction
+
+.EXAMPLE
+New-TppSession -ServerUrl venafitpp.mycompany.com -ClientId MyApp -IncludeAllScope -Credential $cred
+Create token-based session using oauth authentication for all scopes and privilege restrictions
+
+.EXAMPLE
+$sess = New-TppSession -ServerUrl venafitpp.mycompany.com -Credential $cred -PassThru
+Create session and return the session object instead of setting to script scope variable
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppSession/
@@ -53,10 +63,16 @@ http://venafitppps.readthedocs.io/en/latest/functions/New-TppSession/
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppSession.ps1
 
 .LINK
-https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Authorize.php?TocPath=REST%20API%20reference|Authentication%20and%20API%20key%20programming%20interfaces|_____1
+https://docs.venafi.com/Docs/19.4/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Authorize.php?tocpath=Topics%20by%20Guide%7CDeveloper%27s%20Guide%7CWeb%20SDK%20reference%7CAuthentication%20programming%20interfaces%7C_____1
 
 .LINK
-https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Authorize-Integrated.php?tocpath=REST%20API%20reference%7CAuthentication%20and%20API%20key%20programming%20interfaces%7C_____2
+https://docs.venafi.com/Docs/19.4/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Authorize-Integrated.php?tocpath=Topics%20by%20Guide%7CDeveloper%27s%20Guide%7CWeb%20SDK%20reference%7CAuthentication%20programming%20interfaces%7C_____3
+
+.LINK
+https://docs.venafi.com/Docs/20.1SDK/TopNav/Content/SDK/AuthSDK/r-SDKa-POST-Authorize-Integrated.php?tocpath=Auth%20SDK%20reference%20for%20token%20management%7C_____10
+
+.LINK
+https://docs.venafi.com/Docs/20.1SDK/TopNav/Content/SDK/AuthSDK/r-SDKa-POST-AuthorizeOAuth.php?tocpath=Auth%20SDK%20reference%20for%20token%20management%7C_____11
 
 #>
 function New-TppSession {
@@ -70,14 +86,6 @@ function New-TppSession {
         [Parameter(Mandatory, ParameterSetName = 'KeyCredential')]
         [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
         [System.Management.Automation.PSCredential] $Credential,
-
-        # [Parameter(Mandatory, ParameterSetName = 'UsernamePassword')]
-        # [ValidateNotNullOrEmpty()]
-        # [string] $Username,
-
-        # [Parameter(Mandatory, ParameterSetName = 'UsernamePassword')]
-        # [ValidateNotNullOrEmpty()]
-        # [Security.SecureString] $SecurePassword,
 
         [Parameter(Mandatory, ParameterSetName = 'TokenIntegrated')]
         [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
@@ -120,6 +128,8 @@ function New-TppSession {
         Switch -Wildcard ($PsCmdlet.ParameterSetName)	{
 
             "Key*" {
+
+                Write-Warning 'Key-based authentication will be deprecated in release 20.4 in favor of token-based'
 
                 if ( $PsCmdlet.ParameterSetName -eq 'KeyCredential' ) {
                     $newSession.Connect($Credential)
