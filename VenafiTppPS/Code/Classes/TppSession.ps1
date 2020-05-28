@@ -48,10 +48,10 @@ class TppSession {
                         if ( $this.Key.Credential ) {
                             $this.Connect($this.Key.Credential)
                         } else {
-                            $this.Connect()
+                            $this.Connect($null)
                         }
                     } else {
-                        throw $_
+                        throw ('"{0} {1}: {2}' -f $_.Exception.Response.StatusCode.value__, $_.Exception.Response.StatusDescription, $_ | Out-String )
                     }
                 }
             } else {
@@ -195,8 +195,7 @@ class TppSession {
             Credential = $Credential
         }
 
-        $this.GetTppCustomFieldOnConnect()
-
+        # $this.GetTppCustomFieldOnConnect()
         # $this.Version = (Get-TppSystemStatus -TppSession $this) | Select-Object -First 1 -ExpandProperty version
 
     }
