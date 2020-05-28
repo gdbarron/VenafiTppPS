@@ -99,6 +99,7 @@ function New-TppSession {
         [switch] $PassThru
     )
 
+    $ServerUrl = $ServerUrl.Trim('/')
     # add prefix if just server url was provided
     if ( $ServerUrl -notlike 'https://*') {
         $ServerUrl = 'https://{0}' -f $ServerUrl

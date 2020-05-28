@@ -365,7 +365,7 @@ function Find-TppCertificate {
         $params = @{
             TppSession = $TppSession
             Method     = 'Get'
-            UriLeaf    = 'certificates'
+            UriLeaf    = 'certificates/'
             Body       = @{
                 Limit = $Limit
             }

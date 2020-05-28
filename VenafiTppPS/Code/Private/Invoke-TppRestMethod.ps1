@@ -81,7 +81,7 @@ function Invoke-TppRestMethod {
         }
     }
 
-    $uri = Join-UriPath @($ServerUrl, $UriRoot, $UriLeaf)
+    $uri = '{0}/{1}/{2}' -f $ServerUrl, $UriRoot, $UriLeaf
 
     if ( $Header ) {
         $hdr += $Header
@@ -92,7 +92,6 @@ function Invoke-TppRestMethod {
         if ( $Method -ne 'Get' ) {
             $restBody = ConvertTo-Json $Body -depth 5
         }
-        # $restBody = ConvertTo-Json $Body -depth 5
     }
 
     $params = @{
@@ -118,7 +117,11 @@ function Invoke-TppRestMethod {
         }
     } else {
         Write-Debug "Using Invoke-RestMethod"
-        Invoke-RestMethod @params
+        try {
+            Invoke-RestMethod @params
+        } catch {
+            throw ('"{0} {1}: {2}' -f $_.Exception.Response.StatusCode.value__, $_.Exception.Response.StatusDescription, $_|Out-String )
+        }
     }
 }
 
