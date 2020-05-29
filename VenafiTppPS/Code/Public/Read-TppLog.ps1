@@ -78,12 +78,12 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function Read-TppLog {
-    [CmdletBinding(DefaultParameterSetName = 'ByObject')]
+    [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
-        [Parameter(ValueFromPipeline, ParameterSetName = 'ByObject')]
+        [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'ByObject')]
         [TppObject] $InputObject,
 
-        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(Mandatory, ParameterSetName = 'ByPath')]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
@@ -173,12 +173,12 @@ function Read-TppLog {
 
     process {
 
-        switch ($PSBoundParameters.Keys) {
-            'InputObject' {
+        switch ($PSCmdlet.ParameterSetName) {
+            'ByObject' {
                 $params.Body.Component = $InputObject.Path
             }
 
-            'Path' {
+            'ByPath' {
                 $params.Body.Component = $Path
             }
         }
