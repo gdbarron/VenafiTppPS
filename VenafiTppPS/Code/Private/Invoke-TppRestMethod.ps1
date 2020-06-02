@@ -101,7 +101,7 @@ function Invoke-TppRestMethod {
         $params.Body = $restBody
     } else {
         # if there is no querystring, we need to append a trailing slash to avoid a HTTP 307/401
-        if ( $Method -eq 'Get' -and (-not $uri.EndsWith('/')) ) {
+        if ( $Method -eq 'Get' -and (-not $uri.EndsWith('/')) -and (-not $uri.ToLower().EndsWith('systemstatus/version')) ) {
             $params.Uri += '/'
         }
     }
@@ -124,7 +124,7 @@ function Invoke-TppRestMethod {
         try {
             Invoke-RestMethod @params
         } catch {
-            throw ('"{0} {1}: {2}' -f $_.Exception.Response.StatusCode.value__, $_.Exception.Response.StatusDescription, $_ | Out-String )
+            throw ('{0} {1}: {2}' -f $_.Exception.Response.StatusCode.value__, $_.Exception.Response.StatusDescription, $_ | Out-String )
         }
     }
 }
