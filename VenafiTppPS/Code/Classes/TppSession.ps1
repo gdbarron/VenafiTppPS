@@ -55,42 +55,11 @@ class TppSession {
                     }
                 }
             } else {
-                # token
-
-                if ( $this.Token.RefreshUntil -and $this.Token.RefreshUntil -lt (Get-Date) ) {
-                    throw "The refresh token has expired.  You must create a new session with New-TppSession."
-                }
-
-                if ( $this.Token.RefreshToken ) {
-
-                    $params = @{
-                        Method    = 'Post'
-                        ServerUrl = $this.ServerUrl
-                        UriRoot   = 'vedauth'
-                        UriLeaf   = 'authorize/token'
-                        Body      = @{
-                            refresh_token = $this.Token.RefreshToken
-                            client_id     = $this.Token.ClientId
-                        }
-                    }
-                    $response = Invoke-TppRestMethod @params
-
-                    Write-Verbose ($response | Out-String)
-
-                    $this.Expires = ([datetime] '1970-01-01 00:00:00').AddSeconds($response.expires)
-                    $this.Token = [PSCustomObject]@{
-                        AccessToken  = $response.access_token
-                        RefreshToken = $response.refresh_token
-                        Scope        = $response.scope
-                        Identity     = $this.Token.Identity
-                        ClientId     = $this.Token.ClientId
-                        TokenType    = $response.token_type
-                        RefreshUntil = ([datetime] '1970-01-01 00:00:00').AddSeconds($response.refresh_until)
-                    }
-
-                } else {
-                    throw "The token has expired and no refresh token exists.  You must create a new session with New-TppSession."
-                }
+               # token
+               # By default, access tokens are long-lived (90 day default). Refreshing the token should be handled outside of this class, so that the
+               #  refresh token and access token can be properly maintained and passed to the script.
+               
+               # We have to assume a good token here and ensure Invoke-TPPRestMethod catches and handles the condition where a token expires
             }
         }
     }
@@ -106,61 +75,16 @@ class TppSession {
     }
 
     # connect for token based auth
-    [void] Connect(
-        [PSCredential] $Credential,
-        [string] $ClientId,
-        [string] $Scope,
-        [string] $State
+    [void] ConnectToken(
+        [string] $AccessToken
     ) {
-
-        if ( -not ($this.ServerUrl) ) {
-            throw "You must provide a value for ServerUrl"
-        }
-
-        $params = @{
-            Method    = 'Post'
-            ServerUrl = $this.ServerUrl
-            UriRoot   = 'vedauth'
-            Body      = @{
-                client_id = $ClientId
-            }
-        }
-
-        if ( $Credential ) {
-            $params.UriLeaf = 'authorize/oauth'
-            $params.Body.username = $Credential.UserName
-            $params.Body.password = $Credential.GetNetworkCredential().Password
-        } else {
-            $params.UriLeaf = 'authorize/integrated'
-            $params.UseDefaultCredentials = $true
-        }
-
-        if ( $Scope ) {
-            $params.Body.scope = $Scope
-        }
-
-        if ( $State ) {
-            $params.Body.state = $State
-        }
-
-        $response = Invoke-TppRestMethod @params
-
-        Write-Verbose ($response | Out-String)
-
-        $this.Expires = ([datetime] '1970-01-01 00:00:00').AddSeconds($response.Expires)
         $this.Token = [PSCustomObject]@{
-            AccessToken  = $response.access_token
-            RefreshToken = $response.refresh_token
-            Scope        = $response.scope
-            Identity     = $response.identity
-            TokenType    = $response.token_type
-            ClientId     = $ClientId
+            AccessToken  = $AccessToken
         }
-
-        # $this.Token.Identity = $this.Token.Identity | Get-TppIdentityAttribute -TppSession $this | Select-Object -ExpandProperty PrefixedName
 
         # TODO: can't assume scope covers the below, need to update functions which rely on this
-        # $this.GetTppCustomFieldOnConnect()
+        #   BeardedPrincess: The Metadata/GetItemsForClass function does not require any special scope, just a valid token _should_ work
+        $this.GetTppCustomFieldOnConnect()
     }
 
     # connect for key based
