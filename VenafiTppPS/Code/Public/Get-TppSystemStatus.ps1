@@ -42,7 +42,7 @@ function Get-TppSystemStatus {
     $params = @{
         TppSession = $TppSession
         Method     = 'Get'
-        UriLeaf    = 'SystemStatus'
+        UriLeaf    = 'SystemStatus/'
     }
 
     try {

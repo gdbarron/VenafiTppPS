@@ -94,7 +94,6 @@ function Get-TppCertificateDetail {
         $params = @{
             TppSession = $TppSession
             Method     = 'Get'
-            UriLeaf    = 'placeholder'
         }
     }
 
