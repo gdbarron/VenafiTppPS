@@ -99,11 +99,6 @@ function Invoke-TppRestMethod {
             $restBody = ConvertTo-Json $Body -depth 5
         }
         $params.Body = $restBody
-    } else {
-        # if there is no querystring, we need to append a trailing slash to avoid a HTTP 307/401
-        if ( $Method -eq 'Get' -and (-not $uri.EndsWith('/')) -and (-not $uri.ToLower().EndsWith('systemstatus/version')) ) {
-            $params.Uri += '/'
-        }
     }
 
     if ( $UseDefaultCredentials ) {
@@ -124,7 +119,22 @@ function Invoke-TppRestMethod {
         try {
             Invoke-RestMethod @params
         } catch {
-            throw ('{0} {1}: {2}' -f $_.Exception.Response.StatusCode.value__, $_.Exception.Response.StatusDescription, $_ | Out-String )
+            # try with trailing slash as some GETs return a 307/401 without it
+            if ( $Method -eq 'Get' -and (-not $uri.EndsWith('/')) ) {
+
+                Write-Verbose 'GET call failed, trying again with a trailing slash'
+
+                $params.Uri += '/'
+
+                try {
+                    Invoke-RestMethod @params
+                    Write-Warning ('GET call requires a trailing slash, please create an issue at https://github.com/gdbarron/VenafiTppPS/issues and mention api endpoint {0}' -f ('{1}/{2}' -f $UriRoot, $UriLeaf))
+                } catch {
+                    throw ('"{0} {1}: {2}' -f $_.Exception.Response.StatusCode.value__, $_.Exception.Response.StatusDescription, $_ | Out-String )
+                }
+            } else {
+                throw ('"{0} {1}: {2}' -f $_.Exception.Response.StatusCode.value__, $_.Exception.Response.StatusDescription, $_ | Out-String )
+            }
         }
     }
 }

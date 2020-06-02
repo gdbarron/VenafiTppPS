@@ -131,7 +131,7 @@ function Read-TppLog {
         $params = @{
             TppSession = $TppSession
             Method     = 'Get'
-            UriLeaf    = 'Log'
+            UriLeaf    = 'Log/'
             Body       = @{ }
         }
 
