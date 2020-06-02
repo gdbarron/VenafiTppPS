@@ -7,7 +7,7 @@ class TppSession {
     [PSCustomObject] $Key
     [PSCustomObject] $Token
     [PSCustomObject] $CustomField
-    # [Version] $Version
+    [Version] $Version
 
     TppSession () {
         # throw [System.NotImplementedException]::New()
@@ -85,6 +85,11 @@ class TppSession {
         # TODO: can't assume scope covers the below, need to update functions which rely on this
         #   BeardedPrincess: The Metadata/GetItemsForClass function does not require any special scope, just a valid token _should_ work
         $this.GetTppCustomFieldOnConnect()
+        
+        # token-based auth was introduced in 19.2, and GET /systemstatus/version introduced in 18.3. So, if we're doing token auth, we can
+        #  get the version upon connecting!
+        #  FYI - The docs say that users need "Read" access to the engine root for /systemstatus/version - this is a doc bug and has been reported
+        $this.Version = Get-TppVersion -TppSession $this
     }
 
     # connect for key based
@@ -119,8 +124,8 @@ class TppSession {
             Credential = $Credential
         }
 
-        # $this.GetTppCustomFieldOnConnect()
-        # $this.Version = (Get-TppSystemStatus -TppSession $this) | Select-Object -First 1 -ExpandProperty version
+        $this.GetTppCustomFieldOnConnect()
+        # $this.Version = Get-TppVersion -TppSession $this
 
     }
 
