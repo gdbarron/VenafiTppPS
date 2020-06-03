@@ -84,24 +84,10 @@ function New-TppSession {
         [string] $ServerUrl,
 
         [Parameter(Mandatory, ParameterSetName = 'KeyCredential')]
-        [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
         [System.Management.Automation.PSCredential] $Credential,
 
-        [Parameter(Mandatory, ParameterSetName = 'TokenIntegrated')]
-        [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
-        [string] $ClientId,
-
-        [Parameter(ParameterSetName = 'TokenIntegrated')]
-        [Parameter(ParameterSetName = 'TokenOAuth')]
-        [hashtable] $Scope = @{'any' = $null },
-
-        [Parameter(ParameterSetName = 'TokenIntegrated')]
-        [Parameter(ParameterSetName = 'TokenOAuth')]
-        [string] $State,
-
-        [Parameter(ParameterSetName = 'TokenIntegrated')]
-        [Parameter(ParameterSetName = 'TokenOAuth')]
-        [switch] $IncludeAllScope,
+        [Parameter(Mandatory, ParameterSetName = 'TokenAuth')]
+        [string] $AccessToken,
 
         [Parameter()]
         [switch] $PassThru
@@ -118,11 +104,6 @@ function New-TppSession {
     }
 
     Write-Verbose ('Parameter set: {0}' -f $PSCmdlet.ParameterSetName)
-
-    # including this check here instead of parameter sets as it would have created too many imo
-    if ( $PSBoundParameters.ContainsKey('Scope') -and $IncludeAllScope ) {
-        throw 'Scope and IncludeAllScope cannot both be provided'
-    }
 
     if ( $PSCmdlet.ShouldProcess($ServerUrl, 'New session') ) {
         Switch -Wildcard ($PsCmdlet.ParameterSetName)	{
@@ -141,35 +122,7 @@ function New-TppSession {
             }
 
             'Token*' {
-                if ( $PSBoundParameters.ContainsKey('Scope') ) {
-                    $scopeHash = $Scope
-                } else {
-                    $scopeHash = @{
-                        'agent'         = 'delete'
-                        'certificate'   = 'delete,discover,manage,revoke'
-                        'configuration' = 'delete,manage'
-                        'restricted'    = 'delete,manage'
-                        'security'      = 'delete,manage'
-                        'ssh'           = 'approve,delete,discover,manage'
-                        'statistics'    = $null
-                    }
-                }
-                $scopeString = @(
-                    $scopeHash.GetEnumerator() | ForEach-Object {
-                        if ($_.Value) {
-                            '{0}:{1}' -f $_.Key, $_.Value
-                        } else {
-                            $_.Key
-                        }
-                    }
-                ) -join ';'
-                if ( $PsCmdlet.ParameterSetName -eq 'TokenOAuth' ) {
-                    $newSession.Connect($Credential, $ClientId, $scopeString, $State)
-                } else {
-                    # integrated
-                    $newSession.Connect($null, $ClientId, $scopeString, $State)
-                }
-
+                $newSession.ConnectToken($AccessToken)
             }
         }
 
