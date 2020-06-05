@@ -47,7 +47,7 @@ function Invoke-TppRestMethod {
         [String] $UriLeaf,
 
         [Parameter()]
-        [String] $Header,
+        [hashtable] $Header,
 
         [Parameter()]
         [Hashtable] $Body,
