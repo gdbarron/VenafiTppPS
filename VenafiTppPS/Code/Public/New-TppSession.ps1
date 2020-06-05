@@ -4,14 +4,17 @@ Create a new Venafi TPP session
 
 .DESCRIPTION
 Authenticates a user and creates a new session with which future calls can be made.
-Key based username/password and windows integrated are supported as well as token-based integrated and oauth.
+Key based username/password and windows integrated are supported as well as token-based integrated, oauth, and certificate.
 Note, key-based authentication will be fully deprecated in v20.4.
 
-.PARAMETER ServerUrl
-URL for the Venafi server.
+.PARAMETER Server
+Tpp server which hosts the vedsdk application
 
 .PARAMETER Credential
 Username and password used for key and token-based authentication.  Not required for integrated authentication.
+
+.PARAMETER Certificate
+Certificate for token-based authentication
 
 .PARAMETER ClientId
 Applcation Id configured in Venafi for token-based authentication
@@ -20,11 +23,17 @@ Applcation Id configured in Venafi for token-based authentication
 Hashtable with Scopes and privilege restrictions.
 The key is the scope and the value is one or more privilege restrictions separated by commas.
 
-.PARAMETER IncludeAllScope
-Include all scopes and privilege restrictions when authenticating via token, instead of selecting individual ones.
-
 .PARAMETER State
 A session state, redirect URL, or random string to prevent Cross-Site Request Forgery (CSRF) attacks
+
+.PARAMETER TppToken
+Token object obtained from New-TppToken
+
+.PARAMETER AccessToken
+Access token retrieved from tpp vedauth
+
+.PARAMETER AuthServer
+Optional vedauth server if different from vedsdk server
 
 .PARAMETER PassThru
 Optionally, send the session object to the pipeline instead of script scope.
@@ -33,27 +42,27 @@ Optionally, send the session object to the pipeline instead of script scope.
 TppSession, if PassThru is provided
 
 .EXAMPLE
-New-TppSession -ServerUrl venafitpp.mycompany.com
+New-TppSession -Url venafitpp.mycompany.com
 Create key-based session using Windows Integrated authentication
 
 .EXAMPLE
-New-TppSession -ServerUrl venafitpp.mycompany.com -Credential $cred
+New-TppSession -Url venafitpp.mycompany.com -Credential $cred
 Create key-based session using Windows Integrated authentication
 
 .EXAMPLE
-New-TppSession -ServerUrl venafitpp.mycompany.com -ClientId MyApp
+New-TppSession -Url venafitpp.mycompany.com -ClientId MyApp
 Connect using token-based Windows Integrated authentication with the 'any' scope
 
 .EXAMPLE
-New-TppSession -ServerUrl venafitpp.mycompany.com -ClientId MyApp -Scope @{'certificate'='manage'}
+New-TppSession -Url venafitpp.mycompany.com -ClientId MyApp -Scope @{'certificate'='manage'}
 Create token-based session using Windows Integrated authentication with a certain scope and privilege restriction
 
 .EXAMPLE
-New-TppSession -ServerUrl venafitpp.mycompany.com -ClientId MyApp -IncludeAllScope -Credential $cred
+New-TppSession -Url venafitpp.mycompany.com -ClientId MyApp -IncludeAllScope -Credential $cred
 Create token-based session using oauth authentication for all scopes and privilege restrictions
 
 .EXAMPLE
-$sess = New-TppSession -ServerUrl venafitpp.mycompany.com -Credential $cred -PassThru
+$sess = New-TppSession -Url venafitpp.mycompany.com -Credential $cred -PassThru
 Create session and return the session object instead of setting to script scope variable
 
 .LINK
@@ -80,22 +89,68 @@ function New-TppSession {
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'KeyIntegrated')]
 
     param(
-        [Parameter(Mandatory)]
-        [string] $ServerUrl,
+        [Parameter(Mandatory, ParameterSetName = 'KeyCredential')]
+        [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
+        [Parameter(Mandatory, ParameterSetName = 'TokenIntegrated')]
+        [Parameter(Mandatory, ParameterSetName = 'TokenCertificate')]
+        [Parameter(Mandatory, ParameterSetName = 'AccessToken')]
+        [Parameter(ParameterSetName = 'TppToken')]
+        [ValidateScript( {
+                if ( $_ -match '^(https?:\/\/)?(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9][a-z0-9\-]{0,60}|[a-z0-9-]{1,30}\.[a-z]{2,})$' ) {
+                    $true
+                } else {
+                    throw 'Please enter a valid server, https://venafi.company.com or venafi.company.com'
+                }
+            }
+        )]
+        [Alias('ServerUrl')]
+        [string] $Server,
 
         [Parameter(Mandatory, ParameterSetName = 'KeyCredential')]
+        [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
         [System.Management.Automation.PSCredential] $Credential,
 
-        [Parameter(Mandatory, ParameterSetName = 'TokenAuth')]
+        [Parameter(Mandatory, ParameterSetName = 'TokenCertificate')]
+        [X509Certificate] $Certificate,
+
+        [Parameter(Mandatory, ParameterSetName = 'TokenIntegrated')]
+        [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
+        [string] $ClientId,
+
+        [Parameter(Mandatory, ParameterSetName = 'TokenIntegrated')]
+        [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
+        [hashtable] $Scope,
+
+        [Parameter(ParameterSetName = 'TokenIntegrated')]
+        [Parameter(ParameterSetName = 'TokenOAuth')]
+        [string] $State,
+
+        [Parameter(Mandatory, ParameterSetName = 'TppToken', ValueFromPipeline)]
+        [pscustomobject] $TppToken,
+
+        [Parameter(Mandatory, ParameterSetName = 'AccessToken')]
         [string] $AccessToken,
+
+        [Parameter(ParameterSetName = 'TokenOAuth')]
+        [Parameter(ParameterSetName = 'TokenIntegrated')]
+        [Parameter(ParameterSetName = 'AccessToken')]
+        [ValidateScript( {
+                if ( $_ -match '^(https?:\/\/)?(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9][a-z0-9\-]{0,60}|[a-z0-9-]{1,30}\.[a-z]{2,})$' ) {
+                    $true
+                } else {
+                    throw 'Please enter a valid server, https://venafi.company.com or venafi.company.com'
+                }
+            }
+        )]
+        [string] $AuthServer,
 
         [Parameter()]
         [switch] $PassThru
     )
 
-    $ServerUrl = $ServerUrl.Trim('/')
+    $ServerUrl = $Server
     # add prefix if just server url was provided
-    if ( $ServerUrl -notlike 'https://*') {
+    if ( $Server -notlike 'https://*') {
         $ServerUrl = 'https://{0}' -f $ServerUrl
     }
 
@@ -105,7 +160,7 @@ function New-TppSession {
 
     Write-Verbose ('Parameter set: {0}' -f $PSCmdlet.ParameterSetName)
 
-    if ( $PSCmdlet.ShouldProcess($ServerUrl, 'New session') ) {
+    if ( $PSCmdlet.ShouldProcess($Url, 'New session') ) {
         Switch -Wildcard ($PsCmdlet.ParameterSetName)	{
 
             "Key*" {
@@ -122,9 +177,60 @@ function New-TppSession {
             }
 
             'Token*' {
+                $params = @{
+                    AuthServer = $Server
+                    ClientId   = $ClientId
+                    Scope      = $Scope
+                }
+
+                # in case the auth server isn't the same as vedsdk...
+                if ( $AuthServer ) {
+                    $params.AuthServer = $AuthServer
+                }
+
+                if ($Credential) {
+                    $params.Credential = $Credential
+                }
+
+                if ($Certificate) {
+                    $params.Certificate = $Certificate
+                }
+
+                if ($State) {
+                    $params.State = $State
+                }
+
+                $token = New-TppToken @params -Verbose:$Verbose
+                $newSession.Token = $token
+                $newSession.Expires = $token.Expires
+                $newSession.Version = (Get-TppVersion -TppSession $newSession)
+            }
+
+            'TppToken' {
+                $newSession.Token = $TppToken
+                $newSession.Expires = $TppToken.Expires
+                Write-Verbose $newSession.ServerUrl|Out-String
+                if ( -not $Server ) {
+                    $newSession.ServerUrl = $TppToken.AuthUrl
+                }
+                Write-Verbose $newSession.ServerUrl|Out-String
+                $newSession.Version = (Get-TppVersion -TppSession $newSession)
+            }
+
+            'AccessToken' {
                 $newSession.ConnectToken($AccessToken)
+                $newSession.Version = (Get-TppVersion -TppSession $newSession)
+            }
+
+            Default {
+                throw ('Unknown parameter set {0}' -f $PSCmdlet.ParameterSetName)
             }
         }
+
+        $allFields = (Get-TppCustomField -TppSession $newSession -Class 'X509 Certificate').Items
+        $deviceFields = (Get-TppCustomField -TppSession $newSession -Class 'Device').Items
+        $allFields += $deviceFields | Where-Object { $_.Guid -notin $allFields.Guid }
+        $newSession.CustomField = $allFields
 
         if ( $PassThru ) {
             $newSession
