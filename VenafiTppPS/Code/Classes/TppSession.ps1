@@ -1,7 +1,5 @@
 class TppSession {
 
-    # [string] $APIKey
-    # [System.Management.Automation.PSCredential] $Credential
     [string] $ServerUrl
     [datetime] $Expires
     [PSCustomObject] $Key
@@ -10,7 +8,6 @@ class TppSession {
     [Version] $Version
 
     TppSession () {
-        # throw [System.NotImplementedException]::New()
     }
 
     TppSession ([Hashtable] $initHash) {
@@ -22,7 +19,6 @@ class TppSession {
         if ( -not $this.Key -and -not $this.Token ) {
             throw "You must first connect to the TPP server with New-TppSession"
         }
-
 
         # if we know the session is still valid, don't bother checking with the server
         # add a couple of seconds so we don't get caught making the call as it expires
@@ -58,38 +54,10 @@ class TppSession {
                # token
                # By default, access tokens are long-lived (90 day default). Refreshing the token should be handled outside of this class, so that the
                #  refresh token and access token can be properly maintained and passed to the script.
-               
+
                # We have to assume a good token here and ensure Invoke-TPPRestMethod catches and handles the condition where a token expires
             }
         }
-    }
-
-    [void] GetTppCustomFieldOnConnect() {
-        # get custom fields
-        if ( -not $this.CustomField ) {
-            $allFields = (Get-TppCustomField -TppSession $this -Class 'X509 Certificate').Items
-            $deviceFields = (Get-TppCustomField -TppSession $this -Class 'Device').Items
-            $allFields += $deviceFields | Where-Object { $_.Guid -notin $allFields.Guid }
-            $this.CustomField = $allFields
-        }
-    }
-
-    # connect for token based auth
-    [void] ConnectToken(
-        [string] $AccessToken
-    ) {
-        $this.Token = [PSCustomObject]@{
-            AccessToken  = $AccessToken
-        }
-
-        # TODO: can't assume scope covers the below, need to update functions which rely on this
-        #   BeardedPrincess: The Metadata/GetItemsForClass function does not require any special scope, just a valid token _should_ work
-        $this.GetTppCustomFieldOnConnect()
-        
-        # token-based auth was introduced in 19.2, and GET /systemstatus/version introduced in 18.3. So, if we're doing token auth, we can
-        #  get the version upon connecting!
-        #  FYI - The docs say that users need "Read" access to the engine root for /systemstatus/version - this is a doc bug and has been reported
-        $this.Version = Get-TppVersion -TppSession $this
     }
 
     # connect for key based
@@ -123,10 +91,6 @@ class TppSession {
             ApiKey     = $response.ApiKey
             Credential = $Credential
         }
-
-        $this.GetTppCustomFieldOnConnect()
-        # $this.Version = Get-TppVersion -TppSession $this
-
     }
 
     hidden [void] _init ([Hashtable] $initHash) {

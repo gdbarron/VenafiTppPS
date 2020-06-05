@@ -8,7 +8,9 @@ Key based username/password and windows integrated are supported as well as toke
 Note, key-based authentication will be fully deprecated in v20.4.
 
 .PARAMETER Server
-Tpp server which hosts the vedsdk application
+Server or url to access vedsdk, venafi.company.com or https://venafi.company.com.
+If AuthServer is not provided, this will be used to access vedauth as well for token-based authentication.
+If just the server name is provided, https:// will be appended.
 
 .PARAMETER Credential
 Username and password used for key and token-based authentication.  Not required for integrated authentication.
@@ -22,6 +24,9 @@ Applcation Id configured in Venafi for token-based authentication
 .PARAMETER Scope
 Hashtable with Scopes and privilege restrictions.
 The key is the scope and the value is one or more privilege restrictions separated by commas.
+A privilege restriction of none or read, use a value of $null.
+Scopes include Agent, Certificate, Code Signing, Configuration, Restricted, Security, SSH, and statistics.
+See https://docs.venafi.com/Docs/20.1/TopNav/Content/SDK/AuthSDK/r-SDKa-OAuthScopePrivilegeMapping.php?tocpath=Topics%20by%20Guide%7CDeveloper%27s%20Guide%7CAuth%20SDK%20reference%20for%20token%20management%7C_____6 for more info.
 
 .PARAMETER State
 A session state, redirect URL, or random string to prevent Cross-Site Request Forgery (CSRF) attacks
@@ -30,10 +35,12 @@ A session state, redirect URL, or random string to prevent Cross-Site Request Fo
 Token object obtained from New-TppToken
 
 .PARAMETER AccessToken
-Access token retrieved from tpp vedauth
+Access token retrieved from TPP
 
 .PARAMETER AuthServer
-Optional vedauth server if different from vedsdk server
+Optional server or url to access vedauth, venafi.company.com or https://venafi.company.com.
+If AuthServer is not provided, the value provided for Server will be used.
+If just the server name is provided, https:// will be appended.
 
 .PARAMETER PassThru
 Optionally, send the session object to the pipeline instead of script scope.
@@ -83,6 +90,8 @@ https://docs.venafi.com/Docs/20.1SDK/TopNav/Content/SDK/AuthSDK/r-SDKa-POST-Auth
 .LINK
 https://docs.venafi.com/Docs/20.1SDK/TopNav/Content/SDK/AuthSDK/r-SDKa-POST-AuthorizeOAuth.php?tocpath=Auth%20SDK%20reference%20for%20token%20management%7C_____11
 
+.LINK
+https://docs.venafi.com/Docs/20.1/TopNav/Content/SDK/AuthSDK/r-SDKa-POST-AuthorizeCertificate.php?tocpath=Topics%20by%20Guide%7CDeveloper%27s%20Guide%7CAuth%20SDK%20reference%20for%20token%20management%7C_____9
 #>
 function New-TppSession {
 
@@ -90,6 +99,7 @@ function New-TppSession {
 
     param(
         [Parameter(Mandatory, ParameterSetName = 'KeyCredential')]
+        [Parameter(Mandatory, ParameterSetName = 'KeyIntegrated')]
         [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
         [Parameter(Mandatory, ParameterSetName = 'TokenIntegrated')]
         [Parameter(Mandatory, ParameterSetName = 'TokenCertificate')]
@@ -110,9 +120,6 @@ function New-TppSession {
         [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
         [System.Management.Automation.PSCredential] $Credential,
 
-        [Parameter(Mandatory, ParameterSetName = 'TokenCertificate')]
-        [X509Certificate] $Certificate,
-
         [Parameter(Mandatory, ParameterSetName = 'TokenIntegrated')]
         [Parameter(Mandatory, ParameterSetName = 'TokenOAuth')]
         [string] $ClientId,
@@ -126,10 +133,21 @@ function New-TppSession {
         [string] $State,
 
         [Parameter(Mandatory, ParameterSetName = 'TppToken', ValueFromPipeline)]
+        [ValidateScript( {
+                if ( $_.AccessToken -and $_.AuthUrl -and $_.ClientId  ) {
+                    $true
+                } else {
+                    throw 'Object provided for TppToken is not valid.  Please request a new token with New-TppToken.'
+                }
+            }
+        )]
         [pscustomobject] $TppToken,
 
         [Parameter(Mandatory, ParameterSetName = 'AccessToken')]
         [string] $AccessToken,
+
+        [Parameter(Mandatory, ParameterSetName = 'TokenCertificate')]
+        [X509Certificate] $Certificate,
 
         [Parameter(ParameterSetName = 'TokenOAuth')]
         [Parameter(ParameterSetName = 'TokenIntegrated')]
@@ -160,7 +178,7 @@ function New-TppSession {
 
     Write-Verbose ('Parameter set: {0}' -f $PSCmdlet.ParameterSetName)
 
-    if ( $PSCmdlet.ShouldProcess($Url, 'New session') ) {
+    if ( $PSCmdlet.ShouldProcess($Server, 'New session') ) {
         Switch -Wildcard ($PsCmdlet.ParameterSetName)	{
 
             "Key*" {
@@ -203,29 +221,31 @@ function New-TppSession {
                 $token = New-TppToken @params -Verbose:$Verbose
                 $newSession.Token = $token
                 $newSession.Expires = $token.Expires
-                $newSession.Version = (Get-TppVersion -TppSession $newSession)
             }
 
             'TppToken' {
                 $newSession.Token = $TppToken
                 $newSession.Expires = $TppToken.Expires
-                Write-Verbose $newSession.ServerUrl|Out-String
+
                 if ( -not $Server ) {
                     $newSession.ServerUrl = $TppToken.AuthUrl
                 }
-                Write-Verbose $newSession.ServerUrl|Out-String
-                $newSession.Version = (Get-TppVersion -TppSession $newSession)
             }
 
             'AccessToken' {
-                $newSession.ConnectToken($AccessToken)
-                $newSession.Version = (Get-TppVersion -TppSession $newSession)
+                $newSession.Token = [PSCustomObject]@{
+                    AccessToken = $AccessToken
+                }
             }
 
             Default {
                 throw ('Unknown parameter set {0}' -f $PSCmdlet.ParameterSetName)
             }
         }
+
+        # will fail if user is on an older version
+        # this isn't required so bypass on failure
+        $newSession.Version = (Get-TppVersion -TppSession $newSession -ErrorAction SilentlyContinue)
 
         $allFields = (Get-TppCustomField -TppSession $newSession -Class 'X509 Certificate').Items
         $deviceFields = (Get-TppCustomField -TppSession $newSession -Class 'Device').Items

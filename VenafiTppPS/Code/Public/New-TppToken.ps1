@@ -7,7 +7,8 @@ Get an api access and refresh token to be used with New-TppSession or other scri
 Accepts username/password credential, scope, and ClientId to get a token grant from specified TPP server.
 
 .PARAMETER AuthServer
-URL for the Venafi server.
+Auth server or url, venafi.company.com or https://venafi.company.com.
+If just the server name is provided, https:// will be appended.
 
 .PARAMETER Credential
 Username / password credential used to request API Token
@@ -21,11 +22,35 @@ Applcation Id configured in Venafi for token-based authentication
 .PARAMETER Scope
 Hashtable with Scopes and privilege restrictions.
 The key is the scope and the value is one or more privilege restrictions separated by commas.
+A privilege restriction of none or read, use a value of $null.
+Scopes include Agent, Certificate, Code Signing, Configuration, Restricted, Security, SSH, and statistics.
+See https://docs.venafi.com/Docs/20.1/TopNav/Content/SDK/AuthSDK/r-SDKa-OAuthScopePrivilegeMapping.php?tocpath=Topics%20by%20Guide%7CDeveloper%27s%20Guide%7CAuth%20SDK%20reference%20for%20token%20management%7C_____6 for more info.
 
 .EXAMPLE
-New-TppToken -AuthServer 'https://mytppserver.example.com' -Scope @{ Certificate = "manage,discover"; Config = "manage" } -ClientId 'MyAppId' -Credential $credential
+New-TppToken -AuthServer 'https://mytppserver.example.com' -Scope @{ Certificate = "manage,discover"; Configuration = "manage" } -ClientId 'MyAppId' -Credential $credential
 Get a new token with OAuth
 
+.EXAMPLE
+New-TppToken -AuthServer 'mytppserver.example.com' -Scope @{ Certificate = "manage,discover"; Configuration = "manage" } -ClientId 'MyAppId'
+Get a new token with Integrated authentication
+
+.EXAMPLE
+New-TppToken -AuthServer 'mytppserver.example.com' -Scope @{ Certificate = "manage,discover"; Configuration = "manage" } -ClientId 'MyAppId' -Certificate $cert
+Get a new token with certificate authentication
+
+.INPUTS
+None
+
+.OUTPUTS
+PSCustomObject with the following properties:
+    AuthUrl
+    AccessToken
+    RefreshToken
+    Scope
+    Identity
+    TokenType
+    ClientId
+    Expires
 #>
 function New-TppToken {
 
