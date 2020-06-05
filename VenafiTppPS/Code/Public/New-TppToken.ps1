@@ -1,15 +1,19 @@
 <#
 .SYNOPSIS
-Get an API Access and Refresh Token from TPP for use in New-TPPSession (or other scripts/utilities that take such a token)
+Get an API Access and Refresh Token from TPP
 
 .DESCRIPTION
+Get an api access and refresh token to be used with New-TppSession or other scripts/utilities that take such a token.
 Accepts username/password credential, scope, and ClientId to get a token grant from specified TPP server.
 
-.PARAMETER ServerUrl
+.PARAMETER AuthServer
 URL for the Venafi server.
 
 .PARAMETER Credential
 Username / password credential used to request API Token
+
+.PARAMETER Certificate
+Certificate used to request API token
 
 .PARAMETER ClientId
 Applcation Id configured in Venafi for token-based authentication
@@ -19,68 +23,90 @@ Hashtable with Scopes and privilege restrictions.
 The key is the scope and the value is one or more privilege restrictions separated by commas.
 
 .EXAMPLE
-Grant-TPPToken -ServerUrl 'https://mytppserver.example.com' -Scope @{ Certificate = "manage,discover"; Config = "manage" } -ClientId 'MyAppId' -Credential $credential
+New-TppToken -AuthServer 'https://mytppserver.example.com' -Scope @{ Certificate = "manage,discover"; Config = "manage" } -ClientId 'MyAppId' -Credential $credential
+Get a new token with OAuth
 
 #>
-function Grant-TppToken {
+function New-TppToken {
 
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Integrated')]
 
     param (
         [Parameter(Mandatory)]
-        [string] $ServerUrl,
-        
+        [ValidateScript( {
+                if ( $_ -match '^(https?:\/\/)?(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9][a-z0-9\-]{0,60}|[a-z0-9-]{1,30}\.[a-z]{2,})$' ) {
+                    $true
+                } else {
+                    throw 'Please enter a valid server, https://venafi.company.com or venafi.company.com'
+                }
+            }
+        )]
+        [string] $AuthServer,
+
         [Parameter(Mandatory)]
         [string] $ClientId,
-        
+
         [Parameter(Mandatory)]
-        [hashtable] $Scope = @{'any' = $null },
-        
+        [hashtable] $Scope,
+
         [Parameter(Mandatory, ParameterSetName = 'OAuth')]
         [System.Management.Automation.PSCredential] $Credential,
-        
+
+        [Parameter(ParameterSetName = 'Integrated')]
         [Parameter(ParameterSetName = 'OAuth')]
-        [string] $State
-        
-        #[Parameter(Mandatory, ParameterSetName = 'Certificate')]
-        #[System.Management.Automation.PSCredential] $Credential,
+        [string] $State,
+
+        [Parameter(Mandatory, ParameterSetName = 'Certificate')]
+        [X509Certificate] $Certificate
     )
 
-    $ServerUrl = $ServerUrl.Trim('/')
-    # The authorize endpoints for token auth are not under /vedsdk, remove it if it was added by mistake
-    $ServerUrl = $ServerUrl.Trim('/vedsdk')
+    $AuthUrl = $AuthServer
     # add prefix if just server url was provided
-    if ( $ServerUrl -notlike 'https://*') {
-        $ServerUrl = 'https://{0}' -f $ServerUrl
+    if ( $AuthServer -notlike 'https://*') {
+        $AuthUrl = 'https://{0}' -f $AuthUrl
     }
-    
+
     $scopeString = @(
-                    $scope.GetEnumerator() | ForEach-Object {
-                        if ($_.Value) {
-                            '{0}:{1}' -f $_.Key, $_.Value
-                        } else {
-                            $_.Key
-                        }
-                    }
-                ) -join ';'
+        $scope.GetEnumerator() | ForEach-Object {
+            if ($_.Value) {
+                '{0}:{1}' -f $_.Key, $_.Value
+            } else {
+                $_.Key
+            }
+        }
+    ) -join ';'
 
     $params = @{
         Method    = 'Post'
-        ServerUrl = $ServerUrl
+        ServerUrl = $AuthUrl
         UriRoot   = 'vedauth'
         Body      = @{
             client_id = $ClientId
-            scope = $scopeString
+            scope     = $scopeString
         }
     }
 
-    if ( $Credential ) {
-        $params.UriLeaf = 'authorize/oauth'
-        $params.Body.username = $Credential.UserName
-        $params.Body.password = $Credential.GetNetworkCredential().Password
-    } else {
-        $params.UriLeaf = 'authorize/integrated'
-        $params.UseDefaultCredentials = $true
+    switch ($PsCmdlet.ParameterSetName) {
+
+        'Integrated' {
+            $params.UriLeaf = 'authorize/integrated'
+            $params.UseDefaultCredentials = $true
+        }
+
+        'OAuth' {
+            $params.UriLeaf = 'authorize/oauth'
+            $params.Body.username = $Credential.UserName
+            $params.Body.password = $Credential.GetNetworkCredential().Password
+        }
+
+        'Certificate' {
+            $params.UriLeaf = 'authorize/certificate'
+            $params.Certificate = $Certificate
+        }
+
+        Default {
+            throw ('Unknown parameter set {0}' -f $PSCmdlet.ParameterSetName)
+        }
     }
 
     if ( $State ) {
@@ -91,17 +117,16 @@ function Grant-TppToken {
 
     Write-Verbose ($response | Out-String)
 
-    $Token = [PSCustomObject]@{
+    [PSCustomObject] @{
+        AuthUrl      = $AuthUrl
         AccessToken  = $response.access_token
         RefreshToken = $response.refresh_token
         Scope        = $response.scope
         Identity     = $response.identity
         TokenType    = $response.token_type
         ClientId     = $ClientId
-        Expires = ([datetime] '1970-01-01 00:00:00').AddSeconds($response.Expires)
+        Expires      = ([datetime] '1970-01-01 00:00:00').AddSeconds($response.Expires)
     }
-
-    return $Token
 }
 
 <#
@@ -116,7 +141,7 @@ function Grant-TppToken {
 
                     $params = @{
                         Method    = 'Post'
-                        ServerUrl = $this.ServerUrl
+                        AuthServer = $this.AuthServer
                         UriRoot   = 'vedauth'
                         UriLeaf   = 'authorize/token'
                         Body      = @{
