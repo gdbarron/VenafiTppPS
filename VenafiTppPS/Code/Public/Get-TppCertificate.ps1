@@ -140,7 +140,7 @@ function Get-TppCertificate {
         if ($IncludePrivateKey) {
 
             # validate format to be able to export the private key
-            if ( $Format -in @("Base64", "DER", "PKCS #7") ) {
+            if ( $Format -in @("DER", "PKCS #7") ) {
                 throw "Format '$Format' does not support private keys"
             }
 
@@ -164,8 +164,8 @@ function Get-TppCertificate {
         }
 
         if ($IncludeChain) {
-            if ( $Format -in @("Base64 (PKCS #8)", "DER") ) {
-                throw "IncludeChain is only supported when Format is Base64, JKS, PKCS #7, or PKCS #12"
+            if ( $Format -in @('DER') ) {
+                throw "IncludeChain is not supported with the DER Format"
             }
 
             $params.Body.IncludeChain = $true
@@ -183,9 +183,11 @@ function Get-TppCertificate {
 
         $response = Invoke-TppRestMethod @params
 
+        Write-Verbose ($response | Format-List | Out-String)
+
         if ( $PSBoundParameters.ContainsKey('OutPath') ) {
             if ( $response.PSobject.Properties.name -contains "CertificateData" ) {
-                $outFile = Join-Path $OutPath ($response.FileName)
+                $outFile = Join-Path -Path $OutPath -ChildPath ($response.FileName.Trim('"'))
                 $bytes = [Convert]::FromBase64String($response.CertificateData)
                 [IO.File]::WriteAllBytes($outFile, $bytes)
                 Write-Verbose ('Saved {0} of format {1}' -f $outFile, $response.Format)
