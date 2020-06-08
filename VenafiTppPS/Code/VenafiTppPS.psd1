@@ -12,7 +12,7 @@
 RootModule = 'VenafiTppPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.2.5'
+ModuleVersion = '2.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -27,7 +27,7 @@ Author = 'Greg Brownstein'
 CompanyName = 'Greg Brownstein'
 
 # Copyright statement for this module
-Copyright = '(c) 2018-2019 Greg Brownstein. All rights reserved.'
+Copyright = '(c) 2018-2020 Greg Brownstein. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PowerShell module to access the features of Venafi Trust Protection Platform REST API'
@@ -69,19 +69,19 @@ PowerShellVersion = '5.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Add-TppCertificateAssociation', 'ConvertTo-TppGuid', 
-               'ConvertTo-TppPath', 'Find-TppCertificate', 'Find-TppIdentity', 
-               'Find-TppObject', 'Get-TppAttribute', 'Get-TppCertificate', 
-               'Get-TppCertificateDetail', 'Get-TppCustomField', 
-               'Get-TppIdentityAttribute', 'Get-TppObject', 'Get-TppPermission', 
-               'Get-TppSystemStatus', 'Get-TppVersion', 'Get-TppWorkflowTicket', 
-               'Invoke-TppCertificateRenewal', 'Move-TppObject', 
-               'New-TppCapiApplication', 'New-TppCertificate', 'New-TppDevice', 
-               'New-TppObject', 'New-TppPolicy', 'New-TppSession', 'Read-TppLog', 
-               'Remove-TppCertificate', 'Remove-TppCertificateAssociation', 
-               'Rename-TppObject', 'Revoke-TppCertificate', 'Set-TppAttribute', 
-               'Set-TppPermission', 'Set-TppWorkflowTicketStatus', 
-               'Test-TppIdentity', 'Test-TppObject', 'Write-TppLog'
+FunctionsToExport = 'Add-TppCertificateAssociation', 'ConvertTo-TppGuid',
+               'ConvertTo-TppPath', 'Find-TppCertificate', 'Find-TppIdentity',
+               'Find-TppObject', 'Get-TppAttribute', 'Get-TppCertificate',
+               'Get-TppCertificateDetail', 'Get-TppCustomField',
+               'Get-TppIdentityAttribute', 'Get-TppObject', 'Get-TppPermission',
+               'Get-TppSystemStatus', 'Get-TppVersion', 'Get-TppWorkflowTicket',
+               'Invoke-TppCertificateRenewal', 'Move-TppObject',
+               'New-TppCapiApplication', 'New-TppCertificate', 'New-TppDevice',
+               'New-TppObject', 'New-TppPolicy', 'New-TppSession', 'Read-TppLog',
+               'Remove-TppCertificate', 'Remove-TppCertificateAssociation',
+               'Rename-TppObject', 'Revoke-TppCertificate', 'Set-TppAttribute',
+               'Set-TppPermission', 'Set-TppWorkflowTicketStatus',
+               'Test-TppIdentity', 'Test-TppObject', 'Write-TppLog', 'New-TppToken'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()

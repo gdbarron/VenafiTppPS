@@ -74,8 +74,7 @@ function Remove-TppCertificateAssociation {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -88,8 +87,7 @@ function Remove-TppCertificateAssociation {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -114,7 +112,7 @@ function Remove-TppCertificateAssociation {
             TppSession = $TppSession
             Method     = 'Post'
             UriLeaf    = 'Certificates/Dissociate'
-            Body       = @{}
+            Body       = @{ }
         }
     }
 
@@ -137,13 +135,13 @@ function Remove-TppCertificateAssociation {
         }
 
         if ( $PSBoundParameters.ContainsKey('OrphanCleanup') ) {
-            $params.Body.Add( 'DeleteOrphans', $true )
+            $params.Body.DeleteOrphans = $true
             $shouldProcessAction += ' AND ORPHANS'
         }
 
         Switch -Wildcard ($PsCmdlet.ParameterSetName)	{
             'RemoveOne*' {
-                $params.Body.Add( 'ApplicationDN', @($ApplicationPath) )
+                $params.Body.ApplicationDN = @($ApplicationPath)
             }
 
             'RemoveAll*' {
@@ -152,7 +150,7 @@ function Remove-TppCertificateAssociation {
                 Select-Object -ExpandProperty Value
 
                 if ( $associatedApps ) {
-                    $params.Body.Add( 'ApplicationDN', @($associatedApps) )
+                    $params.Body.ApplicationDN = @($associatedApps)
                 } else {
                     # no associations to process, no need to continue
                     Write-Warning "No associations for path '$Path'"
@@ -165,8 +163,7 @@ function Remove-TppCertificateAssociation {
             if ( $PSCmdlet.ShouldProcess($Path, $shouldProcessAction) ) {
                 $null = Invoke-TppRestMethod @params
             }
-        }
-        catch {
+        } catch {
             $myError = $_.ToString() | ConvertFrom-Json
             Write-Error ('Error removing associations from certificate {0}: {1}' -f $Path, $myError.Error)
         }

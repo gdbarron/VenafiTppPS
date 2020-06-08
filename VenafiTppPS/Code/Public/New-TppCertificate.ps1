@@ -14,6 +14,11 @@ Name of the certifcate.  If not provided, the name will be the same as the subje
 .PARAMETER CommonName
 Subject Common Name.  If Name isn't provided, CommonName will be used.
 
+.PARAMETER CertificateType
+Type of certificate to be created.
+No value provided will default to X509 Server Certificate.
+Valid values include 'Code Signing', 'Device', 'Server' (same as default), and 'User'.
+
 .PARAMETER CertificateAuthorityDN
 The Distinguished Name (DN) of the Trust Protection Platform Certificate Authority Template object for enrolling the certificate. If the value is missing, use the default CADN
 
@@ -75,15 +80,14 @@ function New-TppCertificate {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
         [Alias('PolicyDN')]
         [String] $Path,
 
-        [Parameter(Mandatory, ParameterSetName = 'ByName')]
+        [Parameter(Mandatory, ParameterSetName = 'ByName', ValueFromPipeline)]
         [String] $Name,
 
         [Parameter(ParameterSetName = 'ByName')]
@@ -92,16 +96,20 @@ function New-TppCertificate {
         [String] $CommonName,
 
         [Parameter()]
+        [ValidateSet('Code Signing', 'Device', 'Server', 'User')]
+        [String] $CertificateType,
+
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
         [Alias('CertificateAuthorityDN')]
+        [Alias('CADN')]
         [String] $CertificateAuthorityPath,
 
         [Parameter()]
@@ -137,8 +145,7 @@ function New-TppCertificate {
                         'Email' {
                             try {
                                 $null = [mailaddress]$thisValue
-                            }
-                            catch {
+                            } catch {
                                 ('''{0}'' is not a valid email' -f $thisValue)
                             }
                         }
@@ -154,8 +161,7 @@ function New-TppCertificate {
                         'IPAddress' {
                             try {
                                 $null = [ipaddress]$thisValue
-                            }
-                            catch {
+                            } catch {
                                 ('''{0}'' is not a valid IP Address' -f $thisValue)
                             }
                         }
@@ -172,9 +178,6 @@ function New-TppCertificate {
                 throw $errors
             }
         }
-    }
-
-    process {
 
         $params = @{
             TppSession = $TppSession
@@ -183,11 +186,6 @@ function New-TppCertificate {
             Body       = @{
                 PolicyDN = $Path
             }
-            # UseWebRequest = $true
-        }
-
-        if ( $PSBoundParameters.ContainsKey('Name') ) {
-            $params.Body.Add('ObjectName', $Name)
         }
 
         if ( $PSBoundParameters.ContainsKey('CertificateAuthorityPath') ) {
@@ -215,6 +213,12 @@ function New-TppCertificate {
             $params.Body.Add('SubjectAltNames', $newSan)
         }
 
+    }
+
+    process {
+
+        $params.Body.ObjectName = $Name
+
         if ( $PSCmdlet.ShouldProcess($Path, 'Create new certificate') ) {
 
             try {
@@ -222,10 +226,20 @@ function New-TppCertificate {
                 Write-Verbose ($response | Out-String)
 
                 if ( $PassThru ) {
-                    $response.CertificateDN | Get-TppObject
+                    $returnObject = @{
+                        Name     = $Name
+                        TypeName = 'X509 Server Certificate'
+                        Path     = $response.CertificateDN
+                        Guid     = $response.Guid.Trim('{}')
+                    }
+
+                    if ( $PSBoundParameters.CertificateType ) {
+                        $returnObject.TypeName = $CertificateType
+                    }
+
+                    [TppObject] $returnObject
                 }
-            }
-            catch {
+            } catch {
                 Write-Error $_
                 continue
             }
