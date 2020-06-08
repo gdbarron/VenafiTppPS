@@ -49,27 +49,27 @@ Optionally, send the session object to the pipeline instead of script scope.
 TppSession, if PassThru is provided
 
 .EXAMPLE
-New-TppSession -Url venafitpp.mycompany.com
+New-TppSession -Server venafitpp.mycompany.com
 Create key-based session using Windows Integrated authentication
 
 .EXAMPLE
-New-TppSession -Url venafitpp.mycompany.com -Credential $cred
+New-TppSession -Server venafitpp.mycompany.com -Credential $cred
 Create key-based session using Windows Integrated authentication
 
 .EXAMPLE
-New-TppSession -Url venafitpp.mycompany.com -ClientId MyApp
+New-TppSession -Server venafitpp.mycompany.com -ClientId MyApp
 Connect using token-based Windows Integrated authentication with the 'any' scope
 
 .EXAMPLE
-New-TppSession -Url venafitpp.mycompany.com -ClientId MyApp -Scope @{'certificate'='manage'}
+New-TppSession -Server venafitpp.mycompany.com -ClientId MyApp -Scope @{'certificate'='manage'}
 Create token-based session using Windows Integrated authentication with a certain scope and privilege restriction
 
 .EXAMPLE
-New-TppSession -Url venafitpp.mycompany.com -ClientId MyApp -IncludeAllScope -Credential $cred
-Create token-based session using oauth authentication for all scopes and privilege restrictions
+New-TppSession -Server venafitpp.mycompany.com -AuthServer tppauth.mycompany.com -ClientId MyApp -Credential $cred
+Create token-based session using oauth authentication where the vedauth and vedsdk are hosted on different servers
 
 .EXAMPLE
-$sess = New-TppSession -Url venafitpp.mycompany.com -Credential $cred -PassThru
+$sess = New-TppSession -Server venafitpp.mycompany.com -Credential $cred -PassThru
 Create session and return the session object instead of setting to script scope variable
 
 .LINK
