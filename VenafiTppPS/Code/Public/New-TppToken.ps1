@@ -54,7 +54,7 @@ PSCustomObject with the following properties:
 #>
 function New-TppToken {
 
-    [CmdletBinding(DefaultParameterSetName = 'Integrated')]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Integrated')]
     [OutputType([PSCustomObject])]
 
     param (
@@ -139,22 +139,24 @@ function New-TppToken {
         $params.Body.state = $State
     }
 
-    $response = Invoke-TppRestMethod @params
+    if ( $PSCmdlet.ShouldProcess($AuthUrl, 'New token') ) {
 
-    Write-Verbose ($response | Out-String)
+        $response = Invoke-TppRestMethod @params
 
-    [PSCustomObject] @{
-        AuthUrl      = $AuthUrl
-        AccessToken  = $response.access_token
-        RefreshToken = $response.refresh_token
-        Scope        = $response.scope
-        Identity     = $response.identity
-        TokenType    = $response.token_type
-        ClientId     = $ClientId
-        Expires      = ([datetime] '1970-01-01 00:00:00').AddSeconds($response.Expires)
+        Write-Verbose ($response | Out-String)
+
+        [PSCustomObject] @{
+            AuthUrl      = $AuthUrl
+            AccessToken  = $response.access_token
+            RefreshToken = $response.refresh_token
+            Scope        = $response.scope
+            Identity     = $response.identity
+            TokenType    = $response.token_type
+            ClientId     = $ClientId
+            Expires      = ([datetime] '1970-01-01 00:00:00').AddSeconds($response.Expires)
+        }
     }
 }
-
 <#
 ## Refresh Token
 
