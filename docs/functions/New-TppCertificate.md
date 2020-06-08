@@ -7,16 +7,16 @@ Enrolls or provisions a new certificate
 
 ### ByName (Default)
 ```
-New-TppCertificate -Path <String> -Name <String> [-CommonName <String>] [-CertificateAuthorityPath <String>]
- [-ManagementType <TppManagementType>] [-SubjectAltName <Hashtable[]>] [-PassThru] [-TppSession <TppSession>]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+New-TppCertificate -Path <String> -Name <String> [-CommonName <String>] [-CertificateType <String>]
+ [-CertificateAuthorityPath <String>] [-ManagementType <TppManagementType>] [-SubjectAltName <Hashtable[]>]
+ [-PassThru] [-TppSession <TppSession>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### BySubject
 ```
-New-TppCertificate -Path <String> -CommonName <String> [-CertificateAuthorityPath <String>]
- [-ManagementType <TppManagementType>] [-SubjectAltName <Hashtable[]>] [-PassThru] [-TppSession <TppSession>]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+New-TppCertificate -Path <String> -CommonName <String> [-CertificateType <String>]
+ [-CertificateAuthorityPath <String>] [-ManagementType <TppManagementType>] [-SubjectAltName <Hashtable[]>]
+ [-PassThru] [-TppSession <TppSession>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -76,7 +76,7 @@ Aliases:
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: False
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -108,13 +108,30 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -CertificateType
+Type of certificate to be created.
+No value provided will default to X509 Server Certificate.
+Valid values include 'Code Signing', 'Device', 'Server' (same as default), and 'User'.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -CertificateAuthorityPath
 {{ Fill CertificateAuthorityPath Description }}
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases: CertificateAuthorityDN
+Aliases: CADN, CertificateAuthorityDN
 
 Required: False
 Position: Named
