@@ -55,6 +55,7 @@ PSCustomObject with the following properties:
 function New-TppToken {
 
     [CmdletBinding(DefaultParameterSetName = 'Integrated')]
+    [OutputType([PSCustomObject])]
 
     param (
         [Parameter(Mandatory)]
