@@ -3,7 +3,8 @@
 Revoke a token
 
 .DESCRIPTION
-Revoke a token and invalidate the refresh token if provided
+Revoke a token and invalidate the refresh token if provided/available.
+This could be an access token retrieved from this module or from other means.
 
 .PARAMETER AuthServer
 Server name or URL for the vedauth service

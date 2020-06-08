@@ -3,7 +3,7 @@
 Create a new Venafi TPP session
 
 .DESCRIPTION
-Authenticates a user and creates a new session with which future calls can be made.
+Authenticate a user and create a new session with which future calls can be made.
 Key based username/password and windows integrated are supported as well as token-based integrated, oauth, and certificate.
 Note, key-based authentication will be fully deprecated in v20.4.
 
@@ -24,7 +24,7 @@ Applcation Id configured in Venafi for token-based authentication
 .PARAMETER Scope
 Hashtable with Scopes and privilege restrictions.
 The key is the scope and the value is one or more privilege restrictions separated by commas.
-A privilege restriction of none or read, use a value of $null.
+For a privilege restriction of none or read, use a value of $null.
 Scopes include Agent, Certificate, Code Signing, Configuration, Restricted, Security, SSH, and statistics.
 See https://docs.venafi.com/Docs/20.1/TopNav/Content/SDK/AuthSDK/r-SDKa-OAuthScopePrivilegeMapping.php?tocpath=Topics%20by%20Guide%7CDeveloper%27s%20Guide%7CAuth%20SDK%20reference%20for%20token%20management%7C_____6 for more info.
 
