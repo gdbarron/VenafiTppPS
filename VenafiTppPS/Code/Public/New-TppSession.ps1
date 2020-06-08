@@ -132,7 +132,7 @@ function New-TppSession {
         [Parameter(ParameterSetName = 'TokenOAuth')]
         [string] $State,
 
-        [Parameter(Mandatory, ParameterSetName = 'TppToken', ValueFromPipeline)]
+        [Parameter(Mandatory, ParameterSetName = 'TppToken')]
         [ValidateScript( {
                 if ( $_.AccessToken -and $_.AuthUrl -and $_.ClientId  ) {
                     $true
