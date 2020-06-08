@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'stop'
 
 Install-PackageProvider -Name Nuget -Scope CurrentUser -Force -Confirm:$false
-Install-Module -Name Pester -Scope CurrentUser -Force -Confirm:$false -SkipPublisherCheck
+Install-Module -Name Pester -Scope CurrentUser -Force -Confirm:$false -SkipPublisherCheck -MaximumVersion 4.999.999
 Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force -Confirm:$false
 Import-Module -Name Pester, PSScriptAnalyzer
 
