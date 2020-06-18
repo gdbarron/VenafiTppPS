@@ -5,16 +5,23 @@ Read entries from the TPP log
 
 ## SYNTAX
 
-### ByObject (Default)
+### Default (Default)
 ```
-Read-TppLog [-InputObject <TppObject>] [-Severity <TppEventSeverity>] [-StartTime <DateTime>]
+Read-TppLog [-Severity <TppEventSeverity>] [-StartTime <DateTime>] [-EndTime <DateTime>] [-Text1 <String>]
+ [-Text2 <String>] [-Value1 <Int32>] [-Value2 <Int32>] [-Limit <Int32>] [-TppSession <TppSession>]
+ [<CommonParameters>]
+```
+
+### ByObject
+```
+Read-TppLog -InputObject <TppObject> [-Severity <TppEventSeverity>] [-StartTime <DateTime>]
  [-EndTime <DateTime>] [-Text1 <String>] [-Text2 <String>] [-Value1 <Int32>] [-Value2 <Int32>] [-Limit <Int32>]
  [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### ByPath
 ```
-Read-TppLog [-Path <String>] [-Severity <TppEventSeverity>] [-StartTime <DateTime>] [-EndTime <DateTime>]
+Read-TppLog -Path <String> [-Severity <TppEventSeverity>] [-StartTime <DateTime>] [-EndTime <DateTime>]
  [-Text1 <String>] [-Text2 <String>] [-Value1 <Int32>] [-Value2 <Int32>] [-Limit <Int32>]
  [-TppSession <TppSession>] [<CommonParameters>]
 ```
@@ -48,7 +55,7 @@ Type: TppObject
 Parameter Sets: ByObject
 Aliases:
 
-Required: False
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
@@ -63,7 +70,7 @@ Type: String
 Parameter Sets: ByPath
 Aliases: DN
 
-Required: False
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False

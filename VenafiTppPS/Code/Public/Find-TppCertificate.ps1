@@ -21,6 +21,9 @@ Search recursively starting from the search path.
 Limit how many items are returned.  Default is 0 for no limit.
 It is definitely recommended to filter on another property when searching with no limit.
 
+.PARAMETER Offset
+The number of results to skip.
+
 .PARAMETER Country
 Find certificates by Country attribute of Subject DN.
 
@@ -147,6 +150,10 @@ Find-TppCertificate -ExpireBefore "2018-01-01" -Limit 5
 Find 5 certificates expiring before a certain date
 
 .EXAMPLE
+Find-TppCertificate -ExpireBefore "2018-01-01" -Limit 5 -Offset 2
+Find 5 certificates expiring before a certain date, starting at the 3rd certificate found.
+
+.EXAMPLE
 Find-TppCertificate -Path '\VED\Policy\My Policy'
 Find all certificates in a specific path
 
@@ -192,8 +199,7 @@ function Find-TppCertificate {
         [ValidateScript( {
                 if ( $_.TypeName -eq 'Policy' ) {
                     $true
-                }
-                else {
+                } else {
                     throw ("You provided an InputObject of type '{0}', but must be of type 'Policy'." -f $_.TypeName)
                 }
             })]
@@ -204,8 +210,7 @@ function Find-TppCertificate {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath -AllowRoot ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -223,6 +228,9 @@ function Find-TppCertificate {
 
         [Parameter()]
         [int] $Limit = 0,
+
+        [Parameter()]
+        [int] $Offset,
 
         [Parameter()]
         [Alias('C')]
@@ -357,13 +365,16 @@ function Find-TppCertificate {
         $params = @{
             TppSession = $TppSession
             Method     = 'Get'
-            UriLeaf    = 'certificates'
+            UriLeaf    = 'certificates/'
             Body       = @{
                 Limit = $Limit
             }
         }
 
         switch ($PSBoundParameters.Keys) {
+            'Offset' {
+                $params.Body.Add( 'Offset', $Offset )
+            }
             'Country' {
                 $params.Body.Add( 'C', $Country )
             }
@@ -470,21 +481,18 @@ function Find-TppCertificate {
 
         if ( $PSBoundParameters.ContainsKey('InputObject') ) {
             $thisPath = $InputObject.Path
-        }
-        elseif ( $PSBoundParameters.ContainsKey('Path') ) {
+        } elseif ( $PSBoundParameters.ContainsKey('Path') ) {
             $thisPath = $Path
-        }
-        elseif ( $PSBoundParameters.ContainsKey('Guid') ) {
+        } elseif ( $PSBoundParameters.ContainsKey('Guid') ) {
             # guid provided, get path
             $thisPath = $Guid | ConvertTo-TppPath -TppSession $TppSession
         }
 
         if ( $thisPath ) {
             if ( $PSBoundParameters.ContainsKey('Recursive') ) {
-                $params.Body.Add( 'ParentDnRecursive', $thisPath )
-            }
-            else {
-                $params.Body.Add( 'ParentDn', $thisPath )
+                $params.Body.ParentDnRecursive = $thisPath
+            } else {
+                $params.Body.ParentDn = $thisPath
             }
         }
 

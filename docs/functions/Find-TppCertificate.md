@@ -7,23 +7,23 @@ Find certificates based on various attributes
 
 ### NoPath (Default)
 ```
-Find-TppCertificate [-Limit <Int32>] [-Country <String>] [-CommonName <String>] [-Issuer <String>]
- [-KeyAlgorithm <String[]>] [-KeySize <Int32[]>] [-KeySizeGreaterThan <Int32>] [-KeySizeLessThan <Int32>]
- [-Locale <String[]>] [-Organization <String[]>] [-OrganizationUnit <String[]>] [-State <String[]>]
- [-SanDns <String>] [-SanEmail <String>] [-SanIP <String>] [-SanUpn <String>] [-SanUri <String>]
- [-SerialNumber <String>] [-SignatureAlgorithm <String>] [-Thumbprint <String>] [-IssueDate <DateTime>]
- [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>] [-ExpireBefore <DateTime>] [-Enabled] [-InError <Boolean>]
- [-NetworkValidationEnabled <Boolean>] [-CreateDate <DateTime>] [-CreatedAfter <DateTime>]
- [-CreatedBefore <DateTime>] [-ManagementType <TppManagementType[]>] [-PendingWorkflow]
- [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
+Find-TppCertificate [-Limit <Int32>] [-Offset <Int32>] [-Country <String>] [-CommonName <String>]
+ [-Issuer <String>] [-KeyAlgorithm <String[]>] [-KeySize <Int32[]>] [-KeySizeGreaterThan <Int32>]
+ [-KeySizeLessThan <Int32>] [-Locale <String[]>] [-Organization <String[]>] [-OrganizationUnit <String[]>]
+ [-State <String[]>] [-SanDns <String>] [-SanEmail <String>] [-SanIP <String>] [-SanUpn <String>]
+ [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>] [-Thumbprint <String>]
+ [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>] [-ExpireBefore <DateTime>]
+ [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>] [-CreateDate <DateTime>]
+ [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <TppManagementType[]>]
+ [-PendingWorkflow] [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
  [-StageLessThan <TppCertificateStage>] [-ValidationEnabled] [-ValidationState <String[]>]
  [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### ByObject
 ```
-Find-TppCertificate -InputObject <TppObject> [-Recursive] [-Limit <Int32>] [-Country <String>]
- [-CommonName <String>] [-Issuer <String>] [-KeyAlgorithm <String[]>] [-KeySize <Int32[]>]
+Find-TppCertificate -InputObject <TppObject> [-Recursive] [-Limit <Int32>] [-Offset <Int32>]
+ [-Country <String>] [-CommonName <String>] [-Issuer <String>] [-KeyAlgorithm <String[]>] [-KeySize <Int32[]>]
  [-KeySizeGreaterThan <Int32>] [-KeySizeLessThan <Int32>] [-Locale <String[]>] [-Organization <String[]>]
  [-OrganizationUnit <String[]>] [-State <String[]>] [-SanDns <String>] [-SanEmail <String>] [-SanIP <String>]
  [-SanUpn <String>] [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>]
@@ -37,32 +37,32 @@ Find-TppCertificate -InputObject <TppObject> [-Recursive] [-Limit <Int32>] [-Cou
 
 ### ByPath
 ```
-Find-TppCertificate -Path <String> [-Recursive] [-Limit <Int32>] [-Country <String>] [-CommonName <String>]
- [-Issuer <String>] [-KeyAlgorithm <String[]>] [-KeySize <Int32[]>] [-KeySizeGreaterThan <Int32>]
- [-KeySizeLessThan <Int32>] [-Locale <String[]>] [-Organization <String[]>] [-OrganizationUnit <String[]>]
- [-State <String[]>] [-SanDns <String>] [-SanEmail <String>] [-SanIP <String>] [-SanUpn <String>]
- [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>] [-Thumbprint <String>]
- [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>] [-ExpireBefore <DateTime>]
- [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>] [-CreateDate <DateTime>]
- [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <TppManagementType[]>]
- [-PendingWorkflow] [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
- [-StageLessThan <TppCertificateStage>] [-ValidationEnabled] [-ValidationState <String[]>]
- [-TppSession <TppSession>] [<CommonParameters>]
+Find-TppCertificate -Path <String> [-Recursive] [-Limit <Int32>] [-Offset <Int32>] [-Country <String>]
+ [-CommonName <String>] [-Issuer <String>] [-KeyAlgorithm <String[]>] [-KeySize <Int32[]>]
+ [-KeySizeGreaterThan <Int32>] [-KeySizeLessThan <Int32>] [-Locale <String[]>] [-Organization <String[]>]
+ [-OrganizationUnit <String[]>] [-State <String[]>] [-SanDns <String>] [-SanEmail <String>] [-SanIP <String>]
+ [-SanUpn <String>] [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>]
+ [-Thumbprint <String>] [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>]
+ [-ExpireBefore <DateTime>] [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>]
+ [-CreateDate <DateTime>] [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>]
+ [-ManagementType <TppManagementType[]>] [-PendingWorkflow] [-Stage <TppCertificateStage[]>]
+ [-StageGreaterThan <TppCertificateStage>] [-StageLessThan <TppCertificateStage>] [-ValidationEnabled]
+ [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ### ByGuid
 ```
-Find-TppCertificate -Guid <Guid> [-Recursive] [-Limit <Int32>] [-Country <String>] [-CommonName <String>]
- [-Issuer <String>] [-KeyAlgorithm <String[]>] [-KeySize <Int32[]>] [-KeySizeGreaterThan <Int32>]
- [-KeySizeLessThan <Int32>] [-Locale <String[]>] [-Organization <String[]>] [-OrganizationUnit <String[]>]
- [-State <String[]>] [-SanDns <String>] [-SanEmail <String>] [-SanIP <String>] [-SanUpn <String>]
- [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>] [-Thumbprint <String>]
- [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>] [-ExpireBefore <DateTime>]
- [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>] [-CreateDate <DateTime>]
- [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <TppManagementType[]>]
- [-PendingWorkflow] [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
- [-StageLessThan <TppCertificateStage>] [-ValidationEnabled] [-ValidationState <String[]>]
- [-TppSession <TppSession>] [<CommonParameters>]
+Find-TppCertificate -Guid <Guid> [-Recursive] [-Limit <Int32>] [-Offset <Int32>] [-Country <String>]
+ [-CommonName <String>] [-Issuer <String>] [-KeyAlgorithm <String[]>] [-KeySize <Int32[]>]
+ [-KeySizeGreaterThan <Int32>] [-KeySizeLessThan <Int32>] [-Locale <String[]>] [-Organization <String[]>]
+ [-OrganizationUnit <String[]>] [-State <String[]>] [-SanDns <String>] [-SanEmail <String>] [-SanIP <String>]
+ [-SanUpn <String>] [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>]
+ [-Thumbprint <String>] [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>]
+ [-ExpireBefore <DateTime>] [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>]
+ [-CreateDate <DateTime>] [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>]
+ [-ManagementType <TppManagementType[]>] [-PendingWorkflow] [-Stage <TppCertificateStage[]>]
+ [-StageGreaterThan <TppCertificateStage>] [-StageLessThan <TppCertificateStage>] [-ValidationEnabled]
+ [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -86,33 +86,40 @@ Find 5 certificates expiring before a certain date
 
 ### EXAMPLE 3
 ```
+Find-TppCertificate -ExpireBefore "2018-01-01" -Limit 5 -Offset 2
+```
+
+Find 5 certificates expiring before a certain date, starting at the 3rd certificate found.
+
+### EXAMPLE 4
+```
 Find-TppCertificate -Path '\VED\Policy\My Policy'
 ```
 
 Find all certificates in a specific path
 
-### EXAMPLE 4
+### EXAMPLE 5
 ```
 Find-TppCertificate -Issuer 'CN=Example Root CA, O=Venafi,Inc., L=Salt Lake City, S=Utah, C=US'
 ```
 
 Find all certificates by issuer
 
-### EXAMPLE 5
+### EXAMPLE 6
 ```
 Find-TppCertificate -Path '\VED\Policy\My Policy' -Recursive
 ```
 
 Find all certificates in a specific path and all subfolders
 
-### EXAMPLE 6
+### EXAMPLE 7
 ```
 Find-TppCertificate -ExpireBefore "2018-01-01" -Limit 5 | Get-TppCertificateDetail
 ```
 
 Get detailed certificate info on the first 5 certificates expiring before a certain date
 
-### EXAMPLE 7
+### EXAMPLE 8
 ```
 Find-TppCertificate -ExpireBefore "2019-09-01" | Invoke-TppCertificateRenewal
 ```
@@ -185,6 +192,21 @@ Accept wildcard characters: False
 Limit how many items are returned. 
 Default is 0 for no limit.
 It is definitely recommended to filter on another property when searching with no limit.
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Offset
+The number of results to skip.
 
 ```yaml
 Type: Int32

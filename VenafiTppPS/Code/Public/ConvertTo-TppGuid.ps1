@@ -31,8 +31,7 @@ function ConvertTo-TppGuid {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -53,15 +52,15 @@ function ConvertTo-TppGuid {
             TppSession = $TppSession
             Method     = 'Post'
             UriLeaf    = 'config/DnToGuid'
+            Body       = @{
+                ObjectDN = ''
+            }
         }
     }
 
     process {
 
-        $params.Add('Body', @{
-                ObjectDN = $Path
-            }
-        )
+        $params.Body.ObjectDN = $Path
 
         $response = Invoke-TppRestMethod @params
 
@@ -71,12 +70,10 @@ function ConvertTo-TppGuid {
                     Guid     = [Guid] $response.Guid
                     TypeName = $response.ClassName
                 }
-            }
-            else {
+            } else {
                 [Guid] $response.Guid
             }
-        }
-        else {
+        } else {
             throw $response.Error
         }
     }

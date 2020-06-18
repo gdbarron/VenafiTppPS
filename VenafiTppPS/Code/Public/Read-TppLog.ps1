@@ -78,17 +78,16 @@ https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 
 #>
 function Read-TppLog {
-    [CmdletBinding(DefaultParameterSetName = 'ByObject')]
+    [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
-        [Parameter(ValueFromPipeline, ParameterSetName = 'ByObject')]
+        [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'ByObject')]
         [TppObject] $InputObject,
 
-        [Parameter(ParameterSetName = 'ByPath')]
+        [Parameter(Mandatory, ParameterSetName = 'ByPath')]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -125,57 +124,65 @@ function Read-TppLog {
         [TppSession] $TppSession = $Script:TppSession
     )
 
-    $TppSession.Validate()
+    begin {
 
-    $params = @{
-        TppSession = $TppSession
-        Method     = 'Get'
-        UriLeaf    = 'Log'
-        Body       = @{ }
-    }
+        $TppSession.Validate()
 
-    switch ($PSBoundParameters.Keys) {
-        'InputObject' {
-            $params.Body.Add('Component', $InputObject.Path)
+        $params = @{
+            TppSession = $TppSession
+            Method     = 'Get'
+            UriLeaf    = 'Log/'
+            Body       = @{ }
         }
 
-        'Path' {
-            $params.Body.Add('Component', $Path)
-        }
+        switch ($PSBoundParameters.Keys) {
 
-        'Severity' {
-            $params.Body.Add('Severity', $Severity)
-        }
+            'Severity' {
+                $params.Body.Add('Severity', $Severity)
+            }
 
-        'StartTime' {
-            $params.Body.Add('FromTime', ($StartTime | ConvertTo-UtcIso8601) )
-        }
+            'StartTime' {
+                $params.Body.Add('FromTime', ($StartTime | ConvertTo-UtcIso8601) )
+            }
 
-        'EndTime' {
-            $params.Body.Add('ToTime', ($EndTime | ConvertTo-UtcIso8601) )
-        }
+            'EndTime' {
+                $params.Body.Add('ToTime', ($EndTime | ConvertTo-UtcIso8601) )
+            }
 
-        'Text1' {
-            $params.Body.Add('Text1', $Text1)
-        }
+            'Text1' {
+                $params.Body.Add('Text1', $Text1)
+            }
 
-        'Text2' {
-            $params.Body.Add('Text2', $Text2)
-        }
+            'Text2' {
+                $params.Body.Add('Text2', $Text2)
+            }
 
-        'Value1' {
-            $params.Body.Add('Value1', $Value1)
-        }
+            'Value1' {
+                $params.Body.Add('Value1', $Value1)
+            }
 
-        'Value2' {
-            $params.Body.Add('Value2', $Value2)
-        }
+            'Value2' {
+                $params.Body.Add('Value2', $Value2)
+            }
 
-        'Limit' {
-            $params.Body.Add('Limit', $Limit)
+            'Limit' {
+                $params.Body.Add('Limit', $Limit)
+            }
         }
     }
 
-    Invoke-TppRestMethod @params | Select-Object -ExpandProperty LogEvents
+    process {
 
+        switch ($PSCmdlet.ParameterSetName) {
+            'ByObject' {
+                $params.Body.Component = $InputObject.Path
+            }
+
+            'ByPath' {
+                $params.Body.Component = $Path
+            }
+        }
+
+        Invoke-TppRestMethod @params | Select-Object -ExpandProperty LogEvents
+    }
 }

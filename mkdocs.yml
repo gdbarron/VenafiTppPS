@@ -33,11 +33,13 @@ pages:
     - New-TppObject: functions/New-TppObject.md
     - New-TppPolicy: functions/New-TppPolicy.md
     - New-TppSession: functions/New-TppSession.md
+    - New-TppToken: functions/New-TppToken.md
     - Read-TppLog: functions/Read-TppLog.md
     - Remove-TppCertificate: functions/Remove-TppCertificate.md
     - Remove-TppCertificateAssociation: functions/Remove-TppCertificateAssociation.md
     - Rename-TppObject: functions/Rename-TppObject.md
     - Revoke-TppCertificate: functions/Revoke-TppCertificate.md
+    - Revoke-TppToken: functions/Revoke-TppToken.md
     - Set-TppAttribute: functions/Set-TppAttribute.md
     - Set-TppPermission: functions/Set-TppPermission.md
     - Set-TppWorkflowTicketStatus: functions/Set-TppWorkflowTicketStatus.md

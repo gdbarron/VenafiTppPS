@@ -88,6 +88,7 @@ Accept wildcard characters: False
 ### -ProvisionCertificate
 If creating an application object, you can optionally push the certificate once the creation is complete.
 Only available if a 'Certificate' key containing the certificate path is provided for Attribute.
+Please note, this feature was added in v18.3.
 
 ```yaml
 Type: SwitchParameter

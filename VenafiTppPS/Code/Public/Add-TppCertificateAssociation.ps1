@@ -64,8 +64,7 @@ function Add-TppCertificateAssociation {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -76,8 +75,7 @@ function Add-TppCertificateAssociation {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -103,7 +101,7 @@ function Add-TppCertificateAssociation {
             }
         }
 
-        if ( $ProvisionCertificate ) {
+        if ( $PSBoundParameters.ContainsKey('ProvisionCertificate') ) {
             $params.Body.Add('PushToNew', 'true')
         }
     }
@@ -114,17 +112,14 @@ function Add-TppCertificateAssociation {
             $CertificatePath = $InputObject.Path
         }
 
-        $params.Body = @{
-            'CertificateDN' = $CertificatePath
-            'ApplicationDN' = @($ApplicationPath)
-        }
+        $params.Body.CertificateDN = $CertificatePath
+        $params.Body.ApplicationDN = @($ApplicationPath)
 
         try {
             if ( $PSCmdlet.ShouldProcess($CertificatePath, 'Add association') ) {
                 $null = Invoke-TppRestMethod @params
             }
-        }
-        catch {
+        } catch {
             $myError = $_.ToString() | ConvertFrom-Json
             Write-Error ($myError.Error)
         }

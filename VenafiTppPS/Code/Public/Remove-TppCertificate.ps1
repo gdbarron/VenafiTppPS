@@ -61,8 +61,7 @@ function Remove-TppCertificate {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -91,8 +90,7 @@ function Remove-TppCertificate {
         if ( $PSBoundParameters.ContainsKey('InputObject') ) {
             $path = $InputObject.Path
             $guid = $InputObject.Guid
-        }
-        else {
+        } else {
             $guid = $Path | ConvertTo-TppGuid -TppSession $TppSession
         }
 
@@ -103,9 +101,8 @@ function Remove-TppCertificate {
 
         if ( $associatedApps ) {
             if ( $Force ) {
-                $params.Add('Body', @{'ApplicationDN' = @($associatedApps) })
-            }
-            else {
+                $params.Body = @{'ApplicationDN' = @($associatedApps) }
+            } else {
                 Write-Error ("Path '{0}' has associations and cannot be removed.  Provide -Force to override." -f $Path)
                 Return
             }

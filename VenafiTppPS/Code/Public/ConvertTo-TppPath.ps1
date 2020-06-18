@@ -43,15 +43,15 @@ function ConvertTo-TppPath {
             TppSession = $TppSession
             Method     = 'Post'
             UriLeaf    = 'config/GuidToDN'
+            Body       = @{
+                ObjectGUID = ''
+            }
         }
     }
 
     process {
 
-        $params.Add('Body', @{
-                ObjectGUID = "{$Guid}"
-            }
-        )
+        $params.Body.ObjectGUID = "{$Guid}"
 
         $response = Invoke-TppRestMethod @params
 
@@ -61,12 +61,10 @@ function ConvertTo-TppPath {
                     Path     = $response.ObjectDN
                     TypeName = $response.ClassName
                 }
-            }
-            else {
+            } else {
                 $response.ObjectDN
             }
-        }
-        else {
+        } else {
             throw $response.Error
         }
     }
