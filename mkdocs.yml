@@ -25,7 +25,9 @@ pages:
     - Get-TppSystemStatus: functions/Get-TppSystemStatus.md
     - Get-TppVersion: functions/Get-TppVersion.md
     - Get-TppWorkflowTicket: functions/Get-TppWorkflowTicket.md
+    - Import-TppCertificate: functions/Import-TppCertificate.md
     - Invoke-TppCertificateRenewal: functions/Invoke-TppCertificateRenewal.md
+    - Invoke-TppRestMethod: functions/Invoke-TppRestMethod.md
     - Move-TppObject: functions/Move-TppObject.md
     - New-TppCapiApplication: functions/New-TppCapiApplication.md
     - New-TppCertificate: functions/New-TppCertificate.md
