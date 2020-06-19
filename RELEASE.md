@@ -1,6 +1,3 @@
-- Add token-based authentication support, Integrated, OAuth, and Certificate.  Tokens can be used in or out of this module.
-- Add CertificateType option to New-TppCertificate
-- Add support for GET api calls which require a trailing slash
-- Fixes in multiple functions where .Add on a hashtable was called in the process block
-- Fix issue #102, Base64 with private key not an available option
-- Update formats which support IncludeChain
+- add Import-TppCertificate, #88
+- make Invoke-TppRestMethod accessible, #106
+- fix verbose being turned on incorrectly in New-TppSession when getting by token
