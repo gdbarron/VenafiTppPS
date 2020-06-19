@@ -166,6 +166,8 @@ function New-TppSession {
         [switch] $PassThru
     )
 
+    $isVerbose = if ($PSBoundParameters.Verbose -eq $true) { $true } else { $false }
+
     $ServerUrl = $Server
     # add prefix if just server url was provided
     if ( $Server -notlike 'https://*') {
@@ -218,7 +220,7 @@ function New-TppSession {
                     $params.State = $State
                 }
 
-                $token = New-TppToken @params -Verbose:$Verbose
+                $token = New-TppToken @params -Verbose:$isVerbose
                 $newSession.Token = $token
                 $newSession.Expires = $token.Expires
             }
