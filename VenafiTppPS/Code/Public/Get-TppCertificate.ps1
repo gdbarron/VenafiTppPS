@@ -145,7 +145,7 @@ function Get-TppCertificate {
             }
 
             $params.Body.IncludePrivateKey = $true
-            $plainTextPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePassword))
+            $plainTextPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringUni([System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($SecurePassword))
             $params.Body.Password = $plainTextPassword
         }
 
