@@ -2,6 +2,8 @@
 
 [![Build status](https://gd-barron.visualstudio.com/VenafiTppPS/_apis/build/status/VenafiTppPS)](https://dev.azure.com/gd-barron/VenafiTppPS/_build/latest?definitionId=1)
 [![Documentation Status](https://readthedocs.org/projects/venafitppps/badge/?version=latest)](https://venafitppps.readthedocs.io/en/latest/?badge=latest)
+[![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/VenafiTppPS?style=plastic)](https://www.powershellgallery.com/packages/VenafiTppPS)
+![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/VenafiTppPS?style=plastic)
 
 ## Documentation
 
@@ -12,21 +14,26 @@ Documentation can be found at [http://venafitppps.readthedocs.io](http://venafit
 | OS             | PowerShell Version Tested | Status  |
 | -------------- |--------------------| -----|
 | Windows        | 5.1                | **Working!** |
-| Windows        | Core 6.2.3         | **Working!** |
-| MacOS          | Core 6.2.3         | **Working!** |
-| Linux (Ubuntu 18.04) | Core 6.2.3         | **Working!** |
+| Windows        | Core 6.2.3+         | **Working!** |
+| MacOS          | Core 6.2.3+         | **Working!** |
+| Linux (Ubuntu 18.04) | Core 6.2.3+         | **Working!** |
+
+## Install Module
+
+VenafiTppPS is published to the PowerShell Gallery.  The most recent version is listed in the badge 'powershell gallery' above and can be viewed by clicking on it.  To install the module, you need to have PowerShell installed first.  On Windows, PowerShell will already be installed.  For [Linux](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7) or [macOS](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-macos?view=powershell-7), you will need to install PowerShell Core; follow those links for guidance.  Once PowerShell is installed, start a PowerShell prompt and execute `Install-Module -Name VenafiTppPS` which will install from the gallery.
 
 ## Usage
 
-After loading the module, create a new session with
+Start a new PowerShell prompt (even if you have one from the Install Module step) and create a new VenafiTppPS session with
 
 ```powershell
 $cred = Get-Credential
-New-TppSession -ServerUrl 'https://venafi.mycompany.com' -Credential $cred
+New-TppSession -Server 'venafi.mycompany.com' -Credential $cred
 ```
 
-before calling any functions.  This will create a session which will be used by default in other functions.
-You can also use integrated authentication, simply exclude the Credential.
+This will create a session which will be used by default in other functions.
+You can also use integrated authentication, simply exclude `-Credential $cred`.  As of v2.0, token-based authentication has been added as well.
+View the help on all the ways you can create a new TPP session with `help New-TppSession -full`.
 
 One of the easiest ways to get started is to use `Find-TppObject`:
 
