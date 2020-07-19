@@ -184,7 +184,12 @@ function New-TppCertificate {
             Method     = 'Post'
             UriLeaf    = 'certificates/request'
             Body       = @{
-                PolicyDN = $Path
+                PolicyDN             = $Path
+                Origin               = 'VenafiTppPS'
+                CASpecificAttributes = @{
+                    'Name'  = 'Origin'
+                    'Value' = 'VenafiTppPS'
+                }
             }
         }
 
