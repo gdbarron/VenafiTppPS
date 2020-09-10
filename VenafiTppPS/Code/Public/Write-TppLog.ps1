@@ -131,7 +131,7 @@ function Write-TppLog {
     $params = @{
         TppSession = $TppSession
         Method     = 'Post'
-        UriLeaf    = 'Log'
+        UriLeaf    = 'Log/'
         Body       = @{
             GroupID   = $CustomEventGroup
             ID        = $decEventId
