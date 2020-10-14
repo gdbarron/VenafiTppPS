@@ -102,7 +102,7 @@ Only include certificates in an error state
 .PARAMETER NetworkValidationEnabled
 Only include certificates with network validation enabled or disabled
 
-.PARAMETER CreateDate
+.PARAMETER CreatedDate
 Find certificates that were created at an exact date and time
 
 .PARAMETER CreatedAfter
@@ -321,7 +321,8 @@ function Find-TppCertificate {
         [bool] $NetworkValidationEnabled,
 
         [Parameter()]
-        [datetime] $CreateDate,
+        [Alias('CreatedOn')]
+        [datetime] $CreatedDate,
 
         [Parameter()]
         [Alias('CreatedOnGreater')]
@@ -372,6 +373,15 @@ function Find-TppCertificate {
         }
 
         switch ($PSBoundParameters.Keys) {
+            'CreatedDate' {
+                $params.Body.Add( 'CreatedOn', ($CreatedDate | ConvertTo-UtcIso8601) )
+            }
+            'CreatedBefore' {
+                $params.Body.Add( 'CreatedOnLess', ($CreatedBefore | ConvertTo-UtcIso8601) )
+            }
+            'CreatedAfter' {
+                $params.Body.Add( 'CreatedOnGreater', ($CreatedAfter | ConvertTo-UtcIso8601) )
+            }
             'Offset' {
                 $params.Body.Add( 'Offset', $Offset )
             }
