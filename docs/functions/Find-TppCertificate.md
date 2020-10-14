@@ -13,7 +13,7 @@ Find-TppCertificate [-Limit <Int32>] [-Offset <Int32>] [-Country <String>] [-Com
  [-State <String[]>] [-SanDns <String>] [-SanEmail <String>] [-SanIP <String>] [-SanUpn <String>]
  [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>] [-Thumbprint <String>]
  [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>] [-ExpireBefore <DateTime>]
- [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>] [-CreateDate <DateTime>]
+ [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>] [-CreatedDate <DateTime>]
  [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>] [-ManagementType <TppManagementType[]>]
  [-PendingWorkflow] [-Stage <TppCertificateStage[]>] [-StageGreaterThan <TppCertificateStage>]
  [-StageLessThan <TppCertificateStage>] [-ValidationEnabled] [-ValidationState <String[]>]
@@ -29,7 +29,7 @@ Find-TppCertificate -InputObject <TppObject> [-Recursive] [-Limit <Int32>] [-Off
  [-SanUpn <String>] [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>]
  [-Thumbprint <String>] [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>]
  [-ExpireBefore <DateTime>] [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>]
- [-CreateDate <DateTime>] [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>]
+ [-CreatedDate <DateTime>] [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>]
  [-ManagementType <TppManagementType[]>] [-PendingWorkflow] [-Stage <TppCertificateStage[]>]
  [-StageGreaterThan <TppCertificateStage>] [-StageLessThan <TppCertificateStage>] [-ValidationEnabled]
  [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
@@ -44,7 +44,7 @@ Find-TppCertificate -Path <String> [-Recursive] [-Limit <Int32>] [-Offset <Int32
  [-SanUpn <String>] [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>]
  [-Thumbprint <String>] [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>]
  [-ExpireBefore <DateTime>] [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>]
- [-CreateDate <DateTime>] [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>]
+ [-CreatedDate <DateTime>] [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>]
  [-ManagementType <TppManagementType[]>] [-PendingWorkflow] [-Stage <TppCertificateStage[]>]
  [-StageGreaterThan <TppCertificateStage>] [-StageLessThan <TppCertificateStage>] [-ValidationEnabled]
  [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
@@ -59,7 +59,7 @@ Find-TppCertificate -Guid <Guid> [-Recursive] [-Limit <Int32>] [-Offset <Int32>]
  [-SanUpn <String>] [-SanUri <String>] [-SerialNumber <String>] [-SignatureAlgorithm <String>]
  [-Thumbprint <String>] [-IssueDate <DateTime>] [-ExpireDate <DateTime>] [-ExpireAfter <DateTime>]
  [-ExpireBefore <DateTime>] [-Enabled] [-InError <Boolean>] [-NetworkValidationEnabled <Boolean>]
- [-CreateDate <DateTime>] [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>]
+ [-CreatedDate <DateTime>] [-CreatedAfter <DateTime>] [-CreatedBefore <DateTime>]
  [-ManagementType <TppManagementType[]>] [-PendingWorkflow] [-Stage <TppCertificateStage[]>]
  [-StageGreaterThan <TppCertificateStage>] [-StageLessThan <TppCertificateStage>] [-ValidationEnabled]
  [-ValidationState <String[]>] [-TppSession <TppSession>] [<CommonParameters>]
@@ -612,13 +612,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -CreateDate
+### -CreatedDate
 Find certificates that were created at an exact date and time
 
 ```yaml
 Type: DateTime
 Parameter Sets: (All)
-Aliases:
+Aliases: CreatedOn
 
 Required: False
 Position: Named
