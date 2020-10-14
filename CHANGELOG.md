@@ -1,3 +1,6 @@
+## v2.0.5
+- Add missing filters CreateDate, CreatedBefore, and CreatedAfter to Find-TppCertificate, [#117](https://github.com/gdbarron/VenafiTppPS/issues/117).  Thanks @doyle043!
+
 ## v2.0.4
 - Fix header getting stripped causing Write-TppLog to fail, #114
 - Update Invoke-TppRestMethod to retry with trailing slash for all methods, not just Get
