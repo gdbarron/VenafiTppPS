@@ -102,7 +102,7 @@ Only include certificates in an error state
 .PARAMETER NetworkValidationEnabled
 Only include certificates with network validation enabled or disabled
 
-.PARAMETER CreateDate
+.PARAMETER CreatedDate
 Find certificates that were created at an exact date and time
 
 .PARAMETER CreatedAfter
