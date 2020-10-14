@@ -321,6 +321,7 @@ function Find-TppCertificate {
         [bool] $NetworkValidationEnabled,
 
         [Parameter()]
+        [Alias('CreatedOn')]
         [datetime] $CreateDate,
 
         [Parameter()]
@@ -372,6 +373,15 @@ function Find-TppCertificate {
         }
 
         switch ($PSBoundParameters.Keys) {
+            'CreateDate' {
+                $params.Body.Add( 'CreatedOn', ($CreatedDate | ConvertTo-UtcIso8601) )
+            }
+            'CreatedBefore' {
+                $params.Body.Add( 'CreatedOnLess', ($CreatedBefore | ConvertTo-UtcIso8601) )
+            }
+            'CreatedAfter' {
+                $params.Body.Add( 'CreatedOnGreater', ($CreatedAfter | ConvertTo-UtcIso8601) )
+            }
             'Offset' {
                 $params.Body.Add( 'Offset', $Offset )
             }
