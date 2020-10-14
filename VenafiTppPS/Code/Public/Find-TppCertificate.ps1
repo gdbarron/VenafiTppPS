@@ -322,7 +322,7 @@ function Find-TppCertificate {
 
         [Parameter()]
         [Alias('CreatedOn')]
-        [datetime] $CreateDate,
+        [datetime] $CreatedDate,
 
         [Parameter()]
         [Alias('CreatedOnGreater')]
@@ -373,7 +373,7 @@ function Find-TppCertificate {
         }
 
         switch ($PSBoundParameters.Keys) {
-            'CreateDate' {
+            'CreatedDate' {
                 $params.Body.Add( 'CreatedOn', ($CreatedDate | ConvertTo-UtcIso8601) )
             }
             'CreatedBefore' {
