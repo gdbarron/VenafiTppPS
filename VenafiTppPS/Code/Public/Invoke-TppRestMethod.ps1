@@ -115,7 +115,32 @@ function Invoke-TppRestMethod {
         $params.Add('UseDefaultCredentials', $true)
     }
 
-    Write-Verbose ($params | ConvertTo-Json | Out-String)
+    # Check if sensitive data is included in the body (Like: Passwords, or Tokens)
+    # Create redacted params for verbose output.
+    if ( $sensitiveKeys = $Body.Keys | Where-Object {$_ -in @("Password", "Token")}) {
+
+        # Clone the hashtable
+        $redactedParams = $params.Clone()
+        $redactedParams.Body = $Body.Clone()
+
+        # Replace values with Redact text.
+        foreach ($key in $sensitiveKeys) {
+            $redactedParams.Body.$key = "[Redacted]"
+        }
+
+        $redactedParams.Body = ConvertTo-Json $redactedParams.Body -Depth 5
+
+        # Prevent Invoke-WebRequest and Invoke-RestMethod from leaking details.
+        $params.Verbose = $false
+
+        Write-Verbose "WARNING: Sensitive data detected, -Verbose has been disabled for Invoke-WebRequest/Invoke-RestMethod for this call."
+    }
+
+    if ($redactedParams.count -gt 0) {
+        Write-Verbose ($redactedParams | ConvertTo-Json | Out-String)
+    } else {
+        Write-Verbose ($params | ConvertTo-Json | Out-String)
+    }
 
     if ( $PSBoundParameters.ContainsKey('UseWebRequest') ) {
         Write-Debug "Using Invoke-WebRequest"
