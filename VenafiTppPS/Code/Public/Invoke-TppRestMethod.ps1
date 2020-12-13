@@ -115,19 +115,24 @@ function Invoke-TppRestMethod {
         $params.Add('UseDefaultCredentials', $true)
     }
 
-    Write-Verbose ($params | ConvertTo-Json | Out-String)
+    # Write-Verbose ($params | ConvertTo-Json | Out-String)
+    $params | Write-VerboseWithSecret
 
     if ( $PSBoundParameters.ContainsKey('UseWebRequest') ) {
         Write-Debug "Using Invoke-WebRequest"
         try {
             Invoke-WebRequest @params
+            # $verboseOutput = $(Invoke-WebRequest @params) 4>&1
         } catch {
             $_.Exception.Response
         }
     } else {
         Write-Debug "Using Invoke-RestMethod"
         try {
-            Invoke-RestMethod @params
+            # Invoke-RestMethod @params
+            $verboseOutput = $($response = Invoke-RestMethod @params) 4>&1
+            # Write-Warning $verboseOutput
+            # Write-Warning $response
         } catch {
             # try with trailing slash as some GETs return a 307/401 without it
             if ( -not $uri.EndsWith('/') ) {
@@ -138,6 +143,7 @@ function Invoke-TppRestMethod {
 
                 try {
                     Invoke-RestMethod @params
+                    # $verboseOutput = $(Invoke-RestMethod @params) 4>&1
                     Write-Warning ('{0} call requires a trailing slash, please create an issue at https://github.com/gdbarron/VenafiTppPS/issues and mention api endpoint {1}' -f $Method, ('{1}/{2}' -f $UriRoot, $UriLeaf))
                 } catch {
                     throw ('"{0} {1}: {2}' -f $_.Exception.Response.StatusCode.value__, $_.Exception.Response.StatusDescription, $_ | Out-String )
@@ -147,5 +153,7 @@ function Invoke-TppRestMethod {
             }
         }
     }
-}
 
+    $verboseOutput.Message | Write-VerboseWithSecret
+    $response
+}
