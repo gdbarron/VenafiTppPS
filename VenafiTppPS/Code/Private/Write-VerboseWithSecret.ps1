@@ -9,7 +9,7 @@ Remove sensitive information when writing verbose info
 JSON string or other object
 
 .PARAMETER SecretName
-Name of secret(s) to hide their values.  Default value is 'Password', 'AccessToken', 'RefreshToken'
+Name of secret(s) to hide their values.  Default value is 'Password', 'AccessToken', 'RefreshToken', 'access_token', 'refresh_token'
 
 .INPUTS
 InputObject
@@ -37,7 +37,7 @@ function Write-VerboseWithSecret {
         [psobject] $InputObject,
 
         [Parameter()]
-        [string[]] $PropertyName = @('AccessToken', 'Password', 'RefreshToken')
+        [string[]] $PropertyName = @('AccessToken', 'Password', 'RefreshToken', 'access_token', 'refresh_token')
     )
 
     begin {

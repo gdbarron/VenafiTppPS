@@ -143,7 +143,7 @@ function New-TppToken {
 
         $response = Invoke-TppRestMethod @params
 
-        Write-Verbose ($response | Out-String)
+        $response | Write-VerboseWithSecret
 
         [PSCustomObject] @{
             AuthUrl      = $AuthUrl
