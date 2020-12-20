@@ -103,7 +103,7 @@ function Invoke-TppRestMethod {
         ContentType = 'application/json'
     }
 
-    if ( $Body.Count -gt 0 ) {
+    if ( $Body ) {
         $restBody = $Body
         if ( $Method -ne 'Get' ) {
             $restBody = ConvertTo-Json $Body -depth 5
