@@ -37,7 +37,7 @@ function Write-VerboseWithSecret {
         [psobject] $InputObject,
 
         [Parameter()]
-        [string[]] $PropertyName = @('AccessToken', 'Password', 'RefreshToken', 'access_token', 'refresh_token')
+        [string[]] $PropertyName = @('AccessToken', 'Password', 'RefreshToken', 'access_token', 'refresh_token', 'Authorization')
     )
 
     begin {
@@ -59,9 +59,17 @@ function Write-VerboseWithSecret {
 
         foreach ($prop in $PropertyName) {
             # look for secret name and replace value if found
+
+            # look for values in multiline json string, eg. "Body": "{\r\n  \"Password\": \"MyPass\"\r\n}"
             if ( $processMe -match "(?s).*\\""$prop\\"": \\""(.*?)\\"".*" ) {
                 $secret = $processMe -replace "(?s).*\\""$prop\\"": \\""(.*?)\\"".*", '$1'
-                $processMe = ($processMe -replace $secret, '***hidden***')
+                $processMe = ($processMe -replace "$secret", '***hidden***')
+            }
+
+            # look for values in standard key:value string, eg. "Authorization": "Bearer adflkjandsfsmmmsdfkhsdf=="
+            if ( $processMe -match "(?s).*""$prop"": ""(.*?)"".*" ) {
+                $secret = $processMe -replace "(?s).*""$prop"": ""(.*?)"".*", '$1'
+                $processMe = ($processMe -replace "$secret", '***hidden***')
             }
         }
 
