@@ -115,13 +115,11 @@ function Invoke-TppRestMethod {
         $params.Add('UseDefaultCredentials', $true)
     }
 
-    # Write-Verbose ($params | ConvertTo-Json | Out-String)
     $params | Write-VerboseWithSecret
 
     if ( $PSBoundParameters.ContainsKey('UseWebRequest') ) {
         Write-Debug "Using Invoke-WebRequest"
         try {
-            # Invoke-WebRequest @params
             $verboseOutput = $($response = Invoke-WebRequest @params) 4>&1
         } catch {
             $_.Exception.Response
@@ -129,9 +127,12 @@ function Invoke-TppRestMethod {
     } else {
         Write-Debug "Using Invoke-RestMethod"
         try {
-            # Invoke-RestMethod @params
             $verboseOutput = $($response = Invoke-RestMethod @params) 4>&1
         } catch {
+
+            # if trying with a slash below doesn't work, we want to provide the original error
+            $errorPreSlash = $_
+
             # try with trailing slash as some GETs return a 307/401 without it
             if ( -not $uri.EndsWith('/') ) {
 
@@ -140,11 +141,11 @@ function Invoke-TppRestMethod {
                 $params.Uri += '/'
 
                 try {
-                    # Invoke-RestMethod @params
                     $verboseOutput = $($response = Invoke-RestMethod @params) 4>&1
                     Write-Warning ('{0} call requires a trailing slash, please create an issue at https://github.com/gdbarron/VenafiTppPS/issues and mention api endpoint {1}' -f $Method, ('{1}/{2}' -f $UriRoot, $UriLeaf))
                 } catch {
-                    throw ('"{0} {1}: {2}' -f $_.Exception.Response.StatusCode.value__, $_.Exception.Response.StatusDescription, $_ | Out-String )
+                    # this didn't work, provide details from pre slash call
+                    throw $errorPreSlash
                 }
             } else {
                 throw ('"{0} {1}: {2}' -f $_.Exception.Response.StatusCode.value__, $_.Exception.Response.StatusDescription, $_ | Out-String )
