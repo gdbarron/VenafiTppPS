@@ -245,9 +245,10 @@ function New-TppSession {
         # this isn't required so bypass on failure
         $newSession.Version = (Get-TppVersion -TppSession $newSession -ErrorAction SilentlyContinue)
 
-        $allFields = (Get-TppCustomField -TppSession $newSession -Class 'X509 Certificate').Items
-        $deviceFields = (Get-TppCustomField -TppSession $newSession -Class 'Device').Items
-        $allFields += $deviceFields | Where-Object { $_.Guid -notin $allFields.Guid }
+        $certFields = Get-TppCustomField -TppSession $newSession -Class 'X509 Certificate' -ErrorAction SilentlyContinue
+        $deviceFields = Get-TppCustomField -TppSession $newSession -Class 'Device' -ErrorAction SilentlyContinue
+        $allFields = $certFields.Items
+        $allFields += $deviceFields.Items | Where-Object { $_.Guid -notin $allFields.Guid }
         $newSession.CustomField = $allFields
 
         if ( $PassThru ) {
