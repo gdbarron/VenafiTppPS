@@ -73,7 +73,7 @@ function Find-TppCodeSignProject {
             foreach ($project in $response.Projects) {
                 [TppObject] @{
                     Name     = Split-Path $project.DN -Leaf
-                    TypeName = 'SignProject'
+                    TypeName = 'Code Signing Project'
                     Path     = $project.DN
                     Guid     = $project.Guid
                 }

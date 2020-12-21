@@ -49,7 +49,7 @@ https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-
 https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-Codesign-GetProject.php?tocpath=CodeSign%20Protect%20Admin%20REST%C2%A0API%7CProjects%20and%20environments%7C_____10
 
 #>
-function Get-TppCodeSignProject {
+function Get-TppCodeSignEnvironment {
 
     [CmdletBinding()]
     param (
@@ -74,7 +74,7 @@ function Get-TppCodeSignProject {
         $params = @{
             TppSession = $TppSession
             Method     = 'Post'
-            UriLeaf    = 'Codesign/GetProject'
+            UriLeaf    = 'Codesign/GetEnvironment'
             Body       = @{ }
         }
     }
@@ -85,47 +85,7 @@ function Get-TppCodeSignProject {
         $response = Invoke-TppRestMethod @params
 
         if ( $response.Success ) {
-            $response.Project | Select-Object -ExcludeProperty DN, ApplicationDNs, Auditors, KeyUseApprovers, KeyUsers, Owners, Status, CertificateEnvironments -Property *,
-            @{
-                n = 'Name'
-                e = { Split-Path $_.DN -Leaf }
-            },
-            @{
-                n = 'Path'
-                e = { $_.DN }
-            },
-            @{
-                n = 'TypeName'
-                e = { 'Code Signing Project' }
-            },
-            @{
-                n = 'Status'
-                e = { [enum]::GetName([TppCodeSignStatus], $_.Status) }
-            },
-            @{
-                n = 'ApplicationPath'
-                e = { @($_.ApplicationDNs.Items) }
-            },
-            @{
-                n = 'Auditor'
-                e = { @($_.Auditors.Items) }
-            },
-            @{
-                n = 'KeyUseApprover'
-                e = { @($_.KeyUseApprovers.Items) }
-            },
-            @{
-                n = 'KeyUser'
-                e = { @($_.KeyUsers.Items) }
-            },
-            @{
-                n = 'Owner'
-                e = { @($_.Owners.Items) }
-            },
-            @{
-                n = 'CertificateEnvironment'
-                e = { $_.CertificateEnvironments | ConvertTo-TppCodeSignEnvironment }
-            }
+            $response.CertificateEnvironment | ConvertTo-TppCodeSignEnvironment
         } else {
             Write-Error ('{0} : {1} : {2}' -f $response.Result, [enum]::GetName([TppCodeSignResult], $response.Result), $response.Error)
         }
