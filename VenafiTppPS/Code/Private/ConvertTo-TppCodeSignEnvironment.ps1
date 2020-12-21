@@ -1,21 +1,21 @@
 <#
 .SYNOPSIS
-Convert datetime to UTC ISO 8601 format
+Convert code sign certificate environment to something powershell friendly
 
 .DESCRIPTION
-Convert datetime to UTC ISO 8601 format
+Convert code sign certificate environment to something powershell friendly
 
 .PARAMETER InputObject
-DateTime object
+Code sign certificate environment object
 
 .INPUTS
 InputObject
 
 .OUTPUTS
-System.String
+PSCustomObject
 
 .EXAMPLE
-(get-date) | ConvertTo-UtcIso8601
+$envObj | ConvertTo-TppCodeSignEnvironment
 
 #>
 function ConvertTo-TppCodeSignEnvironment {

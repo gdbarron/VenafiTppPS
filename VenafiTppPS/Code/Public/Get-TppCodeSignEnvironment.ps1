@@ -1,12 +1,12 @@
 <#
 .SYNOPSIS
-Get a code sign project
+Get a code sign environment
 
 .DESCRIPTION
-Get code sign project details
+Get code sign environment details
 
 .PARAMETER Path
-Path of the project to get
+Path of the environment to get
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -16,37 +16,49 @@ Path
 
 .OUTPUTS
 PSCustomObject with the following properties:
-    Applications
-    Auditor
-    CertificateEnvironments
-    Collections
-    CreatedOn
+    AllowUserKeyImport
+    Disabled
     Guid
     Id
-    KeyUseApprovers
-    KeyUsers
-    Owners
-    Status
-    Name
+    CertificateStatus
+    CertificateStatusText
+    CertificateTemplate
+    SynchronizeChain
     Path
+    Name
     TypeName
+    OrganizationalUnit
+    IPAddressRestriction
+    KeyUseFlowPath
+    TemplatePath
+    CertificateAuthorityPath
+    CertificatePath
+    CertificateSubject
+    City
+    KeyAlgorithm
+    KeyStorageLocation
+    Organization
+    OrganizationUnit
+    SANEmail
+    State
+    Country
 
 .EXAMPLE
-Get-TppCodeSignProject -Path '\ved\code signing\projects\my_project'
-Get a code sign project
+Get-TppCodeSignEnvironment -Path '\ved\code signing\projects\my_project\my_env'
+Get a code sign environment
 
 .EXAMPLE
-$projectObj | Get-TppCodeSignProject
-Get a project after searching using Find-TppCodeSignProject
+$envObj | Get-TppCodeSignEnvironment
+Get a environment after searching using Find-TppCodeSignEnvironment
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Get-TppCodeSignProject/
+http://venafitppps.readthedocs.io/en/latest/functions/Get-TppCodeSignEnvironment/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppCodeSignProject.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppCodeSignEnvironment.ps1
 
 .LINK
-https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-Codesign-GetProject.php?tocpath=CodeSign%20Protect%20Admin%20REST%C2%A0API%7CProjects%20and%20environments%7C_____10
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-Codesign-GetEnvironment.php?tocpath=CodeSign%20Protect%20Admin%20REST%C2%A0API%7CProjects%20and%20environments%7C_____9
 
 #>
 function Get-TppCodeSignEnvironment {
