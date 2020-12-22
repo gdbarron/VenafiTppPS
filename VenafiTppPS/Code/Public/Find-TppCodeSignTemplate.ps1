@@ -32,7 +32,7 @@ https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find
 https://docs.venafi.com/Docs/20.3/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-Codesign-EnumerateProjects.php?tocpath=CodeSign%20Protect%20SDK%20reference%7CProjects%20and%20environments%7C_____8
 
 #>
-function Find-TppCodeSignProject {
+function Find-TppCodeSignTemplate {
 
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param (
@@ -49,7 +49,7 @@ function Find-TppCodeSignProject {
         $params = @{
             TppSession = $TppSession
             Method     = 'Post'
-            UriLeaf    = 'Codesign/EnumerateProjects'
+            UriLeaf    = 'Codesign/EnumerateTemplates'
             Body       = @{ }
         }
     }
@@ -69,16 +69,16 @@ function Find-TppCodeSignProject {
             }
         }
 
-        $allProjects = foreach ($thisResponse in $response) {
+        $allTemplates = foreach ($thisResponse in $response) {
             if ( $thisResponse.Success ) {
-                $thisProject = $thisResponse.Projects
+                $thisTemplate = $thisResponse.CertificateTemplates
                 # we could be successful without a returned value so check for this
-                if ( $thisProject ) {
+                if ( $thisTemplate ) {
                     [TppObject] @{
-                        Name     = Split-Path $thisProject.DN -Leaf
-                        TypeName = 'Code Signing Project'
-                        Path     = $thisProject.DN
-                        Guid     = $thisProject.Guid
+                        Name     = Split-Path $thisTemplate.DN -Leaf
+                        TypeName = $thisTemplate.Type
+                        Path     = $thisTemplate.DN
+                        Guid     = $thisTemplate.Guid
                     }
                 }
 
@@ -87,6 +87,6 @@ function Find-TppCodeSignProject {
             }
         }
 
-        $allProjects | Sort-Object -Property Path -Unique
+        $allTemplates | Sort-Object -Property Path -Unique
     }
 }

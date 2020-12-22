@@ -36,7 +36,7 @@ function Find-TppCodeSignEnvironment {
 
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param (
-        [Parameter(Mandatory, ParameterSetName = 'Name')]
+        [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'Name')]
         [String[]] $Name,
 
         [Parameter()]
@@ -64,16 +64,13 @@ function Find-TppCodeSignEnvironment {
             }
         }
 
-        if ( $envs ) {
-            foreach ($env in $envs) {
-                [TppObject] @{
-                    Name     = $env.Name
-                    TypeName = $env.TypeName
-                    Path     = $env.Path
-                    Guid     = $env.Guid
-                }
+        foreach ($env in $envs) {
+            [TppObject] @{
+                Name     = $env.Name
+                TypeName = $env.TypeName
+                Path     = $env.Path
+                Guid     = $env.Guid
             }
         }
-
     }
 }
