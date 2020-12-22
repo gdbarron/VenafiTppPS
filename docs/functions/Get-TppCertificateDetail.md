@@ -104,21 +104,20 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## OUTPUTS
 
 ### PSCustomObject with the following properties:
+###     Name
+###     TypeName
 ###     Path
 ###     Guid
+###     ParentPath
+###     Approver
 ###     CertificateAuthorityDN
 ###     CertificateDetails
-###     Consumers
 ###     Contact
 ###     CreatedOn
 ###     CustomFields
-###     Description
 ###     ManagementType
-###     Name
-###     ParentDn
 ###     ProcessingDetails
 ###     RenewalDetails
-###     SchemaClass
 ###     ValidationDetails
 ## NOTES
 
@@ -128,9 +127,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppCertificateDetail.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppCertificateDetail.ps1)
 
-[https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Certificates.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____3](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Certificates.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____3)
-
-[https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Certificates-guid.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____5](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Certificates-guid.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____5)
+[https://docs.venafi.com/Docs/20.3SDK/TopNav/Content/SDK/WebSDK/r-SDK-GET-Certificates-guid.php?tocpath=Web%20SDK%20reference%7CCertificates%20programming%20interface%7C_____10](https://docs.venafi.com/Docs/20.3SDK/TopNav/Content/SDK/WebSDK/r-SDK-GET-Certificates-guid.php?tocpath=Web%20SDK%20reference%7CCertificates%20programming%20interface%7C_____10)
 
 [https://msdn.microsoft.com/en-us/library/system.web.httputility(v=vs.110).aspx](https://msdn.microsoft.com/en-us/library/system.web.httputility(v=vs.110).aspx)
 

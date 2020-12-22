@@ -154,7 +154,7 @@ Hashtable with Scopes and privilege restrictions.
 The key is the scope and the value is one or more privilege restrictions separated by commas, @{'certificate'='delete,manage'}.
 Scopes include Agent, Certificate, Code Signing, Configuration, Restricted, Security, SSH, and statistics.
 For no privilege restriction or read access, use a value of $null.
-For a scope \<-\> privilege map, see the 'WEB SDK' section @ https://docs.venafi.com/Docs/20.1/TopNav/Content/SDK/AuthSDK/r-SDKa-OAuthScopePrivilegeMapping.php?tocpath=Topics%20by%20Guide%7CDeveloper%27s%20Guide%7CAuth%20SDK%20reference%20for%20token%20management%7C_____6.
+For a scope to privilege mapping, see https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/AuthSDK/r-SDKa-OAuthScopePrivilegeMapping.php?tocpath=Auth%20SDK%20reference%20for%20token%20management%7C_____5
 
 ```yaml
 Type: Hashtable
