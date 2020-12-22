@@ -36,7 +36,7 @@ https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-
 #>
 function Set-TppCodeSignProjectStatus {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
@@ -72,10 +72,13 @@ function Set-TppCodeSignProjectStatus {
     process {
 
         $params.Body.Dn = $Path
-        $response = Invoke-TppRestMethod @params
 
-        if ( -not $response.Success ) {
-            Write-Error ('{0} : {1} : {2}' -f $response.Result, [enum]::GetName([TppCodeSignResult], $response.Result), $response.Error)
+        if ( $PSCmdlet.ShouldProcess($Path, "Set project status to $Status") ) {
+            $response = Invoke-TppRestMethod @params
+
+            if ( -not $response.Success ) {
+                Write-Error ('{0} : {1} : {2}' -f $response.Result, [enum]::GetName([TppCodeSignResult], $response.Result), $response.Error)
+            }
         }
     }
 }

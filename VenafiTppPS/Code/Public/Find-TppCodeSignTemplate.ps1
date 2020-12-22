@@ -14,6 +14,9 @@ Session object created from New-TppSession method.  The value defaults to the sc
 .INPUTS
 None
 
+.OUTPUTS
+TppObject
+
 .EXAMPLE
 Find-TppCodeSignProject
 Get all code sign projects
@@ -37,7 +40,7 @@ function Find-TppCodeSignTemplate {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param (
         [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'Name')]
-        [String[]] $Name,
+        [String] $Name,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -52,41 +55,39 @@ function Find-TppCodeSignTemplate {
             UriLeaf    = 'Codesign/EnumerateTemplates'
             Body       = @{ }
         }
+
+        $allTemplates = @()
     }
 
     process {
 
         Switch ($PsCmdlet.ParameterSetName)	{
             'Name' {
-                $response = $Name.ForEach{
-                    $params.Body.Filter = $_
-                    Invoke-TppRestMethod @params
-                }
+                $params.Body.Filter = $Name
             }
 
             'All' {
-                $response = Invoke-TppRestMethod @params
             }
         }
 
-        $allTemplates = foreach ($thisResponse in $response) {
-            if ( $thisResponse.Success ) {
-                $thisTemplate = $thisResponse.CertificateTemplates
-                # we could be successful without a returned value so check for this
-                if ( $thisTemplate ) {
-                    [TppObject] @{
-                        Name     = Split-Path $thisTemplate.DN -Leaf
-                        TypeName = $thisTemplate.Type
-                        Path     = $thisTemplate.DN
-                        Guid     = $thisTemplate.Guid
-                    }
+        $response = Invoke-TppRestMethod @params
+
+        if ( $response.Success ) {
+            $allTemplates += foreach ($thisTemplate in $response.CertificateTemplates) {
+                [TppObject] @{
+                    Name     = Split-Path $thisTemplate.DN -Leaf
+                    TypeName = $thisTemplate.Type
+                    Path     = $thisTemplate.DN
+                    Guid     = $thisTemplate.Guid
                 }
-
-            } else {
-                Write-Error ('{0} : {1} : {2}' -f $thisResponse.Result, [enum]::GetName([TppCodeSignResult], $thisResponse.Result), $thisResponse.Error)
             }
-        }
 
+        } else {
+            Write-Error ('{0} : {1} : {2}' -f $response.Result, [enum]::GetName([TppCodeSignResult], $response.Result), $response.Error)
+        }
+    }
+
+    end {
         $allTemplates | Sort-Object -Property Path -Unique
     }
 }

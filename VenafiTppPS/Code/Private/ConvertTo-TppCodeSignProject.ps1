@@ -1,12 +1,12 @@
 <#
 .SYNOPSIS
-Convert code sign certificate environment to something powershell friendly
+Convert code sign project to something powershell friendly
 
 .DESCRIPTION
-Convert code sign certificate environment to something powershell friendly
+Convert code sign project to something powershell friendly
 
 .PARAMETER InputObject
-Code sign certificate environment object
+Code sign project object
 
 .INPUTS
 InputObject
@@ -15,7 +15,7 @@ InputObject
 PSCustomObject
 
 .EXAMPLE
-$envObj | ConvertTo-TppCodeSignEnvironment
+$envObj | ConvertTo-TppCodeSignProject
 
 #>
 function ConvertTo-TppCodeSignProject {

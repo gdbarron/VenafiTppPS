@@ -14,6 +14,9 @@ Session object created from New-TppSession method.  The value defaults to the sc
 .INPUTS
 None
 
+.OUTPUTS
+TppObject
+
 .EXAMPLE
 Find-TppCodeSignProject
 Get all code sign projects
@@ -37,7 +40,7 @@ function Find-TppCodeSignProject {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param (
         [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'Name')]
-        [String[]] $Name,
+        [String] $Name,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -52,41 +55,39 @@ function Find-TppCodeSignProject {
             UriLeaf    = 'Codesign/EnumerateProjects'
             Body       = @{ }
         }
+
+        $allProjects = @()
     }
 
     process {
 
         Switch ($PsCmdlet.ParameterSetName)	{
             'Name' {
-                $response = $Name.ForEach{
-                    $params.Body.Filter = $_
-                    Invoke-TppRestMethod @params
-                }
+                $params.Body.Filter = $Name
             }
 
             'All' {
-                $response = Invoke-TppRestMethod @params
             }
         }
 
-        $allProjects = foreach ($thisResponse in $response) {
-            if ( $thisResponse.Success ) {
-                $thisProject = $thisResponse.Projects
-                # we could be successful without a returned value so check for this
-                if ( $thisProject ) {
-                    [TppObject] @{
-                        Name     = Split-Path $thisProject.DN -Leaf
-                        TypeName = 'Code Signing Project'
-                        Path     = $thisProject.DN
-                        Guid     = $thisProject.Guid
-                    }
+        $response = Invoke-TppRestMethod @params
+
+        if ( $response.Success ) {
+            $allProjects += foreach ($thisProject in $response.Projects) {
+                [TppObject] @{
+                    Name     = Split-Path $thisProject.DN -Leaf
+                    TypeName = 'Code Signing Project'
+                    Path     = $thisProject.DN
+                    Guid     = $thisProject.Guid
                 }
-
-            } else {
-                Write-Error ('{0} : {1} : {2}' -f $thisResponse.Result, [enum]::GetName([TppCodeSignResult], $thisResponse.Result), $thisResponse.Error)
             }
-        }
 
+        } else {
+            Write-Error ('{0} : {1} : {2}' -f $response.Result, [enum]::GetName([TppCodeSignResult], $response.Result), $response.Error)
+        }
+    }
+
+    end {
         $allProjects | Sort-Object -Property Path -Unique
     }
 }

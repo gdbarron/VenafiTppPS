@@ -37,7 +37,7 @@ function Find-TppCodeSignEnvironment {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param (
         [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'Name')]
-        [String[]] $Name,
+        [String] $Name,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -52,10 +52,7 @@ function Find-TppCodeSignEnvironment {
 
         Switch ($PsCmdlet.ParameterSetName)	{
             'Name' {
-                $envs = $Name.ForEach{
-                    $thisEnvName = $_
-                    $projects.CertificateEnvironment | Where-Object { $_.Name -match $thisEnvName }
-                }
+                $projects.CertificateEnvironment | Where-Object { $_.Name -match $Name }
                 $envs = $envs | Sort-Object -Property Path -Unique
             }
 
