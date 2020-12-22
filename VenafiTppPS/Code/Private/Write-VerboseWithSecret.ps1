@@ -61,18 +61,11 @@ function Write-VerboseWithSecret {
             # look for secret name and replace value if found
 
             # look for values in multiline json string, eg. "Body": "{\r\n  \"Password\": \"MyPass\"\r\n}"
-            # PS v5 has 2 spaces between \"key\":  \"value\"
-            # PS v7 has 1 space between \"key\": \"value\"
-            if ( $processMe -match "(?s).*\\""$prop\\"": *\\""(.*?)\\"".*" ) {
-                $secret = $processMe -replace "(?s).*\\""$prop\\"": *\\""(.*?)\\"".*", '$1'
-                $processMe = ($processMe.replace($secret, '***hidden***'))
-            }
-
-            # look for values in standard key:value string, eg. "Authorization": "Bearer adflkjandsfsmmmsdfkhsdf=="
+            # look for values in standard key:value pair, eg. "Authorization": "Bearer adflkjandsfsmmmsdfkhsdf=="
             # PS v5 has 2 spaces between "key":  "value"
             # PS v7 has 1 space between "key": "value"
-            if ( $processMe -match "(?s).*""$prop"": *""(.*?)"".*" ) {
-                $secret = $processMe -replace "(?s).*""$prop"": *""(.*?)"".*", '$1'
+            if ( $processMe -match "(?s).*\\{0,1}""$prop\\{0,1}"": {1,2}\\{0,1}""(.*?)\\{0,1}"".*" ) {
+                $secret = $processMe -replace "(?s).*\\{0,1}""$prop\\{0,1}"": {1,2}\\{0,1}""(.*?)\\{0,1}"".*", '$1'
                 $processMe = ($processMe.replace($secret, '***hidden***'))
             }
         }
