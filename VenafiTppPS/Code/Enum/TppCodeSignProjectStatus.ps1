@@ -1,4 +1,4 @@
-enum TppCodeSignStatus {
+enum TppCodeSignProjectStatus {
     Disabled = 0
     Enabled = 1
     Draft = 2

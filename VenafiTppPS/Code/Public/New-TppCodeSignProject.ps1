@@ -1,12 +1,12 @@
 <#
 .SYNOPSIS
-Get a code sign project
+Create a new code sign project
 
 .DESCRIPTION
-Get code sign project details
+Create a new code sign project which will be empty.
 
 .PARAMETER Path
-Path of the project to get
+Path of the project to create
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -32,28 +32,24 @@ PSCustomObject with the following properties:
     TypeName
 
 .EXAMPLE
-Get-TppCodeSignProject -Path '\ved\code signing\projects\my_project'
-Get a code sign project
-
-.EXAMPLE
-$projectObj | Get-TppCodeSignProject
-Get a project after searching using Find-TppCodeSignProject
+New-TppCodeSignProject -Path '\ved\code signing\projects\my_project'
+Create a new code sign project
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Get-TppCodeSignProject/
+http://venafitppps.readthedocs.io/en/latest/functions/New-TppCodeSignProject/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppCodeSignProject.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppCodeSignProject.ps1
 
 .LINK
-https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-Codesign-GetProject.php?tocpath=CodeSign%20Protect%20Admin%20REST%C2%A0API%7CProjects%20and%20environments%7C_____10
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-Codesign-CreateProject.php?tocpath=CodeSign%20Protect%20Admin%20REST%C2%A0API%7CProjects%20and%20environments%7C_____5
 
 #>
-function Get-TppCodeSignProject {
+function New-TppCodeSignProject {
 
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -74,7 +70,7 @@ function Get-TppCodeSignProject {
         $params = @{
             TppSession = $TppSession
             Method     = 'Post'
-            UriLeaf    = 'Codesign/GetProject'
+            UriLeaf    = 'Codesign/CreateProject'
             Body       = @{ }
         }
     }

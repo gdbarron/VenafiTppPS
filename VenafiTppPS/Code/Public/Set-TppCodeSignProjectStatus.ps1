@@ -1,12 +1,15 @@
 <#
 .SYNOPSIS
-Get a code sign project
+Set project status
 
 .DESCRIPTION
-Get code sign project details
+Set project status
 
 .PARAMETER Path
-Path of the project to get
+Path of the project to update
+
+.PARAMETER Status
+New project status, must have the appropriate perms.  Status can be Disabled, Enabled, Draft, or Pending.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -15,41 +18,23 @@ Session object created from New-TppSession method.  The value defaults to the sc
 Path
 
 .OUTPUTS
-PSCustomObject with the following properties:
-    Application
-    Auditor
-    CertificateEnvironments
-    Collection
-    CreatedOn
-    Guid
-    Id
-    KeyUseApprovers
-    KeyUsers
-    Owners
-    Status
-    Name
-    Path
-    TypeName
+None
 
 .EXAMPLE
-Get-TppCodeSignProject -Path '\ved\code signing\projects\my_project'
-Get a code sign project
-
-.EXAMPLE
-$projectObj | Get-TppCodeSignProject
-Get a project after searching using Find-TppCodeSignProject
+Set-TppCodeSignProject -Path '\ved\code signing\projects\my_project' -Status Pending
+Update project status
 
 .LINK
-http://venafitppps.readthedocs.io/en/latest/functions/Get-TppCodeSignProject/
+http://venafitppps.readthedocs.io/en/latest/functions/Set-TppCodeSignProjectStatus/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppCodeSignProject.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Set-TppCodeSignProjectStatus.ps1
 
 .LINK
-https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-Codesign-GetProject.php?tocpath=CodeSign%20Protect%20Admin%20REST%C2%A0API%7CProjects%20and%20environments%7C_____10
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-Codesign-UpdateProjectStatus.php?tocpath=CodeSign%20Protect%20Admin%20REST%C2%A0API%7CProjects%20and%20environments%7C_____14
 
 #>
-function Get-TppCodeSignProject {
+function Set-TppCodeSignProjectStatus {
 
     [CmdletBinding()]
     param (
@@ -64,6 +49,9 @@ function Get-TppCodeSignProject {
             })]
         [String] $Path,
 
+        [Parameter(Mandatory)]
+        [TppCodeSignProjectStatus] $Status,
+
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
     )
@@ -74,8 +62,10 @@ function Get-TppCodeSignProject {
         $params = @{
             TppSession = $TppSession
             Method     = 'Post'
-            UriLeaf    = 'Codesign/GetProject'
-            Body       = @{ }
+            UriLeaf    = 'Codesign/UpdateProjectStatus'
+            Body       = @{
+                'ProjectStatus' = $Status
+            }
         }
     }
 
@@ -84,9 +74,7 @@ function Get-TppCodeSignProject {
         $params.Body.Dn = $Path
         $response = Invoke-TppRestMethod @params
 
-        if ( $response.Success ) {
-            $response.Project | ConvertTo-TppCodeSignProject
-        } else {
+        if ( -not $response.Success ) {
             Write-Error ('{0} : {1} : {2}' -f $response.Result, [enum]::GetName([TppCodeSignResult], $response.Result), $response.Error)
         }
     }

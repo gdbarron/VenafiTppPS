@@ -83,7 +83,8 @@ FunctionsToExport = 'Add-TppCertificateAssociation', 'ConvertTo-TppGuid',
                'Rename-TppObject', 'Revoke-TppCertificate', 'Revoke-TppToken',
                'Set-TppAttribute', 'Set-TppPermission',
                'Set-TppWorkflowTicketStatus', 'Test-TppIdentity', 'Test-TppObject',
-               'Write-TppLog', 'Get-TppCodeSignConfig', 'Find-TppCodeSignProject', 'Get-TppCodeSignProject', 'Find-TppCodeSignEnvironment', 'Get-TppCodeSignEnvironment', 'Remove-TppCodeSignEnvironment', 'Remove-TppCodeSignProject'
+               'Write-TppLog', 'Get-TppCodeSignConfig', 'Find-TppCodeSignProject', 'Get-TppCodeSignProject', 'Find-TppCodeSignEnvironment', 'Get-TppCodeSignEnvironment', 'Remove-TppCodeSignEnvironment', 'Remove-TppCodeSignProject',
+               'Find-TppCodeSignTemplate', 'New-TppCodeSignProject', 'Set-TppCodeSignProjectStatus'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
