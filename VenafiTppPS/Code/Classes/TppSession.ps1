@@ -15,9 +15,20 @@ class TppSession {
     }
 
     [void] Validate() {
+        $this.Validate($false)
+    }
+
+    [void] Validate(
+        [bool] $TokenOnly
+    ) {
 
         if ( -not $this.Key -and -not $this.Token ) {
             throw "You must first connect to the TPP server with New-TppSession"
+        }
+
+        # newer api calls may only accept token based auth
+        if ( $TokenOnly -and -not $this.Token ) {
+            throw "This function requires the use of token-based authentication"
         }
 
         # if we know the session is still valid, don't bother checking with the server
@@ -51,11 +62,11 @@ class TppSession {
                     }
                 }
             } else {
-               # token
-               # By default, access tokens are long-lived (90 day default). Refreshing the token should be handled outside of this class, so that the
-               #  refresh token and access token can be properly maintained and passed to the script.
+                # token
+                # By default, access tokens are long-lived (90 day default). Refreshing the token should be handled outside of this class, so that the
+                #  refresh token and access token can be properly maintained and passed to the script.
 
-               # We have to assume a good token here and ensure Invoke-TPPRestMethod catches and handles the condition where a token expires
+                # We have to assume a good token here and ensure Invoke-TPPRestMethod catches and handles the condition where a token expires
             }
         }
     }
