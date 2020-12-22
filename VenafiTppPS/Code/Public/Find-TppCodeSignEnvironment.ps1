@@ -35,6 +35,8 @@ https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find
 function Find-TppCodeSignEnvironment {
 
     [CmdletBinding(DefaultParameterSetName = 'All')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '',	Justification = 'Param is being used, possible pssa bug?')]
+
     param (
         [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'Name')]
         [String] $Name,
