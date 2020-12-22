@@ -52,7 +52,7 @@ function Find-TppCodeSignEnvironment {
 
         Switch ($PsCmdlet.ParameterSetName)	{
             'Name' {
-                $projects.CertificateEnvironment | Where-Object { $_.Name -match $Name }
+                $envs = $projects.CertificateEnvironment | Where-Object { $_.Name -match $Name }
                 $envs = $envs | Sort-Object -Property Path -Unique
             }
 

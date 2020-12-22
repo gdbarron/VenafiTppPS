@@ -18,14 +18,14 @@ Path
 PSCustomObject with the following properties:
     Application
     Auditor
-    CertificateEnvironments
+    CertificateEnvironment
     Collection
     CreatedOn
     Guid
     Id
-    KeyUseApprovers
-    KeyUsers
-    Owners
+    KeyUseApprover
+    KeyUser
+    Owner
     Status
     Name
     Path
@@ -85,6 +85,7 @@ function Get-TppCodeSignProject {
         $response = Invoke-TppRestMethod @params
 
         if ( $response.Success ) {
+            Write-Debug $response.Project
             $response.Project | ConvertTo-TppCodeSignProject
         } else {
             Write-Error ('{0} : {1} : {2}' -f $response.Result, [enum]::GetName([TppCodeSignResult], $response.Result), $response.Error)

@@ -97,6 +97,7 @@ function Get-TppCodeSignEnvironment {
         $response = Invoke-TppRestMethod @params
 
         if ( $response.Success ) {
+            Write-Debug $response.CertificateEnvironment
             $response.CertificateEnvironment | ConvertTo-TppCodeSignEnvironment
         } else {
             Write-Error ('{0} : {1} : {2}' -f $response.Result, [enum]::GetName([TppCodeSignResult], $response.Result), $response.Error)

@@ -32,7 +32,11 @@ function ConvertTo-TppCodeSignEnvironment {
     }
 
     process {
-        $InputObject | Select-Object -ExcludeProperty Dn, Type, OrganizationalUnit, IpAddressRestriction, KeyUseFlowDN, TemplateDN, CertificateAuthorityDN, CertificateDN, CertificateSubject, City, KeyAlgorithm, KeyStorageLocation, Organization, OrganizationUnit, SANEmail, State, Country -Property *,
+        $InputObject | Select-Object  -Property `
+        @{
+            n = 'Name'
+            e = { Split-Path $_.DN -Leaf }
+        },
         @{
             n = 'Path'
             e = {
@@ -40,12 +44,12 @@ function ConvertTo-TppCodeSignEnvironment {
             }
         },
         @{
-            n = 'Name'
-            e = { Split-Path $_.DN -Leaf }
-        },
-        @{
             n = 'TypeName'
             e = { $_.Type }
+        },
+        @{
+            n = 'Guid'
+            e = { [guid] $_.Guid }
         },
         @{
             n = 'OrganizationalUnit'
@@ -106,7 +110,7 @@ function ConvertTo-TppCodeSignEnvironment {
         @{
             n = 'Country'
             e = { $_.Country.Value }
-        }
+        }, AllowUserKeyImport, Disabled, Id, CertificateStatus, CertificateStatusText, CertificateTemplate, SynchronizeChain
 
     }
 }

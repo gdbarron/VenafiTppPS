@@ -32,8 +32,8 @@ function ConvertTo-TppCodeSignProject {
     }
 
     process {
-        $InputObject | Select-Object
-        -Property @{
+        $InputObject | Select-Object -Property `
+        @{
             n = 'Name'
             e = { Split-Path $_.DN -Leaf }
         },
@@ -44,6 +44,10 @@ function ConvertTo-TppCodeSignProject {
         @{
             n = 'TypeName'
             e = { 'Code Signing Project' }
+        },
+        @{
+            n = 'Guid'
+            e = { [guid] $_.Guid }
         },
         @{
             n = 'Status'
@@ -80,6 +84,6 @@ function ConvertTo-TppCodeSignProject {
         @{
             n = 'CertificateEnvironment'
             e = { $_.CertificateEnvironments | ConvertTo-TppCodeSignEnvironment }
-        }, CreatedOn, Description, Guid, Id
+        }, CreatedOn, Description, Id
     }
 }
