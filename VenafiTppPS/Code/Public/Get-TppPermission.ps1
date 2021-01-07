@@ -89,8 +89,7 @@ function Get-TppPermission {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -138,37 +137,35 @@ function Get-TppPermission {
 
         if ( $PSBoundParameters.ContainsKey('Path') ) {
             $InputObject = Get-TppObject -Path $Path -TppSession $TppSession
-        }
-        elseif ( $PSBoundParameters.ContainsKey('Guid') ) {
+        } elseif ( $PSBoundParameters.ContainsKey('Guid') ) {
             $InputObject = $Guid | ConvertTo-TppPath -TppSession $TppSession | Get-TppObject -TppSession $TppSession
         }
 
 
         foreach ( $thisObject in $InputObject ) {
 
-            $thisGuid = $thisObject.Guid
+            $uriBase = ('Permissions/Object/{{{0}}}' -f $thisObject.Guid)
+            $params.UriLeaf = $uriBase
 
             if ( $PSBoundParameters.ContainsKey('PrefixedUniversalId') ) {
                 $principals = $PrefixedUniversalId
-            }
-            else {
+            } else {
                 # get list of principals permissioned to this object
-                $thisGuid = "{$thisGuid}"
-                $params.UriLeaf = "Permissions/Object/$thisGuid"
                 $principals = Invoke-TppRestMethod @params
             }
 
             foreach ( $principal in $principals ) {
 
+                $params.UriLeaf = $uriBase
+
                 if ( $principal.StartsWith('local:') ) {
                     # format of local is local:universalId
                     $type, $id = $principal.Split(':')
                     $params.UriLeaf += "/local/$id"
-                }
-                else {
+                } else {
                     # external source, eg. AD, LDAP
                     # format is type+name:universalId
-                    $type, $name, $id = $principal.Split('+:')
+                    $type, $name, $id = $principal -Split { $_ -in '+', ':' }
                     $params.UriLeaf += "/$type/$name/$id"
                 }
 
@@ -188,8 +185,7 @@ function Get-TppPermission {
                         ExplicitPermissions = [TppPermission] $response.ExplicitPermissions
                         ImplicitPermissions = [TppPermission] $response.ImplicitPermissions
                     }
-                }
-                else {
+                } else {
                     $thisReturnObject | Add-Member @{
                         EffectivePermissions = [TppPermission] $response.EffectivePermissions
                     }
