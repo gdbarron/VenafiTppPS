@@ -47,18 +47,30 @@ function Set-TppPermission {
 
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
     param (
-        # [Parameter(Mandatory, ValueFromPipeline)]
-        # [ValidateNotNullOrEmpty()]
-        # [PSCustomObject[]] $InputObject,
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, ParameterSetName = 'ByPath')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {
+                if ( $_ | Test-TppDnPath ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid DN path"
+                }
+            })]
+        [Alias('DN')]
+        [String[]] $Path,
 
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'ByGuid')]
         [ValidateNotNullOrEmpty()]
         [Alias('ObjectGuid')]
         [guid[]] $Guid,
 
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateScript( {
-                $_ -match '(AD|LDAP)+\S+:\w{32}$' -or $_ -match 'local:\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+                if ( $_ | Test-PrefixedUniversalId ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid PrefixedUniversalId format.  See https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-IdentityInformation.php."
+                }
             })]
         [Alias('PrefixedUniversal')]
         [string[]] $PrefixedUniversalId,
@@ -77,73 +89,78 @@ function Set-TppPermission {
         $TppSession.Validate()
 
         $params = @{
-            TppSession    = $TppSession
-            Method        = 'Post'
-            UriLeaf       = 'placeholder'
-            Body          = $Permission.ToHashtable()
-            UseWebRequest = $true
+            TppSession = $TppSession
+            Method     = 'Post'
+            UriLeaf    = 'placeholder'
+            Body       = $Permission.ToHashtable()
         }
     }
 
     process {
 
-        # TODO: accept object with guid and universal id, eg. from get-tpppermission
-        if ( $PSBoundParameters.ContainsKey('InputObject') ) {
-
+        if ( $PSCmdLet.ParameterSetName -eq 'ByPath' ) {
+            $inputObject = $Path
+        } else {
+            $inputObject = $Guid
         }
 
-        $GUID.ForEach{
-            if ( -not (Test-TppObject -Guid $_ -ExistOnly -TppSession $TppSession) ) {
-                Write-Error ("Guid {0} does not exist" -f $_)
-                Continue
+        foreach ($thisInputObject in $inputObject) {
+            if ( $PSCmdLet.ParameterSetName -eq 'ByPath' ) {
+                $thisGuid = $thisInputObject | ConvertTo-TppGuid
+            } else {
+                $thisGuid = $thisInputObject
             }
 
-            $params.UriLeaf = "Permissions/Object/{$_}"
+            $params.UriLeaf = "Permissions/object/{$thisGuid}"
 
-            $PrefixedUniversalId.ForEach{
-                $thisId = $_
-
-                if ( -not (Test-TppIdentity -PrefixedUniversalId $PrefixedUniversalId -ExistOnly -TppSession $TppSession) ) {
-                    Write-Error "Id $thisId does not exist"
-                    Continue
-                }
+            foreach ( $thisId in $PrefixedUniversalId ) {
 
                 if ( $thisId.StartsWith('local:') ) {
                     # format of local is local:universalId
                     $type, $id = $thisId.Split(':')
-                    $params.UriLeaf += "/local/$id"
+                    $params.UriLeaf += "/$type/$id"
                 } else {
                     # external source, eg. AD, LDAP
                     # format is type+name:universalId
-                    $type, $name, $id = $thisId.Split('+:')
+                    $type, $name, $id = $thisId -Split { $_ -in '+', ':' }
                     $params.UriLeaf += "/$type/$name/$id"
                 }
 
                 if ( $PSCmdlet.ShouldProcess($thisId, 'Set permission') ) {
-                    $response = Invoke-TppRestMethod @params
+                    try {
 
-                    Write-Verbose ('Response status code: {0}' -f $response.StatusCode)
+                        $response = Invoke-TppRestMethod @params
 
-                    switch ($response.StatusCode) {
+                        switch ($response.StatusCode.value__) {
 
-                        {$_ -in 'Created', '201'} {
-                            # success
-                        }
+                            '201' {
+                                # success
+                            }
 
-                        {$_ -in 'Conflict', '409'} {
-                            # user/group already has permissions defined on this object
-                            # need to use a put method instead
-                            Write-Verbose "Existing user/group found, updating existing permissions"
-                            $params.Method = 'Put'
-                            $response = Invoke-TppRestMethod @params
-                            if ( $response.StatusCode -notin 'OK', '200' ) {
-                                Write-Error ('Failed to update permission with error {0}' -f $response.StatusDescription)
+                            '409' {
+                                # user/group already has permissions defined on this object
+                                # need to use a put method instead
+                                if ( $Force ) {
+
+                                    Write-Verbose "Existing user/group found and Force option provided, updating existing permissions"
+                                    $params.Method = 'Put'
+                                    $response = Invoke-TppRestMethod @params
+                                    if ( $response.StatusCode.value__ -ne '200' ) {
+                                        Write-Error ('Failed to update permission with error {0}' -f $response.StatusDescription)
+                                    }
+                                } else {
+                                    # force option not provided, let the user know what's up
+                                    Write-Error ('Permission for {0} already exists.  To override, provide the Force option.' -f $thisId)
+                                }
+                            }
+
+                            default {
+                                # Write-Error ($response | ConvertTo-Json)
+                                Write-Error ('Failed to create permission with error {0}, URL {1}' -f $response.StatusDescription, $response.ResponseUri)
                             }
                         }
-
-                        default {
-                            Write-Error ('Failed to create permission with error {0}, URL {1}' -f $response.StatusDescription, $response.ResponseUri)
-                        }
+                    } catch {
+                        Write-Error ("Failed to set permissions on object $thisInputObject, user/group $thisId.  $_")
                     }
                 }
             }
