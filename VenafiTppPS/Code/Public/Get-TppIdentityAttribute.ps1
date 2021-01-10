@@ -21,18 +21,18 @@ PrefixedUniversalId
 PSCustomObject with the properties PrefixedUniversalId and Attribute
 
 .EXAMPLE
-Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:{1234567890olikujyhtgrfedwsqa}' | format-list
-PrefixedUniversalId : AD+mydomain.com:1234567890olikujyhtgrfedwsqa
+Get-TppIdentityAttribute -PrefixedUniversalId 'AD+blah:{1234567890olikujyhtgrfedwsqa}' | format-list
+PrefixedUniversalId : AD+blah:1234567890olikujyhtgrfedwsqa
 Attribute           : @{FullName=CN=greg,OU=Users,DC=mydomain,DC=com; IsContainer=False; IsGroup=False; Name=greg; Prefix=AD+mydomain.com;
-                      PrefixedName=AD+mydomain.com:greg; PrefixedUniversal=AD+mydomain.com:1234567890olikujyhtgrfedwsqa; Universal=1234567890olikujyhtgrfedwsqa}
+                      PrefixedName=AD+blah:greg; PrefixedUniversal=AD+blah:1234567890olikujyhtgrfedwsqa; Universal=1234567890olikujyhtgrfedwsqa}
 
 Get basic attributes
 
 .EXAMPLE
-Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:{1234567890olikujyhtgrfedwsqa}' -Attribute 'Surname'
+Get-TppIdentityAttribute -PrefixedUniversalId 'AD+blah:{1234567890olikujyhtgrfedwsqa}' -Attribute 'Surname'
 PrefixedUniversalId                              Attribute
 -------------------                              ---------
-AD+mydomain.com:1234567890olikujyhtgrfedwsqa     @{Surname=Brownstein}
+AD+blah:1234567890olikujyhtgrfedwsqa     @{Surname=Brownstein}
 
 Get specific attribute for user
 

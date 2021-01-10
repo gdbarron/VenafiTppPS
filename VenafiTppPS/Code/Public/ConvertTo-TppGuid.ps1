@@ -18,7 +18,7 @@ Path
 Guid
 
 .EXAMPLE
-ConvertTo-TppGuid -Guid 'xyxyxyxy-xyxy-xyxy-xyxy-xyxyxyxyxyxy'
+ConvertTo-TppGuid -Path '\ved\policy\convertme'
 
 #>
 function ConvertTo-TppGuid {
