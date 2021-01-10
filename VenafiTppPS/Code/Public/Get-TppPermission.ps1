@@ -7,9 +7,6 @@ Get permissions for users and groups on any object.
 The effective permissions will be retrieved by default, but inherited/explicit permissions can be retrieved as well.
 All permissions can be retrieved for an object, the default, or for one specific id.
 
-.PARAMETER InputObject
-One or more TppObject
-
 .PARAMETER Path
 Full path to an object
 
@@ -30,7 +27,7 @@ Retrieve identity attribute values for the users and groups.  Attributes include
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-InputObject, Path, Guid
+Path, Guid
 
 .OUTPUTS
 List parameter set returns a PSCustomObject with the properties Guid and Permissions
@@ -79,12 +76,10 @@ https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-S
 #>
 function Get-TppPermission {
 
-    [CmdletBinding(DefaultParameterSetName = 'ByObject')]
+    [CmdletBinding(DefaultParameterSetName = 'ByPath')]
     param (
-        [Parameter(Mandatory, ParameterSetName = 'ByObject', ValueFromPipeline)]
-        [TppObject] $InputObject,
 
-        [Parameter(Mandatory, ParameterSetName = 'ByPath', ValueFromPipeline)]
+        [Parameter(Mandatory, ParameterSetName = 'ByPath', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -96,13 +91,13 @@ function Get-TppPermission {
         [Alias('DN', 'CertificateDN')]
         [String[]] $Path,
 
-        [Parameter(Mandatory, ParameterSetName = 'ByGuid', ValueFromPipeline)]
-        [ValidateNotNullOrEmpty()]
-        [Guid[]] $Guid,
-
         [Parameter()]
         [ValidateScript( {
-                $_ -match '(AD|LDAP)+\S+:\w{32}$' -or $_ -match 'local:\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+                if ( $_ | Test-PrefixedUniversalId ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid PrefixedUniversalId format.  See https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-IdentityInformation.php."
+                }
             })]
         [Alias('PrefixedUniversal')]
         [string[]] $PrefixedUniversalId,
@@ -130,31 +125,30 @@ function Get-TppPermission {
             UriLeaf    = 'placeholder'
         }
 
-        $returnObject = @()
     }
 
     process {
 
-        if ( $PSBoundParameters.ContainsKey('Path') ) {
-            $InputObject = Get-TppObject -Path $Path -TppSession $TppSession
-        } elseif ( $PSBoundParameters.ContainsKey('Guid') ) {
-            $InputObject = $Guid | ConvertTo-TppPath -TppSession $TppSession | Get-TppObject -TppSession $TppSession
-        }
+        foreach ( $thisPath in $Path ) {
 
-
-        foreach ( $thisObject in $InputObject ) {
-
-            $uriBase = ('Permissions/Object/{{{0}}}' -f $thisObject.Guid)
+            $uriBase = ('Permissions/Object/{{{0}}}' -f ($thisPath | ConvertTo-TppGuid) )
             $params.UriLeaf = $uriBase
 
-            if ( $PSBoundParameters.ContainsKey('PrefixedUniversalId') ) {
-                $principals = $PrefixedUniversalId
-            } else {
+            try {
                 # get list of principals permissioned to this object
                 $principals = Invoke-TppRestMethod @params
+            } catch {
+                Write-Error "Couldn't obtain list of permissions for $thisPath.  $_"
+                continue
+            }
+
+            if ( $PSBoundParameters.ContainsKey('PrefixedUniversalId') ) {
+                $principals = $principals | Where-Object { $_ -in $PrefixedUniversalId }
             }
 
             foreach ( $principal in $principals ) {
+
+                Write-Verbose ('Path: {0}, Id: {1}' -f $thisPath, $principal)
 
                 $params.UriLeaf = $uriBase
 
@@ -169,50 +163,59 @@ function Get-TppPermission {
                     $params.UriLeaf += "/$type/$name/$id"
                 }
 
-                if ( -not $PSBoundParameters.ContainsKey('Explicit') ) {
+                if ( -not $Explicit.IsPresent ) {
                     $params.UriLeaf += '/Effective'
                 }
 
-                $response = Invoke-TppRestMethod @params
+                try {
 
-                $thisReturnObject = [PSCustomObject] @{
-                    Object              = $thisObject
-                    PrefixedUniversalId = $principal
-                }
+                    $response = Invoke-TppRestMethod @params
 
-                if ( $PSBoundParameters.ContainsKey('Explicit') ) {
-                    $thisReturnObject | Add-Member @{
-                        ExplicitPermissions = [TppPermission] $response.ExplicitPermissions
-                        ImplicitPermissions = [TppPermission] $response.ImplicitPermissions
+                    # if not permissions are assigned, we won't get anything back
+                    if ( $response ) {
+
+                        $thisReturnObject = [PSCustomObject] @{
+                            Path                = $thisPath
+                            PrefixedUniversalId = $principal
+                        }
+
+                        if ( $Explicit.IsPresent ) {
+                            $thisReturnObject | Add-Member @{
+                                ExplicitPermissions = [TppPermission] $response.ExplicitPermissions
+                                ImplicitPermissions = [TppPermission] $response.ImplicitPermissions
+                            }
+                        } else {
+                            $thisReturnObject | Add-Member @{
+                                EffectivePermissions = [TppPermission] $response.EffectivePermissions
+                            }
+                        }
+
+
+                        if ( $PSBoundParameters.ContainsKey('Attribute') ) {
+
+                            $thisReturnObject | Add-Member @{
+                                Attributes = $null
+                            }
+
+                            $attribParams = @{
+                                PrefixedUniversalId = $thisReturnObject.PrefixedUniversalId
+                                Attribute           = $Attribute
+                                TppSession          = $TppSession
+                            }
+                            try {
+                                $attribResponse = Get-TppIdentityAttribute @attribParams
+                                $thisReturnObject.Attributes = $attribResponse.Attributes
+                            } catch {
+                                Write-Error "Couldn't obtain identity attributes for $($attribParams.PrefixedUniversalId).  $_"
+                            }
+                        }
+
+                        $thisReturnObject
                     }
-                } else {
-                    $thisReturnObject | Add-Member @{
-                        EffectivePermissions = [TppPermission] $response.EffectivePermissions
-                    }
+                } catch {
+                    Write-Error "Couldn't obtain permission set for path $Path, user/group $principal.  $_"
                 }
-
-                $returnObject += $thisReturnObject
             }
-
-            if ( $PSBoundParameters.ContainsKey('Attribute') ) {
-
-                $returnObject | Add-Member @{
-                    Attributes = $null
-                }
-
-                foreach ( $thisObject in $returnObject ) {
-                    $attribParams = @{
-                        PrefixedUniversalId = $thisObject.PrefixedUniversalId
-                        Attribute           = $Attribute
-                        TppSession          = $TppSession
-                    }
-                    $attribResponse = Get-TppIdentityAttribute @attribParams
-                    $thisObject.Attributes = $attribResponse.Attributes
-                }
-            }
-
-            $returnObject
-
         }
     }
 }
