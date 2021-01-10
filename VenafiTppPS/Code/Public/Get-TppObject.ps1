@@ -48,7 +48,7 @@ function Get-TppObject {
                 }
             })]
         [Alias('DN')]
-        [String] $Path,
+        [String[]] $Path,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -70,24 +70,27 @@ function Get-TppObject {
 
     process {
 
-        $params.Body.ObjectDN = Split-Path $Path -Parent
-        $params.Body.Pattern = Split-Path $Path -Leaf
+        foreach ($thisPath in $Path) {
 
-        $response = Invoke-TppRestMethod @params
+            $params.Body.ObjectDN = Split-Path $thisPath -Parent
+            $params.Body.Pattern = Split-Path $thisPath -Leaf
 
-        if ( $response.Result -eq [TppConfigResult]::Success ) {
-            $objects = $response.Objects
-        }
-        else {
-            Write-Error $response.Error
-        }
+            $response = Invoke-TppRestMethod @params
 
-        foreach ($object in $objects) {
-            [TppObject] @{
-                Name     = $object.Name
-                TypeName = $object.TypeName
-                Path     = $object.DN
-                Guid     = $object.Guid
+            if ( $response.Result -eq [TppConfigResult]::Success ) {
+                $objects = $response.Objects
+            }
+            else {
+                Write-Error $response.Error
+            }
+
+            foreach ($object in $objects) {
+                [TppObject] @{
+                    Name     = $object.Name
+                    TypeName = $object.TypeName
+                    Path     = $object.DN
+                    Guid     = $object.Guid
+                }
             }
         }
     }
