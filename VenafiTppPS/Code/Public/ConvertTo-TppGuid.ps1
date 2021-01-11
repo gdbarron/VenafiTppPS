@@ -46,7 +46,7 @@ function ConvertTo-TppGuid {
     )
 
     begin {
-        $TppSession.Validate()
+        # $TppSession.Validate()
 
         $params = @{
             TppSession = $TppSession
