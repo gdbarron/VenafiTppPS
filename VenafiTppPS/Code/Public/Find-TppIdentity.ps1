@@ -161,16 +161,29 @@ function Find-TppIdentity {
                     $params.Body.Filter = $_
                     Invoke-TppRestMethod @params
                 }
+                $ids = $response.Identities
             }
 
             'Me' {
                 $response = Invoke-TppRestMethod @params
+                $ids = $response.Identities | Select-Object -First 1
             }
         }
 
-        if ( $response ) {
-            $response.Identities
+        if ( $ids ) {
+            $ids | Select-Object `
+            @{
+                n = 'IdentityName'
+                e = { $_.Name }
+            },
+            @{
+                n = 'IdentityId'
+                e = { $_.PrefixedUniversal }
+            },
+            @{
+                n = 'IdentityPath'
+                e = { $_.FullName }
+            }
         }
-
     }
 }

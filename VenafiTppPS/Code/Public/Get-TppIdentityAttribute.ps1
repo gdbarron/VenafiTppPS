@@ -5,7 +5,7 @@ Get attribute values for TPP identity objects
 .DESCRIPTION
 Get attribute values for TPP identity objects.
 
-.PARAMETER PrefixedUniversalId
+.PARAMETER IdentityId
 The id that represents the user or group.  Use Find-TppIdentity to get the id.
 
 .PARAMETER Attribute
@@ -15,23 +15,23 @@ Retrieve identity attribute values for the users and groups.
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-PrefixedUniversalId
+IdentityId
 
 .OUTPUTS
-PSCustomObject with the properties PrefixedUniversalId and Attribute
+PSCustomObject with the properties Identity and Attribute
 
 .EXAMPLE
-Get-TppIdentityAttribute -PrefixedUniversalId 'AD+blah:{1234567890olikujyhtgrfedwsqa}' | format-list
-PrefixedUniversalId : AD+blah:1234567890olikujyhtgrfedwsqa
+Get-TppIdentityAttribute -IdentityId 'AD+blah:{1234567890olikujyhtgrfedwsqa}' | format-list
+Identity : AD+blah:1234567890olikujyhtgrfedwsqa
 Attribute           : @{FullName=CN=greg,OU=Users,DC=mydomain,DC=com; IsContainer=False; IsGroup=False; Name=greg; Prefix=AD+mydomain.com;
                       PrefixedName=AD+blah:greg; PrefixedUniversal=AD+blah:1234567890olikujyhtgrfedwsqa; Universal=1234567890olikujyhtgrfedwsqa}
 
 Get basic attributes
 
 .EXAMPLE
-Get-TppIdentityAttribute -PrefixedUniversalId 'AD+blah:{1234567890olikujyhtgrfedwsqa}' -Attribute 'Surname'
-PrefixedUniversalId                              Attribute
--------------------                              ---------
+Get-TppIdentityAttribute -IdentityId 'AD+blah:{1234567890olikujyhtgrfedwsqa}' -Attribute 'Surname'
+Identity                              Attribute
+-------------------                     ---------
 AD+blah:1234567890olikujyhtgrfedwsqa     @{Surname=Brownstein}
 
 Get specific attribute for user
@@ -55,10 +55,11 @@ function Get-TppIdentityAttribute {
     param (
 
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [Alias('PrefixedUniversal', 'Contact')]
-        [string[]] $PrefixedUniversalId,
+        [Alias('PrefixedUniversalId', 'Contact')]
+        [string[]] $IdentityId,
 
         [Parameter()]
+        [ValidateSet('Group Membership', 'Name', 'Internet Email Address', 'Given Name', 'Surname')]
         [string[]] $Attribute,
 
         [Parameter()]
@@ -88,12 +89,12 @@ function Get-TppIdentityAttribute {
 
     process {
 
-        foreach ( $thisId in $PrefixedUniversalId ) {
+        foreach ( $thisId in $IdentityId ) {
 
-            if ( -not ($PrefixedUniversalId | Test-TppIdentity -ExistOnly -TppSession $TppSession) ) {
-                Write-Error ('The id, {0}, does not exist' -f $PrefixedUniversalId)
-                continue
-            }
+            # if ( -not ($thisId | Test-TppIdentity -ExistOnly -TppSession $TppSession) ) {
+            #     Write-Error ('The id, {0}, does not exist' -f $thisId)
+            #     continue
+            # }
 
             $params.Body.ID.PrefixedUniversal = $thisId
 
@@ -118,8 +119,8 @@ function Get-TppIdentityAttribute {
             }
 
             [PSCustomObject] @{
-                PrefixedUniversalId = $thisId
-                Attributes          = $attribsOut
+                IdentityId = $thisId
+                Attributes = $attribsOut
             }
         }
     }

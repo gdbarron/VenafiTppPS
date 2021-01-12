@@ -8,7 +8,7 @@ Determine who has rights for TPP objects and what those rights are
 .PARAMETER Guid
 Guid representing a unique object
 
-.PARAMETER PrefixedUniversalId
+.PARAMETER IdentityId
 The id that represents the user or group.  You can use Find-TppIdentity or Get-TppPermission to get the id.
 
 .PARAMETER Permission
@@ -18,13 +18,13 @@ TppPermission object.  You can create a new object or get existing object from G
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-Guid
+Path, Guid, IdentityId
 
 .OUTPUTS
 None
 
 .EXAMPLE
-Set-TppPermission -Guid '1234abcd-g6g6-h7h7-faaf-f50cd6610cba' -PrefixedUniversalId 'AD+mydomain.com:azsxdcfvgbhnjmlk09877654321' -Permission $TppPermObject
+Set-TppPermission -Guid '1234abcd-g6g6-h7h7-faaf-f50cd6610cba' -IdentityId 'AD+mydomain.com:azsxdcfvgbhnjmlk09877654321' -Permission $TppPermObject
 
 Permission a user on an object
 
@@ -45,9 +45,9 @@ Confirmation impact is set to Medium, set ConfirmPreference accordingly.
 #>
 function Set-TppPermission {
 
-    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium', DefaultParameterSetName = 'ByGuid')]
     param (
-        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, ParameterSetName = 'ByPath')]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName = 'ByPath')]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -59,21 +59,21 @@ function Set-TppPermission {
         [Alias('DN')]
         [String[]] $Path,
 
-        [Parameter(Mandatory, ParameterSetName = 'ByGuid')]
+        [Parameter(Mandatory, ParameterSetName = 'ByGuid', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [Alias('ObjectGuid')]
         [guid[]] $Guid,
 
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateScript( {
-                if ( $_ | Test-PrefixedUniversalId ) {
+                if ( $_ | Test-TppIdentityFormat ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid PrefixedUniversalId format.  See https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-IdentityInformation.php."
+                    throw "'$_' is not a valid Prefixed Universal Id format.  See https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-IdentityInformation.php."
                 }
             })]
-        [Alias('PrefixedUniversal')]
-        [string[]] $PrefixedUniversalId,
+        [Alias('PrefixedUniversalId')]
+        [string[]] $IdentityId,
 
         [Parameter(Mandatory)]
         [TppPermission] $Permission,
@@ -113,7 +113,7 @@ function Set-TppPermission {
 
             $params.UriLeaf = "Permissions/object/{$thisGuid}"
 
-            foreach ( $thisId in $PrefixedUniversalId ) {
+            foreach ( $thisId in $IdentityId ) {
 
                 if ( $thisId.StartsWith('local:') ) {
                     # format of local is local:universalId
@@ -126,7 +126,7 @@ function Set-TppPermission {
                     $params.UriLeaf += "/$type/$name/$id"
                 }
 
-                if ( $PSCmdlet.ShouldProcess($thisId, 'Set permission') ) {
+                if ( $PSCmdlet.ShouldProcess($thisInputObject, "Set permission for $thisId") ) {
                     try {
 
                         $response = Invoke-TppRestMethod @params

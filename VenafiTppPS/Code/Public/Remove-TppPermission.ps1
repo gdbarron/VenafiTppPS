@@ -7,26 +7,26 @@ Remove permissions from TPP objects
 You can opt to remove permissions for a specific user or all assigned
 
 .PARAMETER Path
-Full path to an object.  You can also pipe in a TppObject.
+Full path to an object.  You can also pipe in a TppObject
 
-.PARAMETER PrefixedUniversalId
-Identity of the user to have their permissions removed.
+.PARAMETER IdentityId
+Prefixed Universal Id of the user or group to have their permissions removed
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-Path
+Path, Guid, IdentityId
 
 .OUTPUTS
 None
 
 .EXAMPLE
 Find-TppObject -Path '\VED\Policy\My folder' | Remove-TppPermission
-Remove all permissions
+Remove all permissions from a specific object
 
 .EXAMPLE
-Find-TppObject -Path '\VED\Policy\My folder' | Remove-TppPermission -PrefixedUniversalId 'AD+blah:879s8d7f9a8ds7f9s8d7f9'
+Find-TppObject -Path '\VED' -Recursive | Remove-TppPermission -IdentityId 'AD+blah:879s8d7f9a8ds7f9s8d7f9'
 Remove permissions for a specific user
 
 .LINK
@@ -41,10 +41,10 @@ https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-DELETE-Perm
 #>
 function Remove-TppPermission {
 
-    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High', DefaultParameterSetName = 'ByGuid')]
     param (
 
-        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName = 'ByPath')]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -55,16 +55,21 @@ function Remove-TppPermission {
             })]
         [String[]] $Path,
 
+        [Parameter(Mandatory, ParameterSetName = 'ByGuid', ValueFromPipelineByPropertyName)]
+        [ValidateNotNullOrEmpty()]
+        [Alias('ObjectGuid')]
+        [guid[]] $Guid,
+
         [Parameter(ValueFromPipelineByPropertyName)]
         [ValidateScript( {
-                if ( $_ | Test-PrefixedUniversalId ) {
+                if ( $_ | Test-TppIdentityFormat ) {
                     $true
                 } else {
-                    throw "'$_' is not a valid PrefixedUniversalId format.  See https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-IdentityInformation.php."
+                    throw "'$_' is not a valid Prefixed Universal Id format.  See https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-IdentityInformation.php."
                 }
             })]
-        [Alias('PrefixedUniversal')]
-        [string[]] $PrefixedUniversalId,
+        [Alias('PrefixedUniversalId')]
+        [string[]] $IdentityId,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -82,43 +87,53 @@ function Remove-TppPermission {
 
     process {
 
-        foreach ( $thisPath in $Path ) {
+        Write-Verbose ('Parameter set: {0}' -f $PSCmdLet.ParameterSetName)
 
-            $thisGuid = $thisPath | ConvertTo-TppGuid -TppSession $TppSession
+        if ( $PSCmdLet.ParameterSetName -eq 'ByPath' ) {
+            $inputObject = $Path
+        } else {
+            $inputObject = $Guid
+        }
 
-            $uriBase = ('Permissions/object/{{{0}}}' -f $thisGuid)
-            $params.UriLeaf = $uriBase
-
-            if ( $PSBoundParameters.ContainsKey('PrefixedUniversalId') ) {
-                $principals = $PrefixedUniversalId
+        foreach ($thisInputObject in $inputObject) {
+            if ( $PSCmdLet.ParameterSetName -eq 'ByPath' ) {
+                $thisGuid = $thisInputObject | ConvertTo-TppGuid
             } else {
-                # get list of principals permissioned to this object
-                $getParams = $params.Clone()
-                $getParams.Method = 'Get'
-                $principals = Invoke-TppRestMethod @getParams
+                $thisGuid = $thisInputObject
             }
 
-            foreach ( $principal in $principals ) {
+            $uriBase = "Permissions/object/{$thisGuid}"
+            $params.UriLeaf = $uriBase
+
+            if ( $PSBoundParameters.ContainsKey('IdentityId') ) {
+                $identities = $IdentityId
+            } else {
+                # get list of identities permissioned to this object
+                $getParams = $params.Clone()
+                $getParams.Method = 'Get'
+                $identities = Invoke-TppRestMethod @getParams
+            }
+
+            foreach ( $thisIdentity in $identities ) {
 
                 $params.UriLeaf = $uriBase
 
-                if ( $principal.StartsWith('local:') ) {
+                if ( $thisIdentity.StartsWith('local:') ) {
                     # format of local is local:universalId
-                    $type, $id = $principal.Split(':')
+                    $type, $id = $thisIdentity.Split(':')
                     $params.UriLeaf += "/local/$id"
                 } else {
                     # external source, eg. AD, LDAP
                     # format is type+name:universalId
-                    $type, $name, $id = $principal -Split { $_ -in '+', ':' }
+                    $type, $name, $id = $thisIdentity -Split { $_ -in '+', ':' }
                     $params.UriLeaf += "/$type/$name/$id"
                 }
 
-                if ( $PSCmdlet.ShouldProcess($thisPath, "Remove permissions for $principal") ) {
+                if ( $PSCmdlet.ShouldProcess($thisGuid, "Remove permissions for $thisIdentity") ) {
                     try {
                         Invoke-TppRestMethod @params
-                    }
-                    catch {
-                        Write-Error ("Failed to remove permissions on path $thisPath, user/group $principal.  $_")
+                    } catch {
+                        Write-Error ("Failed to remove permissions on path $thisGuid, user/group $thisIdentity.  $_")
                     }
                 }
             }

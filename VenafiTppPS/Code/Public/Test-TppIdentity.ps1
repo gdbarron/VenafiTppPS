@@ -5,7 +5,7 @@ Test if an identity exists
 .DESCRIPTION
 Provided with a prefixed universal id, find out if an identity exists.
 
-.PARAMETER PrefixedUniversalId
+.PARAMETER Identity
 The id that represents the user or group.
 
 .PARAMETER ExistOnly
@@ -15,7 +15,7 @@ Only return boolean instead of Identity and Exists list.  Helpful when validatin
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-PrefixedUniversalId
+Identity
 
 .OUTPUTS
 PSCustomObject will be returned with properties 'Identity', a System.String, and 'Exists', a System.Boolean.
@@ -30,7 +30,7 @@ AD+mydomain.com:azsxdcfvgbhnjmlk09877654321    False
 Test multiple identities
 
 .EXAMPLE
-Test-TppIdentity -PrefixedUniversalId 'AD+mydomain.com:azsxdcfvgbhnjmlk09877654321' -ExistOnly
+Test-TppIdentity -Identity 'AD+mydomain.com:azsxdcfvgbhnjmlk09877654321' -ExistOnly
 
 Retrieve existence for only one identity, returns boolean
 
@@ -51,10 +51,14 @@ function Test-TppIdentity {
 
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateScript( {
-                $_ -match '^(AD|LDAP)\+.+:{?\w{32}}?$' -or $_ -match 'local:{?\w{8}-\w{4}-\w{4}-\w{4}-\w{12}}?$'
+                if ( $_ | Test-TppIdentityFormat ) {
+                    $true
+                } else {
+                    throw "'$_' is not a valid Prefixed Universal Id format.  See https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-IdentityInformation.php."
+                }
             })]
         [Alias('PrefixedUniversal', 'Contact')]
-        [string[]] $PrefixedUniversalId,
+        [string[]] $IdentityId,
 
         [Parameter()]
         [Switch] $ExistOnly,
@@ -80,7 +84,7 @@ function Test-TppIdentity {
 
     process {
 
-        foreach ( $thisId in $PrefixedUniversalId ) {
+        foreach ( $thisId in $IdentityId ) {
 
             $params.Body.Id.PrefixedUniversal = $thisId
 
