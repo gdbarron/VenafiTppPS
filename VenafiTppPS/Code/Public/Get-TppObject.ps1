@@ -1,26 +1,32 @@
 <#
 .SYNOPSIS
-Get object by path
+Get object information
 
 .DESCRIPTION
-Get object by path
+Return object information by either path or guid.  This will return a TppObject which can be used with many other functions.
 
 .PARAMETER Path
 The full path to the object
+
+.PARAMETER Guid
+Guid of the object
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-Path
+Path, Guid
 
 .OUTPUTS
 TppObject
 
 .EXAMPLE
 Get-TppObject -Path '\VED\Policy\My object'
-
 Get an object by full path
+
+.EXAMPLE
+[guid]'dab22152-0a81-4fb8-a8da-8c5e3d07c3f1' | Get-TppObject
+Get an object by guid
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/
@@ -28,27 +34,28 @@ http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/
 .LINK
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppObject.ps1
 
-.LINK
-https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-enumerate.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____13
-
 #>
 function Get-TppObject {
 
     [CmdletBinding()]
 
     param (
-        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'ByPath', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
         [Alias('DN')]
         [String[]] $Path,
+
+        [Parameter(Mandatory, ParameterSetName = 'ByGuid', ValueFromPipelineByPropertyName)]
+        [ValidateNotNullOrEmpty()]
+        [Alias('ObjectGuid')]
+        [guid[]] $Guid,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -56,42 +63,18 @@ function Get-TppObject {
 
     begin {
         $TppSession.Validate()
-
-        $params = @{
-            TppSession = $TppSession
-            Method     = 'Post'
-            UriLeaf    = 'config/enumerate'
-            Body       = @{
-                'ObjectDN' = ''
-                'Pattern'  = ''
-            }
-        }
     }
 
     process {
 
-        foreach ($thisPath in $Path) {
+        if ( $PSCmdLet.ParameterSetName -eq 'ByPath' ) {
+            $inputObject = $Path
+        } else {
+            $inputObject = $Guid
+        }
 
-            $params.Body.ObjectDN = Split-Path $thisPath -Parent
-            $params.Body.Pattern = Split-Path $thisPath -Leaf
-
-            $response = Invoke-TppRestMethod @params
-
-            if ( $response.Result -eq [TppConfigResult]::Success ) {
-                $objects = $response.Objects
-            }
-            else {
-                Write-Error $response.Error
-            }
-
-            foreach ($object in $objects) {
-                [TppObject] @{
-                    Name     = $object.Name
-                    TypeName = $object.TypeName
-                    Path     = $object.DN
-                    Guid     = $object.Guid
-                }
-            }
+        foreach ($thisInputObject in $inputObject) {
+            [TppObject]::new($thisInputObject)
         }
     }
 }
