@@ -3,7 +3,6 @@ function Test-TppIdentityFormat {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [ValidateNotNullOrEmpty()]
         [string] $Identity,
 
         [Parameter()]
@@ -12,6 +11,7 @@ function Test-TppIdentityFormat {
     )
 
     process {
+
         if ( $Type -eq 'Universal' ) {
             $Identity -match '^(AD|LDAP)+.+:\w{32}$' -or $Identity -match '^local:\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
         } else {
