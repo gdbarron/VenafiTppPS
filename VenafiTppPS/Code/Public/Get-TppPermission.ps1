@@ -120,7 +120,8 @@ function Get-TppPermission {
         [switch] $Explicit,
 
         [Parameter()]
-        [switch] $NoAttribute,
+        [ValidateSet('Group Membership', 'Name', 'Internet Email Address', 'Given Name', 'Surname')]
+        [string[]] $Attribute,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -164,7 +165,7 @@ function Get-TppPermission {
                 }
 
                 Default {
-                    $thisTppObject = [TppObject]::new($newInputObject)
+                    $thisTppObject = [TppObject]::new($thisInputObject)
                 }
             }
 
@@ -219,26 +220,39 @@ function Get-TppPermission {
                             IdentityId = $thisId
                         }
 
-                        if ( -not $NoAttribute.IsPresent ) {
-
-                            $thisReturnObject | Add-Member @{
-                                IdentityPath = $null
-                                IdentityName = $null
-                            }
-
-                            $attribParams = @{
-                                IdentityId = $thisReturnObject.IdentityId
-                                TppSession = $TppSession
-                            }
-                            try {
-                                $attribResponse = Get-TppIdentityAttribute @attribParams
-                                $thisReturnObject.IdentityPath = $attribResponse.Attributes.FullName
-                                $thisReturnObject.IdentityName = $attribResponse.Attributes.Name
-                            } catch {
-                                Write-Error "Couldn't obtain identity attributes for $($attribParams.IdentityId).  $_"
-                            }
+                        # add in identity name and path to return object
+                        $thisReturnObject | Add-Member @{
+                            IdentityPath = $null
+                            IdentityName = $null
                         }
 
+                        $attribParams = @{
+                            IdentityId = $thisReturnObject.IdentityId
+                            TppSession = $TppSession
+                        }
+                        try {
+                            $attribResponse = Get-TppIdentityAttribute @attribParams
+                            $thisReturnObject.IdentityPath = $attribResponse.Attributes.FullName
+                            $thisReturnObject.IdentityName = $attribResponse.Attributes.Name
+                        } catch {
+                            Write-Error "Couldn't obtain identity attributes for $($attribParams.IdentityId).  $_"
+                        }
+
+                        # old identity info, to be deprecated
+                        if ( $PSBoundParameters.ContainsKey('Attribute') ) {
+
+                            Write-Warning 'The Attribute parameter will soon be deprecated.  Identity name and path have been added by default to the return object.  For other attributes, please call Get-TppIdentityAttribute.'
+
+                            $thisReturnObject | Add-Member @{
+                                Attributes = $null
+                            }
+
+                            $attribParams.Attribute = $Attribute
+                            $attribResponse = Get-TppIdentityAttribute @attribParams
+                            $thisReturnObject.Attributes = $attribResponse.Attributes
+                        }
+
+                        # finally, add in the permissions depending on if explicit or not
                         if ( $Explicit.IsPresent ) {
                             $thisReturnObject | Add-Member @{
                                 ExplicitPermissions = [TppPermission] $response.ExplicitPermissions
