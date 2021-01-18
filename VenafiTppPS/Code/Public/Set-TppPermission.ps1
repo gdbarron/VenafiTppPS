@@ -3,7 +3,10 @@
 Set permissions for TPP objects
 
 .DESCRIPTION
-Determine who has rights for TPP objects and what those rights are
+Adds or modifies permissions on TPP objects
+
+.PARAMETER Path
+Path to an object.  Can pipe output from many other functions.
 
 .PARAMETER Guid
 Guid representing a unique object
@@ -13,6 +16,9 @@ The id that represents the user or group.  You can use Find-TppIdentity or Get-T
 
 .PARAMETER Permission
 TppPermission object.  You can create a new object or get existing object from Get-TppPermission.
+
+.PARAMETER Force
+Overwrite an existing permission if one exists
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -26,7 +32,18 @@ None
 .EXAMPLE
 Set-TppPermission -Guid '1234abcd-g6g6-h7h7-faaf-f50cd6610cba' -IdentityId 'AD+mydomain.com:azsxdcfvgbhnjmlk09877654321' -Permission $TppPermObject
 
-Permission a user on an object
+Permission a user/group on an object specified by guid
+
+.EXAMPLE
+Set-TppPermission -Path '\ved\policy\my folder' -IdentityId 'AD+mydomain.com:azsxdcfvgbhnjmlk09877654321' -Permission $TppPermObject
+
+Permission a user/group on an object specified by path
+
+.EXAMPLE
+$id = Find-TppIdentity -Name 'brownstein' | Select-Object -ExpandProperty IdentityId
+Find-TppObject -Path '\VED' -Recursive | Get-TppPermission -IdentityId $id | Set-TppPermission -Permission $TppPermObject -Force
+
+Reset permissions for a specific user/group for all objects.  Note the use of -Force to overwrite existing permissions.
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Set-TppPermission/
@@ -35,10 +52,10 @@ http://venafitppps.readthedocs.io/en/latest/functions/Set-TppPermission/
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Set-TppPermission.ps1
 
 .LINK
-https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Permissions-object-guid-principal.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____6
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Permissions-object-guid-principal.php?tocpath=Web%20SDK%7CPermissions%20programming%20interface%7C_____8
 
 .LINK
-https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-PUT-Permissions-object-guid-principal.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____7
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-PUT-Permissions-object-guid-principal.php?tocpath=Web%20SDK%7CPermissions%20programming%20interface%7C_____9
 
 .NOTES
 Confirmation impact is set to Medium, set ConfirmPreference accordingly.
@@ -72,7 +89,7 @@ function Set-TppPermission {
                     throw "'$_' is not a valid Prefixed Universal Id format.  See https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-IdentityInformation.php."
                 }
             })]
-        [Alias('PrefixedUniversalId')]
+        [Alias('PrefixedUniversalId', 'ID')]
         [string[]] $IdentityId,
 
         [Parameter(Mandatory)]

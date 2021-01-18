@@ -4,11 +4,11 @@ Get permissions for TPP objects
 
 .DESCRIPTION
 Get permissions for users and groups on any object.
-The effective permissions will be retrieved by default, but inherited/explicit permissions can be retrieved as well.
-All permissions can be retrieved for an object, the default, or for one specific id.
+The effective permissions will be retrieved by default, but inherited/explicit permissions can optionally be retrieved.
+You can retrieve all permissions for an object or for a specific user/group.
 
 .PARAMETER InputObject
-TppObject representing an object in TPP from Find-TppObject or Get-TppObject
+TppObject representing an object in TPP, eg. from Find-TppObject or Get-TppObject
 
 .PARAMETER Path
 Full path to an object
@@ -17,20 +17,22 @@ Full path to an object
 Guid representing a unique object
 
 .PARAMETER IdentityId
-Specifying this optional parameter will only return objects that has permissions granted to this id.
-You can use Find-TppIdentity to get the id.
+Specifying this optional parameter will only return objects that have permissions assigned to this id.
+You can use Find-TppIdentity to search for identities.
 
 .PARAMETER Explicit
 Get explicit (direct) and implicit (inherited) permissions instead of effective.
 
 .PARAMETER Attribute
-Retrieve identity attribute values for the users and groups.  Attributes include Group Membership, Name, Internet Email Address, Given Name, Surname.
+Retrieve identity attribute values for the users and groups.
+Attributes include Group Membership, Name, Internet Email Address, Given Name, Surname.
+This parameter will be deprecated in a future release.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-InputObject, Path, Guid
+InputObject, Path, Guid, IdentityId
 
 .OUTPUTS
 PSCustomObject with the following properties:
@@ -44,21 +46,22 @@ PSCustomObject with the following properties:
     EffectivePermissions (if Explicit switch is not used)
     ExplicitPermissions (if Explicit switch is used)
     ImplicitPermissions (if Explicit switch is used)
+    Attribute (if Attribute parameter provided, to be deprecated)
 
 .EXAMPLE
-Find-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission
+Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission
 
-Get effective permissions for users/groups on a specific policy folder
-
-.EXAMPLE
-Find-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Attribute 'Given Name','Surname'
-
-Get effective permissions on a policy folder including identity attributes for the permissioned users/groups
+Get all assigned effective permissions for users/groups on a specific policy folder
 
 .EXAMPLE
-Find-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Explicit
+Get-TppObject -Path '\VED\Policy\My folder' | Get-TppPermission -Explicit
 
 Get explicit and implicit permissions for users/groups on a specific policy folder
+
+.EXAMPLE
+Find-TppObject -Path '\VED' -Recursive | Get-TppPermission -IdentityId 'AD+myprov:jasdf87s9dfsdfhkashfg78f7'
+
+Find assigned permissions for a specific user across all objects
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppPermission/
@@ -67,16 +70,19 @@ http://venafitppps.readthedocs.io/en/latest/functions/Get-TppPermission/
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppPermission.ps1
 
 .LINK
-https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____1
+https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppIdentityAttribute.ps1
 
 .LINK
-https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid-external.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____2
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-GET-Permissions-object-guid.php?tocpath=Web%20SDK%7CPermissions%20programming%20interface%7C_____3
 
 .LINK
-https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid-local.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____3
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-GET-Permissions-object-guid-external.php?tocpath=Web%20SDK%7CPermissions%20programming%20interface%7C_____4
 
 .LINK
-https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Permissions-object-guid-principal.php?tocpath=REST%20API%20reference%7CPermissions%20programming%20interfaces%7C_____5
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-GET-Permissions-object-guid-local.php?tocpath=Web%20SDK%7CPermissions%20programming%20interface%7C_____5
+
+.LINK
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-GET-Permissions-object-guid-principal.php?tocpath=Web%20SDK%7CPermissions%20programming%20interface%7C_____7
 
 #>
 function Get-TppPermission {
@@ -112,7 +118,7 @@ function Get-TppPermission {
                     throw "'$_' is not a valid Identity format.  See https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-IdentityInformation.php."
                 }
             })]
-        [Alias('PrefixedUniversalId')]
+        [Alias('PrefixedUniversalId', 'ID')]
         [string[]] $IdentityId,
 
         [Parameter()]

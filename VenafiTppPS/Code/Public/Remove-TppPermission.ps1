@@ -27,7 +27,7 @@ Remove all permissions from a specific object
 
 .EXAMPLE
 Find-TppObject -Path '\VED' -Recursive | Remove-TppPermission -IdentityId 'AD+blah:879s8d7f9a8ds7f9s8d7f9'
-Remove permissions for a specific user
+Remove all permissions for a specific user
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Remove-TppPermission/

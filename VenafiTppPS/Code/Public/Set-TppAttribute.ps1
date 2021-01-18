@@ -21,7 +21,7 @@ Append existing values as opposed to replacing which is the default
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
 
 .INPUTS
-System.String[] for DN
+Path
 
 .OUTPUTS
 PSCustomObject with the following properties:
@@ -44,7 +44,7 @@ http://venafitppps.readthedocs.io/en/latest/functions/Set-TppAttribute/
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Set-TppAttribute.ps1
 
 .LINK
-https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-addvalue.php?tocpath=REST%20API%20reference%7CConfig%20programming%20interfaces%7C_____4
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Config-addvalue.php?tocpath=Web%20SDK%7CConfig%20programming%20interface%7C_____4
 
 #>
 function Set-TppAttribute {

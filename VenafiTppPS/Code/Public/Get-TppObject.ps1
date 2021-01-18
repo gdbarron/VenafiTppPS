@@ -22,10 +22,12 @@ TppObject
 
 .EXAMPLE
 Get-TppObject -Path '\VED\Policy\My object'
-Get an object by full path
+
+Get an object by path
 
 .EXAMPLE
 [guid]'dab22152-0a81-4fb8-a8da-8c5e3d07c3f1' | Get-TppObject
+
 Get an object by guid
 
 .LINK

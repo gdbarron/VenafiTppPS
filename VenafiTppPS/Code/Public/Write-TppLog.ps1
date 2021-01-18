@@ -59,10 +59,7 @@ http://venafitppps.readthedocs.io/en/latest/functions/Write-TppLog/
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Write-TppLog.ps1
 
 .LINK
-https://docs.venafi.com/Docs/18.4SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Log.php?tocpath=REST%20API%20reference%7CLog%20programming%20interfaces%7C_____2
-
-.LINK
-https://support.venafi.com/hc/en-us/articles/360003460191-Info-Venafi-Trust-Protection-Platform-Event-ID-Messages-For-All-18-X-Releases
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Log.php?tocpath=Web%20SDK%7CLog%20programming%20interface%7C_____3
 
 #>
 function Write-TppLog {
