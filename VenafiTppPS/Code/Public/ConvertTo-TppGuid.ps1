@@ -18,7 +18,7 @@ Path
 Guid
 
 .EXAMPLE
-ConvertTo-TppGuid -Guid 'xyxyxyxy-xyxy-xyxy-xyxy-xyxyxyxyxyxy'
+ConvertTo-TppGuid -Path '\ved\policy\convertme'
 
 #>
 function ConvertTo-TppGuid {
@@ -46,7 +46,7 @@ function ConvertTo-TppGuid {
     )
 
     begin {
-        $TppSession.Validate()
+        # $TppSession.Validate()
 
         $params = @{
             TppSession = $TppSession

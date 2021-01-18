@@ -37,7 +37,7 @@ function ConvertTo-TppPath {
 
     begin {
 
-        $TppSession.Validate()
+        # $TppSession.Validate()
 
         $params = @{
             TppSession = $TppSession

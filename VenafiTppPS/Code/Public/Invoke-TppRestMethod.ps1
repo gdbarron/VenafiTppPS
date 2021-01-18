@@ -60,10 +60,7 @@ function Invoke-TppRestMethod {
         [hashtable] $Header,
 
         [Parameter()]
-        [Hashtable] $Body,
-
-        [Parameter()]
-        [switch] $UseWebRequest
+        [Hashtable] $Body
     )
 
     # ensure this api is supported for the current version
@@ -117,42 +114,47 @@ function Invoke-TppRestMethod {
 
     $params | Write-VerboseWithSecret
 
-    if ( $PSBoundParameters.ContainsKey('UseWebRequest') ) {
-        Write-Debug "Using Invoke-WebRequest"
-        try {
-            $verboseOutput = $($response = Invoke-WebRequest @params) 4>&1
-        } catch {
-            $_.Exception.Response
-        }
-    } else {
-        Write-Debug "Using Invoke-RestMethod"
-        try {
-            $verboseOutput = $($response = Invoke-RestMethod @params) 4>&1
-        } catch {
+    try {
+        $verboseOutput = $($response = Invoke-RestMethod @params) 4>&1
+        $verboseOutput.Message | Write-VerboseWithSecret
+    } catch {
 
-            # if trying with a slash below doesn't work, we want to provide the original error
-            $errorPreSlash = $_
+        # if trying with a slash below doesn't work, we want to provide the original error
+        $originalError = $_
 
-            # try with trailing slash as some GETs return a 307/401 without it
-            if ( -not $uri.EndsWith('/') ) {
+        Write-Verbose ('Response status code {0}' -f $originalError.Exception.Response.StatusCode.value__)
 
-                Write-Verbose "$Method call failed, trying again with a trailing slash"
+        switch ($originalError.Exception.Response.StatusCode.value__) {
 
-                $params.Uri += '/'
+            '409' {
+                # item already exists.  some functions use this for a 'force' option, eg. Set-TppPermission
+                $response = $originalError.Exception.Response
+            }
 
-                try {
-                    $verboseOutput = $($response = Invoke-RestMethod @params) 4>&1
-                    Write-Warning ('{0} call requires a trailing slash, please create an issue at https://github.com/gdbarron/VenafiTppPS/issues and mention api endpoint {1}' -f $Method, ('{1}/{2}' -f $UriRoot, $UriLeaf))
-                } catch {
-                    # this didn't work, provide details from pre slash call
-                    throw $errorPreSlash
+            { $_ -in '307', '401' } {
+                # try with trailing slash as some GETs return a 307/401 without it
+                if ( -not $uri.EndsWith('/') ) {
+
+                    Write-Verbose "$Method call failed, trying again with a trailing slash"
+
+                    $params.Uri += '/'
+
+                    try {
+                        $verboseOutput = $($response = Invoke-RestMethod @params) 4>&1
+                        $verboseOutput.Message | Write-VerboseWithSecret
+                        Write-Warning ('{0} call requires a trailing slash, please create an issue at https://github.com/gdbarron/VenafiTppPS/issues and mention api endpoint {1}' -f $Method, ('{1}/{2}' -f $UriRoot, $UriLeaf))
+                    } catch {
+                        # this didn't work, provide details from pre slash call
+                        throw $originalError
+                    }
                 }
-            } else {
-                throw ('"{0} {1}: {2}' -f $_.Exception.Response.StatusCode.value__, $_.Exception.Response.StatusDescription, $_ | Out-String )
+            }
+
+            Default {
+                throw ('"{0} {1}: {2}' -f $originalError.Exception.Response.StatusCode.value__, $originalError.Exception.Response.StatusDescription, $originalError | Out-String )
             }
         }
     }
 
-    $verboseOutput.Message | Write-VerboseWithSecret
     $response
 }

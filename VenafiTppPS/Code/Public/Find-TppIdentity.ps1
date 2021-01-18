@@ -1,16 +1,16 @@
 <#
 .SYNOPSIS
-Get identity details
+Search for identity details
 
 .DESCRIPTION
 Returns information about individual identity, group identity, or distribution groups from a local or non-local provider such as Active Directory.
-If no identity types are selected, all types will be included in the search.
+You can specify individual identity types to search for or all
 
 .PARAMETER Name
 The individual identity, group identity, or distribution group name to search for
 
 .PARAMETER Limit
-Limit how many items are returned, the default is 100.
+Limit how many items are returned, the default is 500, but is limited by the provider.
 
 .PARAMETER IncludeUsers
 Include user identity type in search
@@ -22,7 +22,7 @@ Include security group identity type in search
 Include distribution group identity type in search
 
 .PARAMETER Me
-Returns the identity of the authenticated user and all associated identities
+Returns the identity of the authenticated user and all associated identities.  Will be deprecated in a future release, use Get-TppIdentity -Me instead.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -32,42 +32,19 @@ Name
 
 .OUTPUTS
 PSCustomObject with the following properties:
-    FullName
-    IsContainer
-    IsGroup
     Name
-    Prefix
-    PrefixedName
-    PrefixedUniversal
-    Universal
+    ID
+    Path
 
 .EXAMPLE
 Find-TppIdentity -Name 'greg' -IncludeUsers
-FullName          : CN=Greg Brownstein,OU=My Group,DC=my,DC=company,DC=com
-IsContainer       : False
-IsGroup           : False
-Name              : greg
-Prefix            : AD+company.com
-PrefixedName      : AD+company.com:greg
-PrefixedUniversal : AD+company.com:1234567890asdfghjklmnbvcxz
-Universal         : 1234567890asdfghjklmnbvcxz
 
 Find user identities with the name greg
-
-.EXAMPLE
-Find-TppIdentity -Name 'greg'
-
-Find all identity types with the name greg
 
 .EXAMPLE
 'greg', 'brownstein' | Find-TppIdentity
 
 Find all identity types with the name greg and brownstein
-
-.EXAMPLE
-Find-TppIdentity -Me
-
-Find authenticated user identity and all associated identities
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Find-TppIdentity/
@@ -76,11 +53,7 @@ http://venafitppps.readthedocs.io/en/latest/functions/Find-TppIdentity/
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppIdentity.ps1
 
 .LINK
-https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Browse.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____3
-
-.LINK
-https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Identity-Self.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____8
-
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Identity-Browse.php?tocpath=Web%20SDK%7CIdentity%20programming%20interface%7C_____5
 #>
 function Find-TppIdentity {
 
@@ -91,7 +64,7 @@ function Find-TppIdentity {
         [String[]] $Name,
 
         [Parameter(ParameterSetName = 'Find')]
-        [int] $Limit = 100,
+        [int] $Limit = 500,
 
         [Parameter(ParameterSetName = 'Find')]
         [Switch] $IncludeUsers,
@@ -144,6 +117,7 @@ function Find-TppIdentity {
             }
 
             'Me' {
+                Write-Warning 'The -Me parameter will be deprecated in a future release.  Please update your code to use Get-TppIdentity -Me.'
                 $params = @{
                     TppSession = $TppSession
                     Method     = 'Get'
@@ -161,16 +135,30 @@ function Find-TppIdentity {
                     $params.Body.Filter = $_
                     Invoke-TppRestMethod @params
                 }
+                $ids = $response.Identities
             }
 
             'Me' {
                 $response = Invoke-TppRestMethod @params
+
+                $ids = $response.Identities | Select-Object -First 1
             }
         }
 
-        if ( $response ) {
-            $response.Identities
+        if ( $ids ) {
+            $ids | Select-Object `
+            @{
+                n = 'Name'
+                e = { $_.Name }
+            },
+            @{
+                n = 'ID'
+                e = { $_.PrefixedUniversal }
+            },
+            @{
+                n = 'Path'
+                e = { $_.FullName }
+            }
         }
-
     }
 }

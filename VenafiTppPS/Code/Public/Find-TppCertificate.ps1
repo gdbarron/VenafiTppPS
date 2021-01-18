@@ -180,10 +180,10 @@ http://venafitppps.readthedocs.io/en/latest/functions/Find-TppCertificate/
 https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppCertificate.ps1
 
 .LINK
-https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Certificates.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____3
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-GET-Certificates.php?tocpath=Web%20SDK%7CCertificates%20programming%20interface%7C_____4
 
 .LINK
-https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-GET-Certificates-guid.php?TocPath=REST%20API%20reference|Certificates%20module%20programming%20interfaces|_____5
+https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-GET-Certificates-guid.php?tocpath=Web%20SDK%7CCertificates%20programming%20interface%7C_____10
 
 .LINK
 https://msdn.microsoft.com/en-us/library/system.web.httputility(v=vs.110).aspx
