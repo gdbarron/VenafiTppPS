@@ -8,13 +8,13 @@ Generic REST API call
 ### Session (Default)
 ```
 Invoke-TppRestMethod -TppSession <TppSession> -Method <String> [-UriRoot <String>] -UriLeaf <String>
- [-Header <Hashtable>] [-Body <Hashtable>] [-UseWebRequest] [<CommonParameters>]
+ [-Header <Hashtable>] [-Body <Hashtable>] [<CommonParameters>]
 ```
 
 ### URL
 ```
 Invoke-TppRestMethod -ServerUrl <String> [-UseDefaultCredentials] -Method <String> [-UriRoot <String>]
- -UriLeaf <String> [-Header <Hashtable>] [-Body <Hashtable>] [-UseWebRequest] [<CommonParameters>]
+ -UriLeaf <String> [-Header <Hashtable>] [-Body <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -149,21 +149,6 @@ Aliases:
 Required: False
 Position: Named
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -UseWebRequest
-{{ Fill UseWebRequest Description }}
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

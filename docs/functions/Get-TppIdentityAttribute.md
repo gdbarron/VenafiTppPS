@@ -6,8 +6,8 @@ Get attribute values for TPP identity objects
 ## SYNTAX
 
 ```
-Get-TppIdentityAttribute [-PrefixedUniversalId] <String[]> [[-Attribute] <String[]>]
- [[-TppSession] <TppSession>] [<CommonParameters>]
+Get-TppIdentityAttribute [-ID] <String[]> [[-Attribute] <String[]>] [[-TppSession] <TppSession>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -17,36 +17,28 @@ Get attribute values for TPP identity objects.
 
 ### EXAMPLE 1
 ```
-Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:{1234567890olikujyhtgrfedwsqa}' | format-list
+Get-TppIdentityAttribute -IdentityId 'AD+blah:{1234567890olikujyhtgrfedwsqa}'
 ```
-
-PrefixedUniversalId : AD+mydomain.com:1234567890olikujyhtgrfedwsqa
-Attribute           : @{FullName=CN=greg,OU=Users,DC=mydomain,DC=com; IsContainer=False; IsGroup=False; Name=greg; Prefix=AD+mydomain.com;
-                      PrefixedName=AD+mydomain.com:greg; PrefixedUniversal=AD+mydomain.com:1234567890olikujyhtgrfedwsqa; Universal=1234567890olikujyhtgrfedwsqa}
 
 Get basic attributes
 
 ### EXAMPLE 2
 ```
-Get-TppIdentityAttribute -PrefixedUniversalId 'AD+mydomain.com:{1234567890olikujyhtgrfedwsqa}' -Attribute 'Surname'
+Get-TppIdentityAttribute -IdentityId 'AD+blah:{1234567890olikujyhtgrfedwsqa}' -Attribute 'Surname'
 ```
-
-PrefixedUniversalId                              Attribute
--------------------                              ---------
-AD+mydomain.com:1234567890olikujyhtgrfedwsqa     @{Surname=Brownstein}
 
 Get specific attribute for user
 
 ## PARAMETERS
 
-### -PrefixedUniversalId
+### -ID
 The id that represents the user or group. 
 Use Find-TppIdentity to get the id.
 
 ```yaml
 Type: String[]
 Parameter Sets: (All)
-Aliases: PrefixedUniversal, Contact
+Aliases: PrefixedUniversalId, Contact, IdentityId
 
 Required: True
 Position: 1
@@ -91,10 +83,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### PrefixedUniversalId
+### ID
 ## OUTPUTS
 
-### PSCustomObject with the properties PrefixedUniversalId and Attribute
+### PSCustomObject with the properties Identity and Attribute
 ## NOTES
 
 ## RELATED LINKS
@@ -103,7 +95,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppIdentityAttribute.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppIdentityAttribute.ps1)
 
-[https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Readattribute.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____7](https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Readattribute.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____7)
+[https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Identity-Validate.php?tocpath=Web%20SDK%7CIdentity%20programming%20interface%7C_____15](https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Identity-Validate.php?tocpath=Web%20SDK%7CIdentity%20programming%20interface%7C_____15)
 
-[https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Validate.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____9](https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Validate.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____9)
+[https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Identity-Readattribute.php?tocpath=Web%20SDK%7CIdentity%20programming%20interface%7C_____10](https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Identity-Readattribute.php?tocpath=Web%20SDK%7CIdentity%20programming%20interface%7C_____10)
 

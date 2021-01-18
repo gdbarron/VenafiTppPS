@@ -6,8 +6,7 @@ Test if an identity exists
 ## SYNTAX
 
 ```
-Test-TppIdentity [-PrefixedUniversalId] <String[]> [-ExistOnly] [[-TppSession] <TppSession>]
- [<CommonParameters>]
+Test-TppIdentity [-ID] <String[]> [-ExistOnly] [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -20,29 +19,24 @@ Provided with a prefixed universal id, find out if an identity exists.
 'local:78uhjny657890okjhhh', 'AD+mydomain.com:azsxdcfvgbhnjmlk09877654321' | Test-TppIdentity
 ```
 
-Identity                                       Exists
---------                                       -----
-local:78uhjny657890okjhhh                      True
-AD+mydomain.com:azsxdcfvgbhnjmlk09877654321    False
-
 Test multiple identities
 
 ### EXAMPLE 2
 ```
-Test-TppIdentity -PrefixedUniversalId 'AD+mydomain.com:azsxdcfvgbhnjmlk09877654321' -ExistOnly
+Test-TppIdentity -Identity 'AD+mydomain.com:azsxdcfvgbhnjmlk09877654321' -ExistOnly
 ```
 
 Retrieve existence for only one identity, returns boolean
 
 ## PARAMETERS
 
-### -PrefixedUniversalId
-The id that represents the user or group.
+### -ID
+{{ Fill ID Description }}
 
 ```yaml
 Type: String[]
 Parameter Sets: (All)
-Aliases: PrefixedUniversal, Contact
+Aliases: PrefixedUniversal, Contact, IdentityId
 
 Required: True
 Position: 1
@@ -52,7 +46,7 @@ Accept wildcard characters: False
 ```
 
 ### -ExistOnly
-Only return boolean instead of Identity and Exists list. 
+Only return boolean instead of ID and Exists list. 
 Helpful when validating just 1 identity.
 
 ```yaml
@@ -88,10 +82,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### PrefixedUniversalId
+### Identity
 ## OUTPUTS
 
-### PSCustomObject will be returned with properties 'Identity', a System.String, and 'Exists', a System.Boolean.
+### PSCustomObject will be returned with properties 'ID', a System.String, and 'Exists', a System.Boolean.
 ## NOTES
 
 ## RELATED LINKS
@@ -100,5 +94,5 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Test-TppIdentity.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Test-TppIdentity.ps1)
 
-[https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Validate.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____9](https://docs.venafi.com/Docs/18.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Identity-Validate.php?tocpath=REST%20API%20reference%7CIdentity%20programming%20interfaces%7C_____9)
+[https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Identity-Validate.php?tocpath=Web%20SDK%7CIdentity%20programming%20interface%7C_____15](https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Identity-Validate.php?tocpath=Web%20SDK%7CIdentity%20programming%20interface%7C_____15)
 

@@ -1,16 +1,23 @@
 # Get-TppObject
 
 ## SYNOPSIS
-Get object by path
+Get object information
 
 ## SYNTAX
 
+### ByPath
 ```
-Get-TppObject [-Path] <String> [[-TppSession] <TppSession>] [<CommonParameters>]
+Get-TppObject -Path <String[]> [-TppSession <TppSession>] [<CommonParameters>]
+```
+
+### ByGuid
+```
+Get-TppObject -Guid <Guid[]> [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Get object by path
+Return object information by either path or guid. 
+This will return a TppObject which can be used with many other functions.
 
 ## EXAMPLES
 
@@ -19,7 +26,14 @@ Get object by path
 Get-TppObject -Path '\VED\Policy\My object'
 ```
 
-Get an object by full path
+Get an object by path
+
+### EXAMPLE 2
+```
+[guid]'dab22152-0a81-4fb8-a8da-8c5e3d07c3f1' | Get-TppObject
+```
+
+Get an object by guid
 
 ## PARAMETERS
 
@@ -27,14 +41,29 @@ Get an object by full path
 The full path to the object
 
 ```yaml
-Type: String
-Parameter Sets: (All)
+Type: String[]
+Parameter Sets: ByPath
 Aliases: DN
 
 Required: True
-Position: 1
+Position: Named
 Default value: None
 Accept pipeline input: True (ByPropertyName, ByValue)
+Accept wildcard characters: False
+```
+
+### -Guid
+Guid of the object
+
+```yaml
+Type: Guid[]
+Parameter Sets: ByGuid
+Aliases: ObjectGuid
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
 
@@ -48,7 +77,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: Named
 Default value: $Script:TppSession
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -59,7 +88,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### Path
+### Path, Guid
 ## OUTPUTS
 
 ### TppObject
@@ -70,6 +99,4 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 [http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/)
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppObject.ps1)
-
-[https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-enumerate.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____13](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Config-enumerate.php?TocPath=REST%20API%20reference|Config%20programming%20interfaces|_____13)
 

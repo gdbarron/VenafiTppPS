@@ -88,5 +88,5 @@ All custom fields are retrieved upon inital connect to the server and a property
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Get-TppCustomField/](http://venafitppps.readthedocs.io/en/latest/functions/Get-TppCustomField/)
 
-[https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Metadata-GetItemsForClass.php?tocpath=REST%20API%20reference%7CMetadata%20programming%20interfaces%7C_____11](https://docs.venafi.com/Docs/18.1SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Metadata-GetItemsForClass.php?tocpath=REST%20API%20reference%7CMetadata%20programming%20interfaces%7C_____11)
+[https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Metadata-GetItemsForClass.php?tocpath=Web%20SDK%7CMetadata%20custom%20fields%20programming%20interface%7C_____10](https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Metadata-GetItemsForClass.php?tocpath=Web%20SDK%7CMetadata%20custom%20fields%20programming%20interface%7C_____10)
 

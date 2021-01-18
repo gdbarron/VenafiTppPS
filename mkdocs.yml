@@ -25,6 +25,7 @@ pages:
     - Get-TppCodeSignEnvironment: functions/Get-TppCodeSignEnvironment.md
     - Get-TppCodeSignProject: functions/Get-TppCodeSignProject.md
     - Get-TppCustomField: functions/Get-TppCustomField.md
+    - Get-TppIdentity: functions/Get-TppIdentity.md
     - Get-TppIdentityAttribute: functions/Get-TppIdentityAttribute.md
     - Get-TppObject: functions/Get-TppObject.md
     - Get-TppPermission: functions/Get-TppPermission.md
@@ -48,6 +49,7 @@ pages:
     - Remove-TppCertificateAssociation: functions/Remove-TppCertificateAssociation.md
     - Remove-TppCodeSignEnvironment: functions/Remove-TppCodeSignEnvironment.md
     - Remove-TppCodeSignProject: functions/Remove-TppCodeSignProject.md
+    - Remove-TppPermission: functions/Remove-TppPermission.md
     - Rename-TppObject: functions/Rename-TppObject.md
     - Revoke-TppCertificate: functions/Revoke-TppCertificate.md
     - Revoke-TppToken: functions/Revoke-TppToken.md

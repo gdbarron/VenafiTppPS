@@ -157,5 +157,5 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Remove-TppCertificate.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Remove-TppCertificate.ps1)
 
-[https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-DELETE-Certificates-Guid.php?tocpath=REST%20API%20reference%7CCertificates%20module%20programming%20interfaces%7C_____8](https://docs.venafi.com/Docs/18.3SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-DELETE-Certificates-Guid.php?tocpath=REST%20API%20reference%7CCertificates%20module%20programming%20interfaces%7C_____8)
+[https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-DELETE-Certificates-Guid.php?tocpath=Web%20SDK%7CCertificates%20programming%20interface%7C_____9](https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-DELETE-Certificates-Guid.php?tocpath=Web%20SDK%7CCertificates%20programming%20interface%7C_____9)
 

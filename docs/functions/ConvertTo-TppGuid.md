@@ -16,7 +16,7 @@ Convert DN path to GUID
 
 ### EXAMPLE 1
 ```
-ConvertTo-TppGuid -Guid 'xyxyxyxy-xyxy-xyxy-xyxy-xyxyxyxyxyxy'
+ConvertTo-TppGuid -Path '\ved\policy\convertme'
 ```
 
 ## PARAMETERS
