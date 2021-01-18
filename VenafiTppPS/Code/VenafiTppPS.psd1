@@ -12,7 +12,7 @@
 RootModule = 'VenafiTppPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.1.1'
+ModuleVersion = '2.2'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -88,7 +88,7 @@ FunctionsToExport = 'Add-TppCertificateAssociation', 'ConvertTo-TppGuid',
                'Revoke-TppCertificate', 'Revoke-TppToken', 'Set-TppAttribute',
                'Set-TppCodeSignProjectStatus', 'Set-TppPermission',
                'Set-TppWorkflowTicketStatus', 'Test-TppIdentity', 'Test-TppObject',
-               'Write-TppLog', 'Remove-TppPermission'
+               'Write-TppLog', 'Remove-TppPermission', 'Get-TppIdentity'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()

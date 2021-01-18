@@ -1,3 +1,20 @@
+## v2.2.0
+- Identity format validation fix, [#126](https://github.com/gdbarron/VenafiTppPS/issues/126).  Thanks @DadsVacayShorts!
+- Add Get-TppIdentity to retrieve Identity info given an id
+- Add Remove-TppPermission, accepts output from Get-TppPermission
+- Add Path param to Set-TppPermission in addition to guid
+- Get-TppPermission now accepts TppObject, eg. from Find-TppObject
+- Set-TppPermission now accepts output from Get-TppPermission for the object and IdentityId so you only need to specify Permission. No need to get guid and identity manually to pass in.
+- Find-TppIdentity output standardized so you can now pipe to permission functions
+- Get-TppPermission returns additional object and identity info
+- Centralize format validation for identities
+- Update help links referring to versions no longer available
+- Find-TppIdentity -Me to be deprecated for Get-TppIdentity -Me
+- Add option to Get-TppObject for guid
+- Standardized on Id/IdentityId for the identity across all identity and permission functions
+- Force missing slash retry to status codes of only 307 and 401
+- Better error handling and messaging through the permission functions
+
 ## v2.1.1
 - Get-TppPermission fix when retrieving multiple permissions, [#124](https://github.com/gdbarron/VenafiTppPS/issues/124).  Thanks @DadsVacayShorts!
 
