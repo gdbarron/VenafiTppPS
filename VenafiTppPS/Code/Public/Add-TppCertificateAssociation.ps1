@@ -4,7 +4,7 @@ Add certificate association
 
 .DESCRIPTION
 Associates one or more Application objects to an existing certificate.
-Optionally, you can provision the certificate once the association is complete.
+Optionally, you can push the certificate once the association is complete.
 
 .PARAMETER InputObject
 TppObject which represents a certificate
@@ -15,9 +15,9 @@ Path to the certificate.  Required if InputObject not provided.
 .PARAMETER ApplicationPath
 List of application object paths to associate
 
-.PARAMETER ProvisionCertificate
-Provision the certificate after associating it to the Application objects.
-This will only be successful if the certificate management type is Provisioning and is not disabled, in error, or the provisioning is already in process.
+.PARAMETER PushCertificate
+Push the certificate after associating it to the Application objects.
+This will only be successful if the certificate management type is Provisioning and is not disabled, in error, or a push is already in process.
 
 .PARAMETER TppSession
 Session object created from New-TppSession method.  The value defaults to the script session object $TppSession.
@@ -33,8 +33,8 @@ Add-TppCertificateAssocation -CertificatePath '\ved\policy\my cert' -Application
 Add a single application object association
 
 .EXAMPLE
-Add-TppCertificateAssocation -Path '\ved\policy\my cert' -ApplicationPath '\ved\policy\my capi' -ProvisionCertificate
-Add the association and provision the certificate
+Add-TppCertificateAssocation -Path '\ved\policy\my cert' -ApplicationPath '\ved\policy\my capi' -PushCertificate
+Add the association and push the certificate
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Add-TppCertificateAssociation/
@@ -82,7 +82,8 @@ function Add-TppCertificateAssociation {
         [String[]] $ApplicationPath,
 
         [Parameter()]
-        [switch] $ProvisionCertificate,
+        [Alias('ProvisionCertificate')]
+        [switch] $PushCertificate,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -101,7 +102,7 @@ function Add-TppCertificateAssociation {
             }
         }
 
-        if ( $PSBoundParameters.ContainsKey('ProvisionCertificate') ) {
+        if ( $PSBoundParameters.ContainsKey('PushCertificate') ) {
             $params.Body.Add('PushToNew', 'true')
         }
     }
@@ -115,13 +116,8 @@ function Add-TppCertificateAssociation {
         $params.Body.CertificateDN = $CertificatePath
         $params.Body.ApplicationDN = @($ApplicationPath)
 
-        try {
-            if ( $PSCmdlet.ShouldProcess($CertificatePath, 'Add association') ) {
-                $null = Invoke-TppRestMethod @params
-            }
-        } catch {
-            $myError = $_.ToString() | ConvertFrom-Json
-            Write-Error ($myError.Error)
+        if ( $PSCmdlet.ShouldProcess($CertificatePath, 'Add association') ) {
+            $null = Invoke-TppRestMethod @params
         }
     }
 }
