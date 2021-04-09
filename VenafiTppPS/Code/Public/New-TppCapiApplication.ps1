@@ -10,10 +10,7 @@ Full path, including name, to the application to be created.  The application mu
 Alternatively, provide the path to the device and provide ApplicationName.
 
 .PARAMETER ApplicationName
-1 or more application names to create.  Path must be a path to a device.
-
-.PARAMETER FriendlyName
-Optional friendly name
+1 or more application names to create.  Path property must be a path to a device.
 
 .PARAMETER CertificatePath
 Path to the certificate to associate to the new application
@@ -21,10 +18,34 @@ Path to the certificate to associate to the new application
 .PARAMETER CredentialPath
 Path to the associated credential which has rights to access the connected device
 
+.PARAMETER FriendlyName
+The Friendly Name that helps to uniquely identify the certificate after it has been installed in the Windows CAPI store
+
+.PARAMETER Descripion
+Application description
+
+.PARAMETER WinRmPort
+WinRM port to connect to application on
+
 .PARAMETER Disable
 Set processing to disabled.  It is enabled by default.
 
-.PARAMETER ProvisionCertificate
+.PARAMETER WebSiteName
+The unique name of the IIS web site
+
+.PARAMETER BindingIp
+The IP address to bind the certificate to the IIS web site. If not specified, the Internet Information Services (IIS) Manager console shows 'All Unassigned'.
+
+.PARAMETER BindingPort
+The TCP port 1 to 65535 to bind the certificate to the IIS web site
+
+.PARAMETER BindingHostName
+The hostname to bind the certificate to the IIS web site. Specifying this value will make it so the certificate is only accessible to clients using Server Name Indication (SNI)
+
+.PARAMETER CreateBinding
+Specify that Trust Protection Platform should create an IIS web site binding if the one specified doesn’t already exist.
+
+.PARAMETER PushCertificate
 Push the certificate to the application.  CertificatePath must be provided.
 
 .PARAMETER SkipExistenceCheck
@@ -42,6 +63,22 @@ Path
 
 .OUTPUTS
 TppObject, if PassThru provided
+
+.EXAMPLE
+New-TppCapiApplication -Path '\ved\policy\mydevice\capi' -CertificatePath $cert.Path -CredentialPath $cred.Path
+Create a new application
+
+.EXAMPLE
+New-TppCapiApplication -Path '\ved\policy\mydevice\capi' -CertificatePath $cert.Path -CredentialPath $cred.Path -WebSiteName 'mysite' -BindingIp '1.2.3.4'
+Create a new application and update IIS
+
+.EXAMPLE
+New-TppCapiApplication -Path '\ved\policy\mydevice\capi' -CertificatePath $cert.Path -CredentialPath $cred.Path -WebSiteName 'mysite' -BindingIp '1.2.3.4' -PushCertificate
+Create a new application, update IIS, and push the certificate to the new app
+
+.EXAMPLE
+New-TppCapiApplication -Path '\ved\policy\mydevice\capi' -CertificatePath $cert.Path -CredentialPath $cred.Path -PassThru
+Create a new application and return a TppObject for the newly created app
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppCapiApplication/
@@ -73,8 +110,7 @@ function New-TppCapiApplication {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -89,8 +125,7 @@ function New-TppCapiApplication {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -102,8 +137,7 @@ function New-TppCapiApplication {
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
                     $true
-                }
-                else {
+                } else {
                     throw "'$_' is not a valid DN path"
                 }
             })]
@@ -131,7 +165,8 @@ function New-TppCapiApplication {
 
         [Parameter(ParameterSetName = 'Iis')]
         [ValidateNotNullOrEmpty()]
-        [ipaddress] $BindingIpAddress,
+        [Alias('BindingIpAddress')]
+        [ipaddress] $BindingIp,
 
         [Parameter(ParameterSetName = 'Iis')]
         [ValidateNotNullOrEmpty()]
@@ -143,10 +178,10 @@ function New-TppCapiApplication {
 
         [Parameter(ParameterSetName = 'Iis')]
         [ValidateNotNullOrEmpty()]
-        [Bool] $CreateBinding,
+        [bool] $CreateBinding,
 
         [Parameter()]
-        [switch] $ProvisionCertificate,
+        [switch] $PushCertificate,
 
         [Parameter()]
         [switch] $SkipExistenceCheck,
@@ -162,8 +197,8 @@ function New-TppCapiApplication {
 
         $TppSession.Validate()
 
-        if ( $PSBoundParameters.ContainsKey('ProvisionCertificate') -and (-not $PSBoundParameters.ContainsKey('CertificatePath')) ) {
-            throw 'A CertificatePath must be provided when using ProvisionCertificate'
+        if ( $PushCertificate.IsPresent -and (-not $PSBoundParameters.ContainsKey('CertificatePath')) ) {
+            throw 'A CertificatePath must be provided when using PushCertificate'
         }
 
         if ( -not $PSBoundParameters.ContainsKey('SkipExistenceCheck') ) {
@@ -211,11 +246,7 @@ function New-TppCapiApplication {
             $params.Attribute.Add('Credential', $CredentialPath)
         }
 
-        if ( $PSBoundParameters.ContainsKey('ProvisionCertificate') ) {
-            $params.Attribute.Add('ProvisionCertificate', $true)
-        }
-
-        if ( $PSBoundParameters.ContainsKey('Disabled') ) {
+        if ( $Disable.IsPresent ) {
             $params.Attribute.Add('Disabled', '1')
         }
 
@@ -224,12 +255,12 @@ function New-TppCapiApplication {
             $params.Attribute.Add('Web Site Name', $WebSiteName)
         }
 
-        if ( $PSBoundParameters.ContainsKey('BindingIpAddress') ) {
-            $params.Attribute.Add('Binding IP Address', $BindingIpAddress.ToString())
+        if ( $PSBoundParameters.ContainsKey('BindingIp') ) {
+            $params.Attribute.Add('Binding IP Address', $BindingIp.ToString())
         }
 
         if ( $PSBoundParameters.ContainsKey('BindingPort') ) {
-            $params.Attribute.Add('Binding Port', $BindingPort)
+            $params.Attribute.Add('Binding Port', $BindingPort.ToString())
         }
 
         if ( $PSBoundParameters.ContainsKey('BindingHostName') ) {
@@ -237,7 +268,11 @@ function New-TppCapiApplication {
         }
 
         if ( $PSBoundParameters.ContainsKey('CreateBinding') ) {
-            $params.Attribute.Add('Create Binding', $CreateBinding)
+            $params.Attribute.Add('Create Binding', ([int]$CreateBinding).ToString())
+        }
+
+        if ( $PSBoundParameters.ContainsKey('WinRmPort') ) {
+            $params.Attribute.Add('Port', $WinRmPort.ToString())
         }
     }
 
@@ -248,8 +283,7 @@ function New-TppCapiApplication {
             # ensure the parent path exists and is of type device
             if ( $PSBoundParameters.ContainsKey('ApplicationName') ) {
                 $devicePath = $Path
-            }
-            else {
+            } else {
                 $devicePath = (Split-Path $Path -Parent)
             }
 
@@ -259,8 +293,7 @@ function New-TppCapiApplication {
                 if ( $device.TypeName -ne 'Device' ) {
                     throw ('A device object could not be found at ''{0}''' -f $devicePath)
                 }
-            }
-            else {
+            } else {
                 throw ('No object was found at the parent path ''{0}''' -f $devicePath)
             }
         }
@@ -269,16 +302,15 @@ function New-TppCapiApplication {
             $appPaths = $ApplicationName | ForEach-Object {
                 $Path + "\$_"
             }
-        }
-        else {
+        } else {
             $appPaths = @($Path)
         }
 
-        foreach ($thisPath in $appPaths) {
+        if ( $PSCmdlet.ShouldProcess($Path, 'Create CAPI application(s)') ) {
+            foreach ($thisPath in $appPaths) {
 
-            $params.Path = $thisPath
+                $params.Path = $thisPath
 
-            if ( $PSCmdlet.ShouldProcess($thisPath, 'Create CAPI application Object') ) {
 
                 $response = New-TppObject @params
 
@@ -286,6 +318,17 @@ function New-TppCapiApplication {
                     $response
                 }
             }
+
+            if ( $PushCertificate.IsPresent ) {
+                $params = @{
+                    CertificatePath = $CertificatePath
+                    ApplicationPath = $appPaths
+                    TppSession      = $TppSession
+                }
+
+                Invoke-TppCertificatePush @params
+            }
+
         }
     }
 }
