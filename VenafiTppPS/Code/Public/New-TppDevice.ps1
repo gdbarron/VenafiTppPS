@@ -18,8 +18,8 @@ Device description
 .PARAMETER CredentialPath
 Path to the credential which has permissions to update the device
 
-.PARAMETER IpAddress
-IP Address of the device
+.PARAMETER Hostname
+Hostname or IP Address of the device
 
 .PARAMETER PassThru
 Return a TppObject representing the newly created policy.
@@ -38,7 +38,7 @@ $newPolicy = New-TppDevice -Path '\VED\Policy\MyFolder\device' -PassThru
 Create device with full path to device and returning the object created
 
 .EXAMPLE
-$policyPath | New-TppDevice -DeviceName 'myDevice' -IpAddress 1.2.3.4
+$policyPath | New-TppDevice -DeviceName 'myDevice' -Hostname 1.2.3.4
 Pipe policy path and provide device details
 
 .LINK
@@ -93,7 +93,8 @@ function New-TppDevice {
         [string] $CredentialPath,
 
         [Parameter()]
-        [ipaddress] $IpAddress,
+        [Alias('IpAddress')]
+        [string] $Hostname,
 
         [Parameter()]
         [switch] $PassThru,
@@ -122,8 +123,8 @@ function New-TppDevice {
             $params.Attribute['Credential'] = $CredentialPath
         }
 
-        if ( $PSBoundParameters.ContainsKey('IpAddress') ) {
-            $params.Attribute['Host'] = $IpAddress.ToString()
+        if ( $PSBoundParameters.ContainsKey('Hostname') ) {
+            $params.Attribute['Host'] = $Hostname
         }
 
         # if no attributes were provided, we need to pull out the attribute key
