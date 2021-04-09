@@ -171,7 +171,7 @@ function Get-TppPermission {
                 }
 
                 Default {
-                    $thisTppObject = [TppObject]::new($thisInputObject)
+                    $thisTppObject = [TppObject]::new($thisInputObject, $TppSession)
                 }
             }
 

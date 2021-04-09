@@ -51,8 +51,24 @@ class TppObject {
         $this.TypeName = $info.TypeName
     }
 
+    TppObject ([string] $Path, [PSObject] $TppSession) {
+        $info = $Path | ConvertTo-TppGuid -IncludeType -TppSession $TppSession
+        $this.Path = $Path
+        $this.Name = Split-Path $Path -Leaf
+        $this.Guid = $info.Guid
+        $this.TypeName = $info.TypeName
+    }
+
     TppObject ([guid] $Guid) {
         $info = ConvertTo-TppPath -Guid $Guid -IncludeType
+        $this.Guid = $Guid
+        $this.Name = Split-Path $info.Path -Leaf
+        $this.Path = $info.Path
+        $this.TypeName = $info.TypeName
+    }
+
+    TppObject ([guid] $Guid, [PSObject] $TppSession) {
+        $info = ConvertTo-TppPath -Guid $Guid -IncludeType -TppSession $TppSession
         $this.Guid = $Guid
         $this.Name = Split-Path $info.Path -Leaf
         $this.Path = $info.Path

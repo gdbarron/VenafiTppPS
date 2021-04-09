@@ -76,7 +76,7 @@ function Get-TppObject {
         }
 
         foreach ($thisInputObject in $inputObject) {
-            [TppObject]::new($thisInputObject)
+            [TppObject]::new($thisInputObject, $TppSession)
         }
     }
 }
