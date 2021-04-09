@@ -331,4 +331,6 @@ function New-TppCapiApplication {
 
         }
     }
+
+    end {}
 }
