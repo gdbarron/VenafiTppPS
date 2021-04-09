@@ -1,3 +1,13 @@
+## 2.2.1
+- Rename 'Provision' to 'Push', aliases added for existing code
+- Add Invoke-TppCertificatePush
+- Fix #130, Get-TppDevice only accepting IP address for host, not hostname.  Thanks @Curtmcgirt!
+- Fix #131, add examples to `New-TppCapiApplication`.  Thanks @Curtmcgirt!
+- Fix #132, 500 error setting BindingIpAddress running `New-TppCapiApplication`.    Thanks @Curtmcgirt!
+- Fix #134, server url is blank when running `Get-TppObject` with secondary token.  This was an issue for Get-TppPermission as well.  Thanks @stevekeever!
+- Add missing parameters comment-based help for `New-TppCapiApplication`
+- Fix certificate push not working in `New-TppCapiApplication`
+
 ## v2.2.0
 - Identity format validation fix, [#126](https://github.com/gdbarron/VenafiTppPS/issues/126).  Thanks @DadsVacayShorts!
 - Add Get-TppIdentity to retrieve Identity info given an id
