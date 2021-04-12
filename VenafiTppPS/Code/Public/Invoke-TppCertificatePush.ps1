@@ -38,7 +38,7 @@ Push certificate to all associated applications
 http://venafitppps.readthedocs.io/en/latest/functions/Invoke-TppCertificatePush/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Invoke-TppCertificatePush.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Invoke-TppCertificatePush.ps1
 
 .LINK
 https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Certificates-Push.php?tocpath=Web%20SDK%7CCertificates%20programming%20interface%7C_____15

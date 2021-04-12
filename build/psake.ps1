@@ -39,7 +39,7 @@ Task Init {
     Get-Item ENV:BH* | Format-List
     "`n"
     "Current Version: $CurrentVersion`n"
-    "Build Version: $BuildVersion`n"    
+    "Build Version: $BuildVersion`n"
     Get-Module
 }
 
@@ -70,7 +70,7 @@ Task UnitTests -Depends Init {
 
 Task Build -Depends UnitTests {
     $lines
-    
+
     # "Populating AliasesToExport and FunctionsToExport"
     # # Load the module, read the exported functions and aliases, update the psd1
     # $FunctionFiles = Get-ChildItem "$ModuleFolder\Public\*.ps1" |
@@ -78,7 +78,7 @@ Task Build -Depends UnitTests {
     # $ExportFunctions = @()
     # $ExportAliases = @()
     # foreach ($FunctionFile in $FunctionFiles) {
-    #     $AST = [System.Management.Automation.Language.Parser]::ParseFile($FunctionFile.FullName, [ref]$null, [ref]$null)        
+    #     $AST = [System.Management.Automation.Language.Parser]::ParseFile($FunctionFile.FullName, [ref]$null, [ref]$null)
     #     $Functions = $AST.FindAll( {
     #             $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst]
     #         }, $true)
@@ -92,11 +92,11 @@ Task Build -Depends UnitTests {
     #         }, $true)
     #     if ($Aliases.PositionalArguments.value) {
     #         $ExportAliases += $Aliases.PositionalArguments.value
-    #     }        
+    #     }
     # }
     # Set-ModuleFunctions -Name $env:BHPSModuleManifest -FunctionsToExport $ExportFunctions
     # Update-Metadata -Path $env:BHPSModuleManifest -PropertyName AliasesToExport -Value $ExportAliases
-    
+
     # "Populating NestedModules"
     # # Scan the Public and Private folders and add all Files to NestedModules
     # # I prefer to populate this instead of dot sourcing from the .psm1
@@ -111,10 +111,10 @@ Task Build -Depends UnitTests {
     #     Where-Object { $_.Name -notmatch '\.tests{0,1}\.ps1' } |
     #     ForEach-Object { $_.fullname.replace("$ModuleFolder\", "") }
     # Update-Metadata -Path $env:BHPSModuleManifest -PropertyName NestedModules -Value $ExportModules
-    
+
     # Bump the module version
     Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $BuildVersion
-    
+
     # Update release notes with Version info and set the PSD1 release notes
     $parameters = @{
         Path        = $ReleaseNotes
@@ -130,7 +130,7 @@ Task Build -Depends UnitTests {
     $ReleaseText = $Header + $ReleaseText
     $ReleaseText | Set-Content $ReleaseNotes
     Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ReleaseNotes -Value $ReleaseText
-    
+
     # Update the ChangeLog with the current release notes
     $releaseparameters = @{
         Path        = $ReleaseNotes
@@ -146,7 +146,7 @@ Task Build -Depends UnitTests {
 Task Test -Depends Build {
     $lines
     "`n`tSTATUS: Testing with PowerShell $PSVersion"
-    
+
     # Gather test results. Store them in a variable and file
     $Timestamp = Get-date -uformat "%Y%m%d-%H%M%S"
     $TestFile = "TestResults_PS$PSVersion`_$TimeStamp.xml"
@@ -155,18 +155,18 @@ Task Test -Depends Build {
         PassThru     = $true
         OutputFormat = 'NUnitXml'
         OutputFile   = "$ProjectRoot\$TestFile"
-    }    
-    $TestResults = Invoke-Pester @parameters 
-    
+    }
+    $TestResults = Invoke-Pester @parameters
+
     # In Appveyor?  Upload our tests! #Abstract this into a function?
     If ($ENV:BHBuildSystem -eq 'AppVeyor') {
         "Uploading $ProjectRoot\$TestFile to AppVeyor"
         "JobID: $env:APPVEYOR_JOB_ID"
         (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path "$ProjectRoot\$TestFile"))
     }
-    
+
     Remove-Item "$ProjectRoot\$TestFile" -Force -ErrorAction SilentlyContinue
-    
+
     # Failed tests?
     # Need to tell psake or it will proceed to the deployment. Danger!
     if ($TestResults.FailedCount -gt 0) {
@@ -177,12 +177,12 @@ Task Test -Depends Build {
 
 Task BuildDocs -depends Test {
     $lines
-    
+
     "Loading Module from $ENV:BHPSModuleManifest"
     Remove-Module $ENV:BHProjectName -Force -ea SilentlyContinue
     # platyPS + AppVeyor requires the module to be loaded in Global scope
     Import-Module $ENV:BHPSModuleManifest -force -Global
-    
+
     #Build YAMLText starting with the header
     $YMLtext = (Get-Content "$ProjectRoot\header-mkdocs.yml") -join "`n"
     $YMLtext = "$YMLtext`n"
@@ -230,11 +230,11 @@ Task BuildDocs -depends Test {
 
 Task Deploy -Depends BuildDocs {
     $lines
-    
+
     # Gate deployment
     if (
         $ENV:BHBuildSystem -ne 'Unknown' -and
-        $ENV:BHBranchName -eq "master" -and
+        $ENV:BHBranchName -eq "main" -and
         ($ENV:BHCommitMessage -match '!deploy' -or $ENV:BHCommitMessage -match '!builddocs')
     ) {
 
@@ -243,7 +243,7 @@ Task Deploy -Depends BuildDocs {
                 Path  = $ProjectRoot
                 Force = $true
             }
-        
+
             Invoke-PSDeploy @Verbose @Params
 
             # remove .zip and .nupkg from project folder after it's been pushed to PS gallery
@@ -255,7 +255,7 @@ Task Deploy -Depends BuildDocs {
         # } else {
         #     Write-Error "Skipping deployment: To deploy, ensure that...`n" +
         #     "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" +
-        #     "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
+        #     "`t* You are committing to the main branch (Current: $ENV:BHBranchName) `n" +
         #     "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)"
         # }
         # }
@@ -270,39 +270,39 @@ Task Deploy -Depends BuildDocs {
             If ($ENV:BHBuildSystem -eq 'AppVeyor') {
                 "git config --global credential.helper store"
                 cmd /c "git config --global credential.helper store 2>&1"
-        
+
                 Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
-        
+
                 "git config --global user.email"
                 cmd /c "git config --global user.email ""$($ENV:BHProjectName)-$($ENV:BHBranchName)-$($ENV:BHBuildSystem)@markekraus.com"" 2>&1"
-        
+
                 "git config --global user.name"
                 cmd /c "git config --global user.name ""AppVeyor"" 2>&1"
-        
+
                 "git config --global core.autocrlf true"
                 cmd /c "git config --global core.autocrlf true 2>&1"
             }
-    
+
             "git checkout $ENV:BHBranchName"
             cmd /c "git checkout $ENV:BHBranchName 2>&1"
-    
+
             "git add -A"
             cmd /c "git add -A 2>&1"
-    
+
             "git commit -m"
             cmd /c "git commit -m ""AppVeyor post-build commit[ci skip]"" 2>&1"
-    
+
             "git status"
             cmd /c "git status 2>&1"
-    
+
             "git push origin $ENV:BHBranchName"
             cmd /c "git push origin $ENV:BHBranchName 2>&1"
-            # if this is a !deploy on master, create GitHub release
+            # if this is a !deploy on main, create GitHub release
             # 20180518, stop use of this for now
             if (
                 0 -and
                 $ENV:BHBuildSystem -ne 'Unknown' -and
-                $ENV:BHBranchName -eq "master" -and
+                $ENV:BHBranchName -eq "main" -and
                 $ENV:BHCommitMessage -match '!deploy'
             ) {
                 "Publishing Release 'v$BuildVersion' to Github"
@@ -316,7 +316,7 @@ Task Deploy -Depends BuildDocs {
                 }
                 $Body = @{
                     "tag_name"         = "v$BuildVersion"
-                    "target_commitish" = "master"
+                    "target_commitish" = "main"
                     "name"             = "v$BuildVersion"
                     "body"             = $ReleaseText
                     "draft"            = $false
@@ -339,7 +339,7 @@ Task Deploy -Depends BuildDocs {
     } else {
         "Skipping deployment: To deploy, ensure that...`n" +
         "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" +
-        "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
+        "`t* You are committing to the main branch (Current: $ENV:BHBranchName) `n" +
         "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)"
     }
 

@@ -6,7 +6,7 @@
     <authors>Greg Brownstein</authors>
     <owners>Greg Brownstein</owners>
     <projectUrl>https://github.com/gdbarron/VenafiTppPS</projectUrl>
-    <iconUrl>https://raw.githubusercontent.com/gdbarron/VenafiTppPS/master/images/Ven_circleV_logo.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/gdbarron/VenafiTppPS/main/images/Ven_circleV_logo.png</iconUrl>
     <licenseUrl>https://www.github.com/gdbarron/VenafiTppPS/LICENSE</licenseUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>PowerShell module to take advantage of the Venafi TPP REST API</description>

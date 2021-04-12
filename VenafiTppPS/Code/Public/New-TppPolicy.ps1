@@ -35,13 +35,13 @@ Create policy with description
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppPolicy/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppPolicy.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/New-TppPolicy.ps1
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppObject/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppObject.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/New-TppObject.ps1
 
 #>
 function New-TppPolicy {

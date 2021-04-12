@@ -22,7 +22,7 @@ Get the status
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppSystemStatus/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppSystemStatus.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Get-TppSystemStatus.ps1
 
 .LINK
 https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-GET-SystemStatus.php?tocpath=Web%20SDK%7CSystemStatus%20programming%20interface%7C_____3

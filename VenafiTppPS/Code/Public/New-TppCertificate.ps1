@@ -63,7 +63,7 @@ Create certificate including subject alternate names
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppCertificate/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppCertificate.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/New-TppCertificate.ps1
 
 .LINK
 https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Certificates-request.php?tocpath=Web%20SDK%7CCertificates%20programming%20interface%7CPOST%20Certificates%252FRequest%7C_____0

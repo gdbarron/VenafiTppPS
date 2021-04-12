@@ -84,10 +84,10 @@ Create a new application and return a TppObject for the newly created app
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppCapiApplication/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppCapiApplication.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/New-TppCapiApplication.ps1
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppObject.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/New-TppObject.ps1
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/Find-TppCertificate/

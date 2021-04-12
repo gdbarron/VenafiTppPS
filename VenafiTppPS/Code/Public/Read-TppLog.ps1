@@ -71,7 +71,7 @@ Find all events for a specific object
 http://venafitppps.readthedocs.io/en/latest/functions/Read-TppLog/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Read-TppLog.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Read-TppLog.ps1
 
 .LINK
 https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-GET-Log.php?tocpath=Web%20SDK%7CLog%20programming%20interface%7C_____2

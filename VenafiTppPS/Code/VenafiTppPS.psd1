@@ -117,16 +117,16 @@ PrivateData = @{
         Tags = 'Venafi','TPP','TrustProtectionPlatform','API'
 
         # A URL to the license for this module.
-        LicenseUri = 'https://github.com/gdbarron/VenafiTppPS/blob/master/LICENSE'
+        LicenseUri = 'https://github.com/gdbarron/VenafiTppPS/blob/main/LICENSE'
 
         # A URL to the main website for this project.
         ProjectUri = 'https://github.com/gdbarron/VenafiTppPS'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://raw.githubusercontent.com/gdbarron/VenafiTppPS/master/images/Ven_circleV_logo.png'
+        IconUri = 'https://raw.githubusercontent.com/gdbarron/VenafiTppPS/main/images/Ven_circleV_logo.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/gdbarron/VenafiTppPS/blob/master/CHANGELOG.md'
+        ReleaseNotes = 'https://github.com/gdbarron/VenafiTppPS/blob/main/CHANGELOG.md'
 
         # Prerelease string of this module
         # Prerelease = ''

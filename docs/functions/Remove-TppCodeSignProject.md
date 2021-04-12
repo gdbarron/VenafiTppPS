@@ -11,7 +11,7 @@ Remove-TppCodeSignProject [-Path] <String> [[-TppSession] <TppSession>] [-WhatIf
 ```
 
 ## DESCRIPTION
-Delete a code sign project. 
+Delete a code sign project.
 You must be a code sign admin or owner of the project.
 
 ## EXAMPLES
@@ -28,7 +28,7 @@ Delete a project
 $projectObj | Remove-TppCodeSignProject
 ```
 
-Remove 1 or more projects. 
+Remove 1 or more projects.
 Get projects with Find-TppCodeSignProject
 
 ## PARAMETERS
@@ -49,7 +49,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method. 
+Session object created from New-TppSession method.
 The value defaults to the script session object $TppSession.
 
 ```yaml
@@ -110,7 +110,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Remove-TppCodeSignProject/](http://venafitppps.readthedocs.io/en/latest/functions/Remove-TppCodeSignProject/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Remove-TppCodeSignProject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Remove-TppCodeSignProject.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Remove-TppCodeSignProject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Remove-TppCodeSignProject.ps1)
 
 [https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-Codesign-DeleteProject.php?tocpath=CodeSign%20Protect%20Admin%20REST%C2%A0API%7CProjects%20and%20environments%7C_____7](https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-Codesign-DeleteProject.php?tocpath=CodeSign%20Protect%20Admin%20REST%C2%A0API%7CProjects%20and%20environments%7C_____7)
 

@@ -45,13 +45,13 @@ Pipe policy path and provide device details
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppDevice/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppDevice.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/New-TppDevice.ps1
 
 .LINK
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppObject/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppObject.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/New-TppObject.ps1
 
 #>
 function New-TppDevice {

@@ -136,7 +136,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method. 
+Session object created from New-TppSession method.
 The value defaults to the script session object $TppSession.
 
 ```yaml
@@ -201,7 +201,7 @@ You must have:
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Remove-TppCertificateAssociation/](http://venafitppps.readthedocs.io/en/latest/functions/Remove-TppCertificateAssociation/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Remove-TppCertificateAssociation.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Remove-TppCertificateAssociation.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Remove-TppCertificateAssociation.ps1](https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Remove-TppCertificateAssociation.ps1)
 
 [https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Certificates-Dissociate.php?tocpath=Web%20SDK%7CCertificates%20programming%20interface%7C_____8](https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Certificates-Dissociate.php?tocpath=Web%20SDK%7CCertificates%20programming%20interface%7C_____8)
 

@@ -11,9 +11,9 @@ Set-TppAttribute [-Path] <String[]> [-AttributeName] <String> [-Value] <String[]
 ```
 
 ## DESCRIPTION
-Write a value to the object's configuration. 
-This function will append by default. 
-Attributes can have multiple values which may not be the intended use. 
+Write a value to the object's configuration.
+This function will append by default.
+Attributes can have multiple values which may not be the intended use.
 To ensure you only have one value for an attribute, use the Overwrite switch.
 
 ## EXAMPLES
@@ -23,7 +23,7 @@ To ensure you only have one value for an attribute, use the Overwrite switch.
 Set-TppAttribute -Path '\VED\Policy\My Folder\app.company.com -AttributeName 'My custom field Label' -Value 'new custom value'
 ```
 
-Set value on custom field. 
+Set value on custom field.
 This will add to any existing value.
 
 ### EXAMPLE 2
@@ -51,7 +51,7 @@ Accept wildcard characters: False
 ```
 
 ### -AttributeName
-Name of the attribute to modify. 
+Name of the attribute to modify.
 If modifying a custom field, use the Label.
 
 ```yaml
@@ -97,7 +97,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method. 
+Session object created from New-TppSession method.
 The value defaults to the script session object $TppSession.
 
 ```yaml
@@ -161,7 +161,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Set-TppAttribute/](http://venafitppps.readthedocs.io/en/latest/functions/Set-TppAttribute/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Set-TppAttribute.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Set-TppAttribute.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Set-TppAttribute.ps1](https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Set-TppAttribute.ps1)
 
 [https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Config-addvalue.php?tocpath=Web%20SDK%7CConfig%20programming%20interface%7C_____4](https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Config-addvalue.php?tocpath=Web%20SDK%7CConfig%20programming%20interface%7C_____4)
 

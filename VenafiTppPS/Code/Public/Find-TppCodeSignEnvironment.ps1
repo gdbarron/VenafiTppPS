@@ -29,7 +29,7 @@ Find all environments that match the name Development
 http://venafitppps.readthedocs.io/en/latest/functions/Find-TppCodeSignEnvironment/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppCodeSignEnvironment.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Find-TppCodeSignEnvironment.ps1
 
 #>
 function Find-TppCodeSignEnvironment {

@@ -177,7 +177,7 @@ Renew all certificates expiring before a certain date
 http://venafitppps.readthedocs.io/en/latest/functions/Find-TppCertificate/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppCertificate.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Find-TppCertificate.ps1
 
 .LINK
 https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-GET-Certificates.php?tocpath=Web%20SDK%7CCertificates%20programming%20interface%7C_____4

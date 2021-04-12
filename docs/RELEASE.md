@@ -1,1 +1,1 @@
-https://github.com/gdbarron/VenafiTppPS/blob/master/CHANGELOG.md
+https://github.com/gdbarron/VenafiTppPS/blob/main/CHANGELOG.md

@@ -36,7 +36,7 @@ Revoke a token obtained from TPP, not necessarily via VenafiTppPS
 http://venafitppps.readthedocs.io/en/latest/functions/Revoke-TppToken/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Revoke-TppToken.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Revoke-TppToken.ps1
 
 .LINK
 https://docs.venafi.com/Docs/20.1SDK/TopNav/Content/SDK/AuthSDK/r-SDKa-GET-Revoke-Token.php?tocpath=Auth%20SDK%20reference%20for%20token%20management%7C_____13
