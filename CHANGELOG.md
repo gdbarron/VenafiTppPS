@@ -7,6 +7,7 @@
 - Fix #134, server url is blank when running `Get-TppObject` with secondary token.  This was an issue for Get-TppPermission as well.  Thanks @stevekeever!
 - Add missing parameters comment-based help for `New-TppCapiApplication`
 - Fix certificate push not working in `New-TppCapiApplication`
+- Update links to `main` branch
 
 ## v2.2.0
 - Identity format validation fix, [#126](https://github.com/gdbarron/VenafiTppPS/issues/126).  Thanks @DadsVacayShorts!
