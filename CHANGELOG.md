@@ -1,4 +1,4 @@
-## 2.2.1
+## 2.2.2
 - Rename 'Provision' to 'Push', aliases added for existing code
 - Add Invoke-TppCertificatePush
 - Fix [#130](https://github.com/gdbarron/VenafiTppPS/issues/130), Get-TppDevice only accepting IP address for host, not hostname.  Thanks @Curtmcgirt!
