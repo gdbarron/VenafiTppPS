@@ -105,11 +105,11 @@ function New-TppSession {
                 if ( $_ -match '^(https?:\/\/)?(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9][a-z0-9\-]{0,60}|[a-z0-9-]{1,30}\.[a-z]{2,})$' ) {
                     $true
                 } else {
-                    throw 'Please enter a valid server, https://venafi.company.com or venafi.company.com'
+                    throw "'$_' is not a valid server url, it should look like https://venafi.company.com or venafi.company.com"
                 }
             }
         )]
-        [Alias('ServerUrl')]
+        [Alias('ServerUrl', 'Url')]
         [string] $Server,
 
         [Parameter(Mandatory, ParameterSetName = 'KeyCredential')]

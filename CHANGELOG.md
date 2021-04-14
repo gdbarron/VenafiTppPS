@@ -1,10 +1,10 @@
 ## 2.2.1
 - Rename 'Provision' to 'Push', aliases added for existing code
 - Add Invoke-TppCertificatePush
-- Fix #130, Get-TppDevice only accepting IP address for host, not hostname.  Thanks @Curtmcgirt!
-- Fix #131, add examples to `New-TppCapiApplication`.  Thanks @Curtmcgirt!
-- Fix #132, 500 error setting BindingIpAddress running `New-TppCapiApplication`.    Thanks @Curtmcgirt!
-- Fix #134, server url is blank when running `Get-TppObject` with secondary token.  This was an issue for Get-TppPermission as well.  Thanks @stevekeever!
+- Fix [#130](https://github.com/gdbarron/VenafiTppPS/issues/130), Get-TppDevice only accepting IP address for host, not hostname.  Thanks @Curtmcgirt!
+- Fix [#131](https://github.com/gdbarron/VenafiTppPS/issues/131), add examples to `New-TppCapiApplication`.  Thanks @Curtmcgirt!
+- Fix [#132](https://github.com/gdbarron/VenafiTppPS/issues/132), 500 error setting BindingIpAddress running `New-TppCapiApplication`.    Thanks @Curtmcgirt!
+- Fix [#134](https://github.com/gdbarron/VenafiTppPS/issues/134), server url is blank when running `Get-TppObject` with secondary token.  This was an issue for Get-TppPermission as well.  Thanks @stevekeever!
 - Add missing parameters comment-based help for `New-TppCapiApplication`
 - Fix certificate push not working in `New-TppCapiApplication`
 - Update links to reference `main` branch instead of `master`
