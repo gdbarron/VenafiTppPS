@@ -83,7 +83,7 @@ Get all objects of the type iis6 or capi
 Find-TppObject -Pattern 'test*'
 ```
 
-Find objects with the specific name. 
+Find objects with the specific name.
 All objects will be searched.
 
 ### EXAMPLE 8
@@ -178,7 +178,7 @@ Accept wildcard characters: False
 ```
 
 ### -Attribute
-A list of attribute names to limit the search against. 
+A list of attribute names to limit the search against.
 Only valid when searching by pattern.
 
 ```yaml
@@ -194,7 +194,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method. 
+Session object created from New-TppSession method.
 The value defaults to the script session object $TppSession.
 
 ```yaml
@@ -224,7 +224,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Find-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/Find-TppObject/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppObject.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Find-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Find-TppObject.ps1)
 
 [https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Config-find.php?tocpath=Web%20SDK%7CConfig%20programming%20interface%7C_____17](https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Config-find.php?tocpath=Web%20SDK%7CConfig%20programming%20interface%7C_____17)
 

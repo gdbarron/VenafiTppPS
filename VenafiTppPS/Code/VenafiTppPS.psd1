@@ -12,7 +12,7 @@
 RootModule = 'VenafiTppPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.2.0'
+ModuleVersion = '2.2.1'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -69,26 +69,26 @@ PowerShellVersion = '5.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Add-TppCertificateAssociation', 'ConvertTo-TppGuid', 
-               'ConvertTo-TppPath', 'Find-TppCertificate', 
-               'Find-TppCodeSignEnvironment', 'Find-TppCodeSignProject', 
-               'Find-TppCodeSignTemplate', 'Find-TppIdentity', 'Find-TppObject', 
-               'Get-TppAttribute', 'Get-TppCertificate', 'Get-TppCertificateDetail', 
-               'Get-TppCodeSignConfig', 'Get-TppCodeSignEnvironment', 
-               'Get-TppCodeSignProject', 'Get-TppCustomField', 'Get-TppIdentity', 
-               'Get-TppIdentityAttribute', 'Get-TppObject', 'Get-TppPermission', 
-               'Get-TppSystemStatus', 'Get-TppVersion', 'Get-TppWorkflowTicket', 
-               'Import-TppCertificate', 'Invoke-TppCertificateRenewal', 
-               'Invoke-TppRestMethod', 'Move-TppObject', 'New-TppCapiApplication', 
-               'New-TppCertificate', 'New-TppCodeSignProject', 'New-TppDevice', 
-               'New-TppObject', 'New-TppPolicy', 'New-TppSession', 'New-TppToken', 
-               'Read-TppLog', 'Remove-TppCertificate', 
-               'Remove-TppCertificateAssociation', 'Remove-TppCodeSignEnvironment', 
-               'Remove-TppCodeSignProject', 'Remove-TppPermission', 
-               'Rename-TppObject', 'Revoke-TppCertificate', 'Revoke-TppToken', 
-               'Set-TppAttribute', 'Set-TppCodeSignProjectStatus', 
-               'Set-TppPermission', 'Set-TppWorkflowTicketStatus', 
-               'Test-TppIdentity', 'Test-TppObject', 'Write-TppLog'
+FunctionsToExport = 'Add-TppCertificateAssociation', 'ConvertTo-TppGuid',
+               'ConvertTo-TppPath', 'Find-TppCertificate',
+               'Find-TppCodeSignEnvironment', 'Find-TppCodeSignProject',
+               'Find-TppCodeSignTemplate', 'Find-TppIdentity', 'Find-TppObject',
+               'Get-TppAttribute', 'Get-TppCertificate', 'Get-TppCertificateDetail',
+               'Get-TppCodeSignConfig', 'Get-TppCodeSignEnvironment',
+               'Get-TppCodeSignProject', 'Get-TppCustomField', 'Get-TppIdentity',
+               'Get-TppIdentityAttribute', 'Get-TppObject', 'Get-TppPermission',
+               'Get-TppSystemStatus', 'Get-TppVersion', 'Get-TppWorkflowTicket',
+               'Import-TppCertificate', 'Invoke-TppCertificateRenewal',
+               'Invoke-TppRestMethod', 'Move-TppObject', 'New-TppCapiApplication',
+               'New-TppCertificate', 'New-TppCodeSignProject', 'New-TppDevice',
+               'New-TppObject', 'New-TppPolicy', 'New-TppSession', 'New-TppToken',
+               'Read-TppLog', 'Remove-TppCertificate',
+               'Remove-TppCertificateAssociation', 'Remove-TppCodeSignEnvironment',
+               'Remove-TppCodeSignProject', 'Remove-TppPermission',
+               'Rename-TppObject', 'Revoke-TppCertificate', 'Revoke-TppToken',
+               'Set-TppAttribute', 'Set-TppCodeSignProjectStatus',
+               'Set-TppPermission', 'Set-TppWorkflowTicketStatus',
+               'Test-TppIdentity', 'Test-TppObject', 'Write-TppLog', 'Invoke-TppCertificatePush'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
@@ -117,16 +117,16 @@ PrivateData = @{
         Tags = 'Venafi','TPP','TrustProtectionPlatform','API'
 
         # A URL to the license for this module.
-        LicenseUri = 'https://github.com/gdbarron/VenafiTppPS/blob/master/LICENSE'
+        LicenseUri = 'https://github.com/gdbarron/VenafiTppPS/blob/main/LICENSE'
 
         # A URL to the main website for this project.
         ProjectUri = 'https://github.com/gdbarron/VenafiTppPS'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://raw.githubusercontent.com/gdbarron/VenafiTppPS/master/images/Ven_circleV_logo.png'
+        IconUri = 'https://raw.githubusercontent.com/gdbarron/VenafiTppPS/main/images/Ven_circleV_logo.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/gdbarron/VenafiTppPS/blob/master/CHANGELOG.md'
+        ReleaseNotes = 'https://github.com/gdbarron/VenafiTppPS/blob/main/CHANGELOG.md'
 
         # Prerelease string of this module
         # Prerelease = ''

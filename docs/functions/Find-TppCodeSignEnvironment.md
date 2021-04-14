@@ -16,7 +16,7 @@ Find-TppCodeSignEnvironment -Name <String> [-TppSession <TppSession>] [<CommonPa
 ```
 
 ## DESCRIPTION
-Search for specific code sign environments that match a name you provide or get all. 
+Search for specific code sign environments that match a name you provide or get all.
 This will search across projects.
 
 ## EXAMPLES
@@ -53,7 +53,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method. 
+Session object created from New-TppSession method.
 The value defaults to the script session object $TppSession.
 
 ```yaml
@@ -83,5 +83,5 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Find-TppCodeSignEnvironment/](http://venafitppps.readthedocs.io/en/latest/functions/Find-TppCodeSignEnvironment/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppCodeSignEnvironment.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppCodeSignEnvironment.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Find-TppCodeSignEnvironment.ps1](https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Find-TppCodeSignEnvironment.ps1)
 

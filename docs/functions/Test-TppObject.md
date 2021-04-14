@@ -42,8 +42,8 @@ Retrieve existence for only one object
 ## PARAMETERS
 
 ### -Path
-DN path to object. 
-Provide either this or Guid. 
+DN path to object.
+Provide either this or Guid.
 This is the default if both are provided.
 
 ```yaml
@@ -59,7 +59,7 @@ Accept wildcard characters: False
 ```
 
 ### -Guid
-Guid which represents a unqiue object. 
+Guid which represents a unqiue object.
 Provide either this or Path.
 
 ```yaml
@@ -75,7 +75,7 @@ Accept wildcard characters: False
 ```
 
 ### -ExistOnly
-Only return boolean instead of Object and Exists list. 
+Only return boolean instead of Object and Exists list.
 Helpful when validating just 1 object.
 
 ```yaml
@@ -91,7 +91,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method. 
+Session object created from New-TppSession method.
 The value defaults to the script session object $TppSession.
 
 ```yaml
@@ -121,7 +121,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/](http://venafitppps.readthedocs.io/en/latest/functions/Test-TppObject/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Test-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Test-TppObject.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Test-TppObject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Test-TppObject.ps1)
 
 [https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Config-isvalid.php?tocpath=Web%20SDK%7CConfig%20programming%20interface%7C_____25](https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Config-isvalid.php?tocpath=Web%20SDK%7CConfig%20programming%20interface%7C_____25)
 

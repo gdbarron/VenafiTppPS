@@ -72,7 +72,7 @@ Create session and return the session object instead of setting to script scope 
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppSession/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppSession.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/New-TppSession.ps1
 
 .LINK
 https://docs.venafi.com/Docs/19.4/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Authorize.php?tocpath=Topics%20by%20Guide%7CDeveloper%27s%20Guide%7CWeb%20SDK%20reference%7CAuthentication%20programming%20interfaces%7C_____1
@@ -105,11 +105,11 @@ function New-TppSession {
                 if ( $_ -match '^(https?:\/\/)?(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9][a-z0-9\-]{0,60}|[a-z0-9-]{1,30}\.[a-z]{2,})$' ) {
                     $true
                 } else {
-                    throw 'Please enter a valid server, https://venafi.company.com or venafi.company.com'
+                    throw "'$_' is not a valid server url, it should look like https://venafi.company.com or venafi.company.com"
                 }
             }
         )]
-        [Alias('ServerUrl')]
+        [Alias('ServerUrl', 'Url')]
         [string] $Server,
 
         [Parameter(Mandatory, ParameterSetName = 'KeyCredential')]

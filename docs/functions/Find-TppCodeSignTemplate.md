@@ -52,7 +52,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method. 
+Session object created from New-TppSession method.
 The value defaults to the script session object $TppSession.
 
 ```yaml
@@ -82,7 +82,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Find-TppCodeSignProject/](http://venafitppps.readthedocs.io/en/latest/functions/Find-TppCodeSignProject/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppCodeSignProject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Find-TppCodeSignProject.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Find-TppCodeSignProject.ps1](https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Find-TppCodeSignProject.ps1)
 
 [https://docs.venafi.com/Docs/20.3/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-Codesign-EnumerateProjects.php?tocpath=CodeSign%20Protect%20SDK%20reference%7CProjects%20and%20environments%7C_____8](https://docs.venafi.com/Docs/20.3/TopNav/Content/SDK/CodeSignSDK/r-SDKc-POST-Codesign-EnumerateProjects.php?tocpath=CodeSign%20Protect%20SDK%20reference%7CProjects%20and%20environments%7C_____8)
 

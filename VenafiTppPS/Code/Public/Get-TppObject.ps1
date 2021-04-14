@@ -34,7 +34,7 @@ Get an object by guid
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppObject/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppObject.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Get-TppObject.ps1
 
 #>
 function Get-TppObject {
@@ -76,7 +76,7 @@ function Get-TppObject {
         }
 
         foreach ($thisInputObject in $inputObject) {
-            [TppObject]::new($thisInputObject)
+            [TppObject]::new($thisInputObject, $TppSession)
         }
     }
 }

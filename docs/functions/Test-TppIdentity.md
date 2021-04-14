@@ -46,7 +46,7 @@ Accept wildcard characters: False
 ```
 
 ### -ExistOnly
-Only return boolean instead of ID and Exists list. 
+Only return boolean instead of ID and Exists list.
 Helpful when validating just 1 identity.
 
 ```yaml
@@ -62,7 +62,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method. 
+Session object created from New-TppSession method.
 The value defaults to the script session object $TppSession.
 
 ```yaml
@@ -92,7 +92,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Test-TppIdentity/](http://venafitppps.readthedocs.io/en/latest/functions/Test-TppIdentity/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Test-TppIdentity.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Test-TppIdentity.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Test-TppIdentity.ps1](https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Test-TppIdentity.ps1)
 
 [https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Identity-Validate.php?tocpath=Web%20SDK%7CIdentity%20programming%20interface%7C_____15](https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Identity-Validate.php?tocpath=Web%20SDK%7CIdentity%20programming%20interface%7C_____15)
 

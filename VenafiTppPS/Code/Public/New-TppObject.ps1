@@ -16,7 +16,7 @@ See https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/SchemaReferen
 Hashtable with initial values for the new object.
 These will be specific to the object class being created.
 
-.PARAMETER ProvisionCertificate
+.PARAMETER PushCertificate
 If creating an application object, you can optionally push the certificate once the creation is complete.
 Only available if a 'Certificate' key containing the certificate path is provided for Attribute.
 Please note, this feature was added in v18.3.
@@ -49,10 +49,10 @@ TppObject, if PassThru provided
 http://venafitppps.readthedocs.io/en/latest/functions/New-TppObject/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/New-TppObject.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/New-TppObject.ps1
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1
 
 .LINK
 https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-POST-Config-create.php?tocpath=Web%20SDK%7CConfig%20programming%20interface%7C_____9
@@ -86,7 +86,8 @@ function New-TppObject {
         [Hashtable] $Attribute,
 
         [Parameter()]
-        [switch] $ProvisionCertificate,
+        [Alias('ProvisionCertificate')]
+        [switch] $PushCertificate,
 
         [Parameter()]
         [switch] $PassThru,
@@ -107,8 +108,8 @@ function New-TppObject {
     #     throw ("The parent folder, {0}, of your new object does not exist" -f (Split-Path -Path $Path -Parent))
     # }
 
-    if ( $PSBoundParameters.ContainsKey('ProvisionCertificate') -and (-not $Attribute.Certificate) ) {
-        Write-Warning 'A ''Certificate'' key containing the certificate path must be provided for Attribute when using ProvisionCertificate, eg. -Attribute @{''Certificate''=''\Ved\Policy\mycert.com''}.  Certificate provisioning will not take place.'
+    if ( $PushCertificate.IsPresent -and (-not $Attribute.Certificate) ) {
+        Write-Warning 'A ''Certificate'' key containing the certificate path must be provided for Attribute when using PushCertificate, eg. -Attribute @{''Certificate''=''\Ved\Policy\mycert.com''}.  Certificate provisioning will not take place.'
     }
 
     $params = @{
@@ -144,8 +145,8 @@ function New-TppObject {
                 CertificatePath = $Attribute.Certificate
                 ApplicationPath = $response.Object.DN
             }
-            if ( $PSBoundParameters.ContainsKey('ProvisionCertificate') ) {
-                $associateParams.Add('ProvisionCertificate', $true)
+            if ( $PushCertificate.IsPresent ) {
+                $associateParams.Add('PushCertificate', $true)
             }
 
             Add-TppCertificateAssociation @associateParams -TppSession $TppSession

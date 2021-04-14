@@ -67,10 +67,10 @@ Find assigned permissions for a specific user across all objects
 http://venafitppps.readthedocs.io/en/latest/functions/Get-TppPermission/
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppPermission.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Get-TppPermission.ps1
 
 .LINK
-https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Get-TppIdentityAttribute.ps1
+https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Get-TppIdentityAttribute.ps1
 
 .LINK
 https://docs.venafi.com/Docs/20.4SDK/TopNav/Content/SDK/WebSDK/r-SDK-GET-Permissions-object-guid.php?tocpath=Web%20SDK%7CPermissions%20programming%20interface%7C_____3
@@ -171,7 +171,7 @@ function Get-TppPermission {
                 }
 
                 Default {
-                    $thisTppObject = [TppObject]::new($thisInputObject)
+                    $thisTppObject = [TppObject]::new($thisInputObject, $TppSession)
                 }
             }
 

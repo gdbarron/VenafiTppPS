@@ -55,7 +55,7 @@ Accept wildcard characters: False
 ```
 
 ### -CertificatePath
-Path to the certificate. 
+Path to the certificate.
 Required if InputObject not provided.
 
 ```yaml
@@ -102,7 +102,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method. 
+Session object created from New-TppSession method.
 The value defaults to the script session object $TppSession.
 
 ```yaml
@@ -166,7 +166,7 @@ You must have:
 
 [http://venafitppps.readthedocs.io/en/latest/functions/Add-TppCertificateAssociation/](http://venafitppps.readthedocs.io/en/latest/functions/Add-TppCertificateAssociation/)
 
-[https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1](https://github.com/gdbarron/VenafiTppPS/blob/master/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1)
+[https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1](https://github.com/gdbarron/VenafiTppPS/blob/main/VenafiTppPS/Code/Public/Add-TppCertificateAssociation.ps1)
 
 [https://docs.venafi.com/Docs/19.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-Associate.php?tocpath=REST%20API%20reference%7CCertificates%20programming%20interface%7C_____6](https://docs.venafi.com/Docs/19.2SDK/TopNav/Content/SDK/WebSDK/API_Reference/r-SDK-POST-Certificates-Associate.php?tocpath=REST%20API%20reference%7CCertificates%20programming%20interface%7C_____6)
 
