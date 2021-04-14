@@ -16,7 +16,7 @@ Get-TppObject -Guid <Guid[]> [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Return object information by either path or guid.
+Return object information by either path or guid. 
 This will return a TppObject which can be used with many other functions.
 
 ## EXAMPLES
@@ -68,7 +68,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml

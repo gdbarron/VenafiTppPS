@@ -148,7 +148,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml

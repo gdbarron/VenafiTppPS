@@ -11,7 +11,7 @@ Remove-TppCodeSignProject [-Path] <String> [[-TppSession] <TppSession>] [-WhatIf
 ```
 
 ## DESCRIPTION
-Delete a code sign project.
+Delete a code sign project. 
 You must be a code sign admin or owner of the project.
 
 ## EXAMPLES
@@ -28,7 +28,7 @@ Delete a project
 $projectObj | Remove-TppCodeSignProject
 ```
 
-Remove 1 or more projects.
+Remove 1 or more projects. 
 Get projects with Find-TppCodeSignProject
 
 ## PARAMETERS
@@ -49,7 +49,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml

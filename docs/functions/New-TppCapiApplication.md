@@ -9,7 +9,7 @@ Create a new CAPI application
 ```
 New-TppCapiApplication -Path <String> [-ApplicationName <String[]>] [-CertificatePath <String>]
  [-CredentialPath <String>] [-FriendlyName <String>] [-Description <String>] [-WinRmPort <Int32>] [-Disable]
- [-ProvisionCertificate] [-SkipExistenceCheck] [-PassThru] [-TppSession <TppSession>] [-WhatIf] [-Confirm]
+ [-PushCertificate] [-SkipExistenceCheck] [-PassThru] [-TppSession <TppSession>] [-WhatIf] [-Confirm]
  [<CommonParameters>]
 ```
 
@@ -17,9 +17,9 @@ New-TppCapiApplication -Path <String> [-ApplicationName <String[]>] [-Certificat
 ```
 New-TppCapiApplication -Path <String> [-ApplicationName <String[]>] [-CertificatePath <String>]
  [-CredentialPath <String>] [-FriendlyName <String>] [-Description <String>] [-WinRmPort <Int32>] [-Disable]
- -WebSiteName <String> [-BindingIpAddress <IPAddress>] [-BindingPort <Int32>] [-BindingHostName <String>]
- [-CreateBinding <Boolean>] [-ProvisionCertificate] [-SkipExistenceCheck] [-PassThru]
- [-TppSession <TppSession>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ -WebSiteName <String> [-BindingIp <IPAddress>] [-BindingPort <Int32>] [-BindingHostName <String>]
+ [-CreateBinding <Boolean>] [-PushCertificate] [-SkipExistenceCheck] [-PassThru] [-TppSession <TppSession>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -27,17 +27,38 @@ Create a new CAPI application
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+New-TppCapiApplication -Path '\ved\policy\mydevice\capi' -CertificatePath $cert.Path -CredentialPath $cred.Path
 ```
 
-{{ Add example description here }}
+Create a new application
+
+### EXAMPLE 2
+```
+New-TppCapiApplication -Path '\ved\policy\mydevice\capi' -CertificatePath $cert.Path -CredentialPath $cred.Path -WebSiteName 'mysite' -BindingIp '1.2.3.4'
+```
+
+Create a new application and update IIS
+
+### EXAMPLE 3
+```
+New-TppCapiApplication -Path '\ved\policy\mydevice\capi' -CertificatePath $cert.Path -CredentialPath $cred.Path -WebSiteName 'mysite' -BindingIp '1.2.3.4' -PushCertificate
+```
+
+Create a new application, update IIS, and push the certificate to the new app
+
+### EXAMPLE 4
+```
+New-TppCapiApplication -Path '\ved\policy\mydevice\capi' -CertificatePath $cert.Path -CredentialPath $cred.Path -PassThru
+```
+
+Create a new application and return a TppObject for the newly created app
 
 ## PARAMETERS
 
 ### -Path
-Full path, including name, to the application to be created.
+Full path, including name, to the application to be created. 
 The application must be created under a device.
 Alternatively, provide the path to the device and provide ApplicationName.
 
@@ -54,8 +75,8 @@ Accept wildcard characters: False
 ```
 
 ### -ApplicationName
-1 or more application names to create.
-Path must be a path to a device.
+1 or more application names to create. 
+Path property must be a path to a device.
 
 ```yaml
 Type: String[]
@@ -100,7 +121,7 @@ Accept wildcard characters: False
 ```
 
 ### -FriendlyName
-Optional friendly name
+The Friendly Name that helps to uniquely identify the certificate after it has been installed in the Windows CAPI store
 
 ```yaml
 Type: String
@@ -130,7 +151,7 @@ Accept wildcard characters: False
 ```
 
 ### -WinRmPort
-{{ Fill WinRmPort Description }}
+WinRM port to connect to application on
 
 ```yaml
 Type: Int32
@@ -145,7 +166,7 @@ Accept wildcard characters: False
 ```
 
 ### -Disable
-Set processing to disabled.
+Set processing to disabled. 
 It is enabled by default.
 
 ```yaml
@@ -161,7 +182,7 @@ Accept wildcard characters: False
 ```
 
 ### -WebSiteName
-{{ Fill WebSiteName Description }}
+The unique name of the IIS web site
 
 ```yaml
 Type: String
@@ -175,13 +196,14 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -BindingIpAddress
-{{ Fill BindingIpAddress Description }}
+### -BindingIp
+The IP address to bind the certificate to the IIS web site.
+If not specified, the Internet Information Services (IIS) Manager console shows 'All Unassigned'.
 
 ```yaml
 Type: IPAddress
 Parameter Sets: Iis
-Aliases:
+Aliases: BindingIpAddress
 
 Required: False
 Position: Named
@@ -191,7 +213,7 @@ Accept wildcard characters: False
 ```
 
 ### -BindingPort
-{{ Fill BindingPort Description }}
+The TCP port 1 to 65535 to bind the certificate to the IIS web site
 
 ```yaml
 Type: Int32
@@ -206,7 +228,8 @@ Accept wildcard characters: False
 ```
 
 ### -BindingHostName
-{{ Fill BindingHostName Description }}
+The hostname to bind the certificate to the IIS web site.
+Specifying this value will make it so the certificate is only accessible to clients using Server Name Indication (SNI)
 
 ```yaml
 Type: String
@@ -221,7 +244,7 @@ Accept wildcard characters: False
 ```
 
 ### -CreateBinding
-{{ Fill CreateBinding Description }}
+Specify that Trust Protection Platform should create an IIS web site binding if the one specified doesn't already exist.
 
 ```yaml
 Type: Boolean
@@ -235,8 +258,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProvisionCertificate
-Push the certificate to the application.
+### -PushCertificate
+Push the certificate to the application. 
 CertificatePath must be provided.
 
 ```yaml
@@ -283,7 +306,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml

@@ -40,7 +40,7 @@ Get-TppAttribute -Guid <Guid[]> -Attribute <String[]> [-Effective] [-TppSession 
 ```
 
 ## DESCRIPTION
-Retrieves object attributes.
+Retrieves object attributes. 
 You can either retrieve all attributes or individual ones.
 By default, the attributes returned are not the effective policy, but that can be requested with the
 EffectivePolicy switch.
@@ -86,7 +86,7 @@ Accept wildcard characters: False
 ```
 
 ### -Path
-Path to the object to retrieve configuration attributes.
+Path to the object to retrieve configuration attributes. 
 Just providing DN will return all attributes.
 
 ```yaml
@@ -102,7 +102,7 @@ Accept wildcard characters: False
 ```
 
 ### -Guid
-Object Guid.
+Object Guid. 
 Just providing Guid will return all attributes.
 
 ```yaml
@@ -160,7 +160,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml

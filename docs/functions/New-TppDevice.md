@@ -7,7 +7,7 @@ Add a new device
 
 ```
 New-TppDevice [-Path] <String> [[-DeviceName] <String[]>] [[-Description] <String>]
- [[-CredentialPath] <String>] [[-IpAddress] <IPAddress>] [-PassThru] [[-TppSession] <TppSession>] [-WhatIf]
+ [[-CredentialPath] <String>] [[-Hostname] <String>] [-PassThru] [[-TppSession] <TppSession>] [-WhatIf]
  [-Confirm] [<CommonParameters>]
 ```
 
@@ -25,7 +25,7 @@ Create device with full path to device and returning the object created
 
 ### EXAMPLE 2
 ```
-$policyPath | New-TppDevice -DeviceName 'myDevice' -IpAddress 1.2.3.4
+$policyPath | New-TppDevice -DeviceName 'myDevice' -Hostname 1.2.3.4
 ```
 
 Pipe policy path and provide device details
@@ -49,7 +49,7 @@ Accept wildcard characters: False
 ```
 
 ### -DeviceName
-Name of 1 or more devices to create.
+Name of 1 or more devices to create. 
 Path must be of type Policy to use this.
 
 ```yaml
@@ -94,13 +94,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -IpAddress
-IP Address of the device
+### -Hostname
+Hostname or IP Address of the device
 
 ```yaml
-Type: IPAddress
+Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: IpAddress
 
 Required: False
 Position: 5
@@ -125,7 +125,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml

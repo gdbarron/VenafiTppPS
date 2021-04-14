@@ -11,9 +11,9 @@ Set-TppAttribute [-Path] <String[]> [-AttributeName] <String> [-Value] <String[]
 ```
 
 ## DESCRIPTION
-Write a value to the object's configuration.
-This function will append by default.
-Attributes can have multiple values which may not be the intended use.
+Write a value to the object's configuration. 
+This function will append by default. 
+Attributes can have multiple values which may not be the intended use. 
 To ensure you only have one value for an attribute, use the Overwrite switch.
 
 ## EXAMPLES
@@ -23,7 +23,7 @@ To ensure you only have one value for an attribute, use the Overwrite switch.
 Set-TppAttribute -Path '\VED\Policy\My Folder\app.company.com -AttributeName 'My custom field Label' -Value 'new custom value'
 ```
 
-Set value on custom field.
+Set value on custom field. 
 This will add to any existing value.
 
 ### EXAMPLE 2
@@ -51,7 +51,7 @@ Accept wildcard characters: False
 ```
 
 ### -AttributeName
-Name of the attribute to modify.
+Name of the attribute to modify. 
 If modifying a custom field, use the Label.
 
 ```yaml
@@ -97,7 +97,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml

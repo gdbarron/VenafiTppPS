@@ -184,7 +184,7 @@ Accept wildcard characters: False
 ```
 
 ### -Limit
-Specify the number of items to retrieve, starting with most recent.
+Specify the number of items to retrieve, starting with most recent. 
 The default is 100 and there is no maximum.
 
 ```yaml
@@ -200,7 +200,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml

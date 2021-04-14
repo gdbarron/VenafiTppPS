@@ -97,7 +97,7 @@ If just the server name is provided, https:// will be appended.
 ```yaml
 Type: String
 Parameter Sets: KeyIntegrated, AccessToken, TokenCertificate, TokenIntegrated, TokenOAuth, KeyCredential
-Aliases: ServerUrl
+Aliases: ServerUrl, Url
 
 Required: True
 Position: Named
@@ -109,7 +109,7 @@ Accept wildcard characters: False
 ```yaml
 Type: String
 Parameter Sets: TppToken
-Aliases: ServerUrl
+Aliases: ServerUrl, Url
 
 Required: False
 Position: Named
@@ -119,7 +119,7 @@ Accept wildcard characters: False
 ```
 
 ### -Credential
-Username and password used for key and token-based authentication.
+Username and password used for key and token-based authentication. 
 Not required for integrated authentication.
 
 ```yaml

@@ -36,7 +36,7 @@ Create certificate by name
 New-TppCertificate -Path '\ved\policy\folder' -CommonName 'mycert.com' -CertificateAuthorityDN '\ved\policy\CA Templates\my template' -PassThru
 ```
 
-Create certificate using common name.
+Create certificate using common name. 
 Return the created object.
 
 ### EXAMPLE 3
@@ -65,7 +65,7 @@ Accept wildcard characters: False
 ```
 
 ### -Name
-Name of the certifcate.
+Name of the certifcate. 
 If not provided, the name will be the same as the subject.
 
 ```yaml
@@ -81,7 +81,7 @@ Accept wildcard characters: False
 ```
 
 ### -CommonName
-Subject Common Name.
+Subject Common Name. 
 If Name isn't provided, CommonName will be used.
 
 ```yaml
@@ -197,7 +197,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml

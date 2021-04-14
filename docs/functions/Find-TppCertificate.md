@@ -189,7 +189,7 @@ Accept wildcard characters: False
 ```
 
 ### -Limit
-Limit how many items are returned.
+Limit how many items are returned. 
 Default is 0 for no limit.
 It is definitely recommended to filter on another property when searching with no limit.
 
@@ -767,7 +767,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml

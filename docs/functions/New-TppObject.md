@@ -6,7 +6,7 @@ Create a new object
 ## SYNTAX
 
 ```
-New-TppObject [-Path] <String> [-Class] <String> [[-Attribute] <Hashtable>] [-ProvisionCertificate] [-PassThru]
+New-TppObject [-Path] <String> [-Class] <String> [[-Attribute] <Hashtable>] [-PushCertificate] [-PassThru]
  [[-TppSession] <TppSession>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
@@ -85,7 +85,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProvisionCertificate
+### -PushCertificate
 If creating an application object, you can optionally push the certificate once the creation is complete.
 Only available if a 'Certificate' key containing the certificate path is provided for Attribute.
 Please note, this feature was added in v18.3.
@@ -93,7 +93,7 @@ Please note, this feature was added in v18.3.
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
-Aliases:
+Aliases: ProvisionCertificate
 
 Required: False
 Position: Named
@@ -118,7 +118,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml

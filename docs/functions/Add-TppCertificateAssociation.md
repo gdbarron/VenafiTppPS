@@ -7,19 +7,19 @@ Add certificate association
 
 ### AddByObject
 ```
-Add-TppCertificateAssociation -InputObject <TppObject> [-ApplicationPath <String[]>] [-ProvisionCertificate]
+Add-TppCertificateAssociation -InputObject <TppObject> [-ApplicationPath <String[]>] [-PushCertificate]
  [-TppSession <TppSession>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### AddByPath
 ```
-Add-TppCertificateAssociation -CertificatePath <String> [-ApplicationPath <String[]>] [-ProvisionCertificate]
+Add-TppCertificateAssociation -CertificatePath <String> [-ApplicationPath <String[]>] [-PushCertificate]
  [-TppSession <TppSession>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Associates one or more Application objects to an existing certificate.
-Optionally, you can provision the certificate once the association is complete.
+Optionally, you can push the certificate once the association is complete.
 
 ## EXAMPLES
 
@@ -32,10 +32,10 @@ Add a single application object association
 
 ### EXAMPLE 2
 ```
-Add-TppCertificateAssocation -Path '\ved\policy\my cert' -ApplicationPath '\ved\policy\my capi' -ProvisionCertificate
+Add-TppCertificateAssocation -Path '\ved\policy\my cert' -ApplicationPath '\ved\policy\my capi' -PushCertificate
 ```
 
-Add the association and provision the certificate
+Add the association and push the certificate
 
 ## PARAMETERS
 
@@ -55,7 +55,7 @@ Accept wildcard characters: False
 ```
 
 ### -CertificatePath
-Path to the certificate.
+Path to the certificate. 
 Required if InputObject not provided.
 
 ```yaml
@@ -85,14 +85,14 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProvisionCertificate
-Provision the certificate after associating it to the Application objects.
-This will only be successful if the certificate management type is Provisioning and is not disabled, in error, or the provisioning is already in process.
+### -PushCertificate
+Push the certificate after associating it to the Application objects.
+This will only be successful if the certificate management type is Provisioning and is not disabled, in error, or a push is already in process.
 
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
-Aliases:
+Aliases: ProvisionCertificate
 
 Required: False
 Position: Named
@@ -102,7 +102,7 @@ Accept wildcard characters: False
 ```
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml

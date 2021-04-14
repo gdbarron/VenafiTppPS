@@ -10,7 +10,7 @@ Get-TppCodeSignConfig [[-TppSession] <TppSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Get CodeSign Protect project settings.
+Get CodeSign Protect project settings. 
 Must have token with scope codesign:manage.
 
 ## EXAMPLES
@@ -25,7 +25,7 @@ Get settings
 ## PARAMETERS
 
 ### -TppSession
-Session object created from New-TppSession method.
+Session object created from New-TppSession method. 
 The value defaults to the script session object $TppSession.
 
 ```yaml
