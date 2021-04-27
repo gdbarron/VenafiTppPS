@@ -113,7 +113,7 @@ function Revoke-TppToken {
 
         Write-Verbose ($params | Out-String)
 
-        if ( $PSCmdlet.ShouldProcess("server: $target", 'Revoke token') ) {
+        if ( $PSCmdlet.ShouldProcess($target, 'Revoke token') ) {
             Invoke-TppRestMethod @params
         }
     }
