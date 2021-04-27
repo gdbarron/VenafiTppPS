@@ -83,6 +83,7 @@ function Revoke-TppToken {
         switch ($PsCmdlet.ParameterSetName) {
             'Session' {
                 $params.TppSession = $TppSession
+                $target = $TppSession.ServerUrl
             }
 
             'AccessToken' {
@@ -92,7 +93,7 @@ function Revoke-TppToken {
                     $AuthUrl = 'https://{0}' -f $AuthUrl
                 }
 
-                $params.ServerUrl = $AuthUrl
+                $params.ServerUrl = $target = $AuthUrl
                 $params.Header = @{'Authorization' = 'Bearer {0}' -f $AccessToken }
             }
 
@@ -101,7 +102,7 @@ function Revoke-TppToken {
                     throw 'Not a valid TppToken'
                 }
 
-                $params.ServerUrl = $TppToken.AuthUrl
+                $params.ServerUrl = $target = $TppToken.AuthUrl
                 $params.Header = @{'Authorization' = 'Bearer {0}' -f $TppToken.AccessToken }
             }
 
@@ -112,7 +113,7 @@ function Revoke-TppToken {
 
         Write-Verbose ($params | Out-String)
 
-        if ( $PSCmdlet.ShouldProcess($TppToken.AccessToken, 'Revoke token') ) {
+        if ( $PSCmdlet.ShouldProcess("server: $target", 'Revoke token') ) {
             Invoke-TppRestMethod @params
         }
     }
