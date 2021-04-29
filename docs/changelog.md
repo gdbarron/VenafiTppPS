@@ -1,51 +1,51 @@
 ## 2.2.3
-- Fix [#145](https://github.com/gdbarron/VenafiTppPS/issues/145), Revoke-TppToken doesn't show target.  Thanks @wilddev65!
+- Fix [#145](https://github.com/gdbarron/VenafiTppPS/issues/145), `Revoke-TppToken` doesn't show target.  Thanks @wilddev65!
 
 ## 2.2.2
 - Rename 'Provision' to 'Push', aliases added for existing code
-- Add Invoke-TppCertificatePush
-- Fix [#130](https://github.com/gdbarron/VenafiTppPS/issues/130), Get-TppDevice only accepting IP address for host, not hostname.  Thanks @Curtmcgirt!
+- Add `Invoke-TppCertificatePush`
+- Fix [#130](https://github.com/gdbarron/VenafiTppPS/issues/130), `Get-TppDevice` only accepting IP address for host, not hostname.  Thanks @Curtmcgirt!
 - Fix [#131](https://github.com/gdbarron/VenafiTppPS/issues/131), add examples to `New-TppCapiApplication`.  Thanks @Curtmcgirt!
 - Fix [#132](https://github.com/gdbarron/VenafiTppPS/issues/132), 500 error setting BindingIpAddress running `New-TppCapiApplication`.    Thanks @Curtmcgirt!
-- Fix [#134](https://github.com/gdbarron/VenafiTppPS/issues/134), server url is blank when running `Get-TppObject` with secondary token.  This was an issue for Get-TppPermission as well.  Thanks @stevekeever!
+- Fix [#134](https://github.com/gdbarron/VenafiTppPS/issues/134), server url is blank when running `Get-TppObject` with secondary token.  This was an issue for `Get-TppPermission` as well.  Thanks @stevekeever!
 - Add missing parameters comment-based help for `New-TppCapiApplication`
 - Fix certificate push not working in `New-TppCapiApplication`
 - Update links to reference `main` branch instead of `master`
 
 ## v2.2.0
 - Identity format validation fix, [#126](https://github.com/gdbarron/VenafiTppPS/issues/126).  Thanks @DadsVacayShorts!
-- Add Get-TppIdentity to retrieve Identity info given an id
-- Add Remove-TppPermission, accepts output from Get-TppPermission
-- Add Path param to Set-TppPermission in addition to guid
-- Get-TppPermission now accepts TppObject, eg. from Find-TppObject
-- Set-TppPermission now accepts output from Get-TppPermission for the object and IdentityId so you only need to specify Permission. No need to get guid and identity manually to pass in.
-- Find-TppIdentity output standardized so you can now pipe to permission functions
-- Get-TppPermission returns additional object and identity info
+- Add `Get-TppIdentity` to retrieve Identity info given an id
+- Add `Remove-TppPermission`, accepts output from `Get-TppPermission`
+- Add Path param to `Set-TppPermission` in addition to guid
+- `Get-TppPermission` now accepts TppObject, eg. from `Find-TppObject`
+- `Set-TppPermission` now accepts output from `Get-TppPermission` for the object and IdentityId so you only need to specify Permission. No need to get guid and identity manually to pass in.
+- `Find-TppIdentity` output standardized so you can now pipe to permission functions
+- `Get-TppPermission` returns additional object and identity info
 - Centralize format validation for identities
 - Update help links referring to versions no longer available
-- Find-TppIdentity -Me to be deprecated for Get-TppIdentity -Me
-- Add option to Get-TppObject for guid
+- `Find-TppIdentity -Me` to be deprecated for `Get-TppIdentity -Me`
+- Add option to `Get-TppObject` for guid
 - Standardized on Id/IdentityId for the identity across all identity and permission functions
 - Force missing slash retry to status codes of only 307 and 401
 - Better error handling and messaging through the permission functions
 
 ## v2.1.1
-- Get-TppPermission fix when retrieving multiple permissions, [#124](https://github.com/gdbarron/VenafiTppPS/issues/124).  Thanks @DadsVacayShorts!
+- `Get-TppPermission` fix when retrieving multiple permissions, [#124](https://github.com/gdbarron/VenafiTppPS/issues/124).  Thanks @DadsVacayShorts!
 
 ## v2.1.0
-- Update Get-TppCertificateDetail help to ensure output lists the correct properties, [#119](https://github.com/gdbarron/VenafiTppPS/issues/119).  Thanks @doyle043!
+- Update `Get-TppCertificateDetail` help to ensure output lists the correct properties, [#119](https://github.com/gdbarron/VenafiTppPS/issues/119).  Thanks @doyle043!
 - Hide secret info, eg. passwords, tokens, etc, when verbose logging.  [#120](https://github.com/gdbarron/VenafiTppPS/issues/120).  Thanks @bwright86!
 - Add search, get, and remove code sign project and environment functions
 - Fix, provide the correct error message when making rest call and testing to see if a trailing slash is needed or not
-- Update New-TppSession to ensure $TppSession is created even if subsequent custom field calls fail
+- Update `New-TppSession` to ensure $TppSession is created even if subsequent custom field calls fail
 - Update TppSession object Validate method to check if token auth is required.  Needed for code sign.
 
 ## v2.0.5
-- Add missing filters CreateDate, CreatedBefore, and CreatedAfter to Find-TppCertificate, [#117](https://github.com/gdbarron/VenafiTppPS/issues/117).  Thanks @doyle043!
+- Add missing filters CreateDate, CreatedBefore, and CreatedAfter to `Find-TppCertificate`, [#117](https://github.com/gdbarron/VenafiTppPS/issues/117).  Thanks @doyle043!
 
 ## v2.0.4
-- Fix header getting stripped causing Write-TppLog to fail, [#114](https://github.com/gdbarron/VenafiTppPS/issues/114).  Thanks @stevekeever!
-- Update Invoke-TppRestMethod to retry with trailing slash for all methods, not just Get
+- Fix header getting stripped causing `Write-TppLog` to fail, [#114](https://github.com/gdbarron/VenafiTppPS/issues/114).  Thanks @stevekeever!
+- Update `Invoke-TppRestMethod` to retry with trailing slash for all methods, not just Get
 
 ## v2.0.3
 - Add Origin property when creating a new certificate
