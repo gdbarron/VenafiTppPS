@@ -37,9 +37,9 @@ Import-Module platyPS
 Get-ChildItem env:
 $branch = $env:BUILD_SOURCEBRANCHNAME
 $projectRoot = $env:BUILD_SOURCESDIRECTORY
-$BuildDate = Get-Date -uFormat '%Y-%m-%d'
-$releaseNotesPath = "$projectRoot\RELEASE.md"
-$changeLogPath = "$projectRoot\docs\ChangeLog.md"
+# $BuildDate = Get-Date -uFormat '%Y-%m-%d'
+# $releaseNotesPath = "$projectRoot\RELEASE.md"
+$changeLogPath = "$projectRoot\changelog.md"
 
 
 $manifestPath = '{0}\{1}\code\{1}.psd1' -f $projectRoot, $ModuleName
@@ -62,7 +62,7 @@ Write-Output "New Version - $NewVersion"
 
 # Load the module, read the exported functions and aliases, update the psd1
 $FunctionFiles = Get-ChildItem ".\$ModuleName\code\Public\*.ps1" |
-    Where-Object { $_.name -notmatch 'Tests' }
+Where-Object { $_.name -notmatch 'Tests' }
 $ExportFunctions = @()
 $ExportAliases = @()
 foreach ($FunctionFile in $FunctionFiles) {
@@ -95,9 +95,9 @@ try {
     "
 
     $updateParams = @{
-        Path = $manifestPath
+        Path          = $manifestPath
         ModuleVersion = $newVersion
-        ReleaseNotes = $releaseNotes
+        ReleaseNotes  = $releaseNotes
     }
 
     if ( $ExportFunctions ) {
@@ -126,23 +126,21 @@ try {
 "Loading Module from $manifestPath to update docs"
 Remove-Module $ModuleName -Force -ea SilentlyContinue -Verbose
 # platyPS + AppVeyor requires the module to be loaded in Global scope
-Import-Module $manifestPath -force -Verbose
+Import-Module $manifestPath -Force -Verbose
 
 #Build YAMLText starting with the header
 $YMLtext = (Get-Content "$projectRoot\header-mkdocs.yml") -join "`n"
 $YMLtext = "$YMLtext`n"
 $parameters = @{
-    Path        = $releaseNotesPath
+    Path        = $changeLogPath
     ErrorAction = 'SilentlyContinue'
 }
-$ReleaseText = (Get-Content @parameters) -join "`n"
-if ($ReleaseText) {
-    $ReleaseText | Set-Content "$projectRoot\docs\RELEASE.md"
-    $YMLText = "$YMLtext  - Release Notes: RELEASE.md`n"
+$changeLogText = (Get-Content @parameters) -join "`n"
+if ($changeLogText) {
+    $changeLogText | Set-Content "$projectRoot\docs\changelog.md"
+    $YMLText = "$YMLtext  - Change Log: changelog.md`n"
 }
-if ((Test-Path -Path $changeLogPath)) {
-    $YMLText = "$YMLtext  - Change Log: ChangeLog.md`n"
-}
+
 $YMLText = "$YMLtext  - Functions:`n"
 # Drain the swamp
 $parameters = @{
@@ -164,7 +162,7 @@ $Params = @{
     OutputFolder = "$projectRoot\docs\functions"
     NoMetadata   = $true
 }
-New-MarkdownHelp @Params | foreach-object {
+New-MarkdownHelp @Params | ForEach-Object {
     $Function = $_.Name -replace '\.md', ''
     $Part = "    - {0}: functions/{1}" -f $Function, $_.Name
     $YMLText = "{0}{1}`n" -f $YMLText, $Part
@@ -173,23 +171,23 @@ New-MarkdownHelp @Params | foreach-object {
 $YMLtext | Set-Content -Path "$projectRoot\mkdocs.yml"
 
 $YMLtext
-gci "$projectRoot\docs" -Recurse
+Get-ChildItem "$projectRoot\docs" -Recurse
 
 try {
     Write-Output ("Updating {0} branch source" -f $branch)
-    git config user.email 'greg@jagtechnical.com'
-    git config user.name 'Greg Brownstein'
-    git add *.psd1
-    git add *.md
-    git add "$projectRoot\mkdocs.yml"
-    git status -v
-    git commit -m "Updated $ModuleName Version to $NewVersion ***NO_CI***"
+    git.exe config user.email 'greg@jagtechnical.com'
+    git.exe config user.name 'Greg Brownstein'
+    git.exe add *.psd1
+    git.exe add *.md
+    git.exe add "$projectRoot\mkdocs.yml"
+    git.exe status -v
+    git.exe commit -m "Update module version and docs to $NewVersion ***NO_CI***"
 
     # if we are performing pull request validation, do not push the code to the repo
     if ( $env:BUILD_REASON -eq 'PullRequest') {
         Write-Output "Bypassing git push given this build is for pull request validation"
     } else {
-        git push https://$($GitHubPat)@github.com/gdbarron/VenafiTppPS.git ('HEAD:{0}' -f $branch)
+        git.exe push https://$($GitHubPat)@github.com/gdbarron/VenafiTppPS.git ('HEAD:{0}' -f $branch)
         Write-Output ("Updated {0} branch source" -f $branch)
     }
 
