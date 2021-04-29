@@ -1,3 +1,6 @@
+## 2.2.3
+- Fix [#145](https://github.com/gdbarron/VenafiTppPS/issues/145), Revoke-TppToken doesn't show target.  Thanks @wilddev65!
+
 ## 2.2.2
 - Rename 'Provision' to 'Push', aliases added for existing code
 - Add Invoke-TppCertificatePush
