@@ -1,7 +1,7 @@
 site_name: VenafiTppPS
 repo_url: https://github.com/gdbarron/VenafiTppPS
 site_author: Greg Brownstein
-edit_uri: edit/master/docs/
+edit_uri: edit/main/docs/
 theme: readthedocs
 copyright: ""
 pages:
