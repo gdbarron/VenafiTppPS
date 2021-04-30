@@ -5,28 +5,16 @@ Get a certificate
 
 ## SYNTAX
 
-### ByObject (Default)
-```
-Get-TppCertificate -InputObject <TppObject> -Format <String> [-OutPath <String>] [-IncludeChain]
- [-FriendlyName <String>] [-TppSession <TppSession>] [<CommonParameters>]
-```
-
-### ByObjectWithPrivateKey
-```
-Get-TppCertificate -InputObject <TppObject> -Format <String> [-OutPath <String>] [-IncludeChain]
- [-FriendlyName <String>] [-IncludePrivateKey] -SecurePassword <SecureString> [-TppSession <TppSession>]
- [<CommonParameters>]
-```
-
-### ByPathWithPrivateKey
+### NonJKS (Default)
 ```
 Get-TppCertificate -Path <String> -Format <String> [-OutPath <String>] [-IncludeChain] [-FriendlyName <String>]
- [-IncludePrivateKey] -SecurePassword <SecureString> [-TppSession <TppSession>] [<CommonParameters>]
+ [-IncludePrivateKey] [-PrivateKeyPassword <SecureString>] [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
-### ByPath
+### JKS
 ```
-Get-TppCertificate -Path <String> -Format <String> [-OutPath <String>] [-IncludeChain] [-FriendlyName <String>]
+Get-TppCertificate -Path <String> [-Format <String>] [-OutPath <String>] [-IncludeChain] -FriendlyName <String>
+ [-IncludePrivateKey] [-PrivateKeyPassword <SecureString>] -KeystorePassword <SecureString>
  [-TppSession <TppSession>] [<CommonParameters>]
 ```
 
@@ -41,72 +29,43 @@ You have the option of simply getting the data or saving it to a file.
 $certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp'
 ```
 
-Get one or more certificates
+Get certificate data and save to a file
 
 ### EXAMPLE 2
 ```
-$certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain
+$certs | Get-TppCertificate -Format 'PKCS #7' -IncludeChain
 ```
 
 Get one or more certificates with the certificate chain included
 
 ### EXAMPLE 3
 ```
-$certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain -FriendlyName 'MyFriendlyName'
-```
-
-Get one or more certificates with the certificate chain included and friendly name attribute specified
-
-### EXAMPLE 4
-```
-$certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
+$certs | Get-TppCertificate -Format 'PKCS #12' -PrivateKeyPassword $cred.password
 ```
 
 Get one or more certificates with private key included
 
-### EXAMPLE 5
+### EXAMPLE 4
 ```
-$certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludeChain -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
-```
-
-Get one or more certificates with private key and certificate chain included
-
-### EXAMPLE 6
-```
-$certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludeChain -FriendlyName 'MyFriendlyName' -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
+$certs | Get-TppCertificate -FriendlyName 'MyFriendlyName' -KeystorePassword $cred.password
 ```
 
-Get one or more certificates with private key and certificate chain included and friendly name attribute specified
+Get certificates in JKS format
 
 ## PARAMETERS
-
-### -InputObject
-TppObject which represents a unique object
-
-```yaml
-Type: TppObject
-Parameter Sets: ByObject, ByObjectWithPrivateKey
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
 
 ### -Path
 Path to the certificate object to retrieve
 
 ```yaml
 Type: String
-Parameter Sets: ByPathWithPrivateKey, ByPath
+Parameter Sets: (All)
 Aliases: DN
 
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
@@ -116,10 +75,22 @@ Valid formats include Base64, Base64 (PKCS #8), DER, JKS, PKCS #7, PKCS #12.
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: NonJKS
 Aliases:
 
 Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+```yaml
+Type: String
+Parameter Sets: JKS
+Aliases:
+
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -143,7 +114,8 @@ Accept wildcard characters: False
 ```
 
 ### -IncludeChain
-Include the certificate chain with the exported certificate.
+Include the certificate chain with the exported certificate. 
+Not supported with DER format.
 
 ```yaml
 Type: SwitchParameter
@@ -158,12 +130,13 @@ Accept wildcard characters: False
 ```
 
 ### -FriendlyName
-The exported certificate's FriendlyName attribute.
-This parameter is required when Format is JKS.
+Label or alias to use. 
+Permitted with Base64 and PKCS #12 formats. 
+Required when Format is JKS.
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: NonJKS
 Aliases:
 
 Required: False
@@ -173,24 +146,36 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -IncludePrivateKey
-Include the private key. 
-The Format chosen must support private keys.
-
 ```yaml
-Type: SwitchParameter
-Parameter Sets: ByObjectWithPrivateKey, ByPathWithPrivateKey
+Type: String
+Parameter Sets: JKS
 Aliases:
 
 Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -IncludePrivateKey
+{{ Fill IncludePrivateKey Description }}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
 Position: Named
 Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -SecurePassword
-Password required when including a private key. 
+### -PrivateKeyPassword
+Password required to include the private key. 
+Not supported with DER or PKCS #7 formats.
 You must adhere to the following rules:
 - Password is at least 12 characters.
 - Comprised of at least three of the following:
@@ -201,7 +186,29 @@ You must adhere to the following rules:
 
 ```yaml
 Type: SecureString
-Parameter Sets: ByObjectWithPrivateKey, ByPathWithPrivateKey
+Parameter Sets: (All)
+Aliases: SecurePassword
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -KeystorePassword
+Password required to retrieve the certificate in JKS format. 
+You must adhere to the following rules:
+- Password is at least 12 characters.
+- Comprised of at least three of the following:
+    - Uppercase alphabetic letters
+    - Lowercase alphabetic letters
+    - Numeric characters
+    - Special characters
+
+```yaml
+Type: SecureString
+Parameter Sets: JKS
 Aliases:
 
 Required: True
@@ -232,7 +239,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### InputObject or Path
+### Path
 ## OUTPUTS
 
 ### If OutPath not provided, a PSCustomObject will be returned with properties CertificateData, Filename, and Format.  Otherwise, no output.
