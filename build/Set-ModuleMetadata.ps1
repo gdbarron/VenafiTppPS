@@ -83,21 +83,16 @@ foreach ($FunctionFile in $FunctionFiles) {
     }
 }
 
-# get release notes
-$releaseNotes = Get-Content -Path $releaseNotesPath -Raw
-
 try {
     Write-Output "Updating the module metadata
         New version: $newVersion
         Functions: $ExportFunctions
         Aliases: $ExportAliases
-        Release notes: $releaseNotes
     "
 
     $updateParams = @{
         Path          = $manifestPath
         ModuleVersion = $newVersion
-        ReleaseNotes  = $releaseNotes
     }
 
     if ( $ExportFunctions ) {
