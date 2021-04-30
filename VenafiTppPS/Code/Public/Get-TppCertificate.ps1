@@ -6,9 +6,6 @@ Get a certificate
 Get a certificate with or without private key.
 You have the option of simply getting the data or saving it to a file.
 
-.PARAMETER InputObject
-TppObject which represents a unique object
-
 .PARAMETER Path
 Path to the certificate object to retrieve
 
@@ -19,16 +16,23 @@ The format of the returned certificate.  Valid formats include Base64, Base64 (P
 Folder path to save the certificate to.  The name of the file will be determined automatically.
 
 .PARAMETER IncludeChain
-Include the certificate chain with the exported certificate.
+Include the certificate chain with the exported certificate.  Not supported with DER format.
 
 .PARAMETER FriendlyName
-The exported certificate's FriendlyName attribute. This parameter is required when Format is JKS.
+Label or alias to use.  Permitted with Base64 and PKCS #12 formats.  Required when Format is JKS.
 
-.PARAMETER IncludePrivateKey
-Include the private key.  The Format chosen must support private keys.
+.PARAMETER PrivateKeyPassword
+Password required to include the private key.  Not supported with DER or PKCS #7 formats.
+You must adhere to the following rules:
+- Password is at least 12 characters.
+- Comprised of at least three of the following:
+    - Uppercase alphabetic letters
+    - Lowercase alphabetic letters
+    - Numeric characters
+    - Special characters
 
-.PARAMETER SecurePassword
-Password required when including a private key.  You must adhere to the following rules:
+.PARAMETER KeystorePassword
+Password required to retrieve the certificate in JKS format.  You must adhere to the following rules:
 - Password is at least 12 characters.
 - Comprised of at least three of the following:
     - Uppercase alphabetic letters
@@ -41,45 +45,32 @@ Session object created from New-TppSession method.  The value defaults to the sc
 
 .EXAMPLE
 $certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp'
-Get one or more certificates
+Get certificate data and save to a file
 
 .EXAMPLE
-$certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain
+$certs | Get-TppCertificate -Format 'PKCS #7' -IncludeChain
 Get one or more certificates with the certificate chain included
 
 .EXAMPLE
-$certs | Get-TppCertificate -Format 'PKCS #7' -OutPath 'c:\temp' -IncludeChain -FriendlyName 'MyFriendlyName'
-Get one or more certificates with the certificate chain included and friendly name attribute specified
-
-.EXAMPLE
-$certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
+$certs | Get-TppCertificate -Format 'PKCS #12' -PrivateKeyPassword $cred.password
 Get one or more certificates with private key included
 
 .EXAMPLE
-$certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludeChain -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
-Get one or more certificates with private key and certificate chain included
-
-.EXAMPLE
-$certs | Get-TppCertificate -Format 'PKCS #12' -OutPath 'c:\temp' -IncludeChain -FriendlyName 'MyFriendlyName' -IncludePrivateKey -SecurePassword ($password | ConvertTo-SecureString -asPlainText -Force)
-Get one or more certificates with private key and certificate chain included and friendly name attribute specified
+$certs | Get-TppCertificate -FriendlyName 'MyFriendlyName' -KeystorePassword $cred.password
+Get certificates in JKS format
 
 .INPUTS
-InputObject or Path
+Path
 
 .OUTPUTS
 If OutPath not provided, a PSCustomObject will be returned with properties CertificateData, Filename, and Format.  Otherwise, no output.
 
 #>
 function Get-TppCertificate {
-    [CmdletBinding(DefaultParameterSetName = 'ByObject')]
+    [CmdletBinding(DefaultParameterSetName = 'NonJKS')]
     param (
 
-        [Parameter(Mandatory, ParameterSetName = 'ByObject', ValueFromPipeline)]
-        [Parameter(Mandatory, ParameterSetName = 'ByObjectWithPrivateKey', ValueFromPipeline)]
-        [TppObject] $InputObject,
-
-        [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'ByPath')]
-        [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'ByPathWithPrivateKey')]
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 if ( $_ | Test-TppDnPath ) {
@@ -91,7 +82,8 @@ function Get-TppCertificate {
         [Alias('DN')]
         [String] $Path,
 
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ParameterSetName = 'NonJKS')]
+        [Parameter(ParameterSetName = 'JKS')]
         [ValidateSet("Base64", "Base64 (PKCS #8)", "DER", "JKS", "PKCS #7", "PKCS #12")]
         [String] $Format,
 
@@ -109,16 +101,19 @@ function Get-TppCertificate {
         [Parameter()]
         [switch] $IncludeChain,
 
-        [Parameter()]
+        [Parameter(ParameterSetName = 'NonJKS')]
+        [Parameter(Mandatory, ParameterSetName = 'JKS')]
         [string] $FriendlyName,
 
-        [Parameter(Mandatory, ParameterSetName = 'ByObjectWithPrivateKey')]
-        [Parameter(Mandatory, ParameterSetName = 'ByPathWithPrivateKey')]
+        [Parameter()]
         [switch] $IncludePrivateKey,
 
-        [Parameter(Mandatory, ParameterSetName = 'ByObjectWithPrivateKey')]
-        [Parameter(Mandatory, ParameterSetName = 'ByPathWithPrivateKey')]
-        [Security.SecureString] $SecurePassword,
+        [Parameter()]
+        [Alias('SecurePassword')]
+        [Security.SecureString] $PrivateKeyPassword,
+
+        [Parameter(Mandatory, ParameterSetName = 'JKS')]
+        [Security.SecureString] $KeystorePassword,
 
         [Parameter()]
         [TppSession] $TppSession = $Script:TppSession
@@ -137,7 +132,7 @@ function Get-TppCertificate {
             }
         }
 
-        if ($IncludePrivateKey) {
+        if ($PrivateKeyPassword) {
 
             # validate format to be able to export the private key
             if ( $Format -in @("DER", "PKCS #7") ) {
@@ -145,7 +140,7 @@ function Get-TppCertificate {
             }
 
             $params.Body.IncludePrivateKey = $true
-            $plainTextPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringUni([System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($SecurePassword))
+            $plainTextPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringUni([System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($PrivateKeyPassword))
             $params.Body.Password = $plainTextPassword
         }
 
@@ -153,10 +148,16 @@ function Get-TppCertificate {
             if (-not ([string]::IsNullOrEmpty($FriendlyName))) {
                 throw "Only Base64, JKS, PKCS #12 formats support FriendlyName parameter"
             }
-        } else {
-            if ($Format -ieq 'JKS' -and [string]::IsNullOrEmpty($FriendlyName)) {
-                throw "JKS format requires FriendlyName parameter to be set"
+        }
+
+        if ( $KeystorePassword ) {
+            if ( $Format -and $Format -ne 'JKS' ) {
+                Write-Warning "Changing format from $Format to JKS as KeystorePassword was provided"
             }
+            $params.Body.Format = 'JKS'
+            $plainTextPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringUni([System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($KeystorePassword))
+            $params.Body.KeystorePassword = $plainTextPassword
+
         }
 
         if (-not [string]::IsNullOrEmpty($FriendlyName)) {
@@ -175,10 +176,6 @@ function Get-TppCertificate {
 
     process {
 
-        if ( $PSBoundParameters.ContainsKey('InputObject') ) {
-            $path = $InputObject.Path
-        }
-
         $params.Body.CertificateDN = $Path
 
         $response = Invoke-TppRestMethod @params
@@ -190,7 +187,7 @@ function Get-TppCertificate {
                 $outFile = Join-Path -Path $OutPath -ChildPath ($response.FileName.Trim('"'))
                 $bytes = [Convert]::FromBase64String($response.CertificateData)
                 [IO.File]::WriteAllBytes($outFile, $bytes)
-                Write-Verbose ('Saved {0} of format {1}' -f $outFile, $response.Format)
+                Write-Verbose ('Saved {0} with format {1}' -f $outFile, $response.Format)
             }
         } else {
             $response
