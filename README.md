@@ -1,4 +1,4 @@
-# VenafiTppPS - PowerShell module for Venafi Trust Protection Platform
+# VenafiTppPS - PowerShell module for Venafi Trust Protection Platform and CodeSign Protect
 
 [![Build status](https://gd-barron.visualstudio.com/VenafiTppPS/_apis/build/status/VenafiTppPS)](https://dev.azure.com/gd-barron/VenafiTppPS/_build/latest?definitionId=1)
 [![Documentation Status](https://readthedocs.org/projects/venafitppps/badge/?version=latest)](https://venafitppps.readthedocs.io/en/latest/?badge=latest)
