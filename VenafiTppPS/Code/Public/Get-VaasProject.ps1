@@ -111,7 +111,7 @@ function Get-VaasProject {
                 }
             } -ExcludeProperty id
 
-            $projects.PSObject.TypeNames.Insert(0, 'Vaas.Project')
+            $projects | ForEach-Object { $_.PSObject.TypeNames.Insert(0, 'VenafiTppPS.Vaas.Project') }
             $projects
 
         }

@@ -2,9 +2,41 @@
 <Configuration>
 	<ViewDefinitions>
 		<View>
-			<Name>Vaas.Project</Name>
+			<Name>VenafiTppPS.Vaas.Certificate</Name>
 			<ViewSelectedBy>
-				<TypeName>Vaas.Project</TypeName>
+				<TypeName>VenafiTppPS.Vaas.Certificate</TypeName>
+			</ViewSelectedBy>
+			<TableControl>
+				<TableHeaders>
+					<TableColumnHeader/>
+					<TableColumnHeader/>
+					<TableColumnHeader/>
+					<TableColumnHeader/>
+				</TableHeaders>
+				<TableRowEntries>
+					<TableRowEntry>
+						<TableColumnItems>
+							<TableColumnItem>
+								<PropertyName>certificateName</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>status</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>certificateId</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>creationDate</PropertyName>
+							</TableColumnItem>
+						</TableColumnItems>
+					</TableRowEntry>
+				</TableRowEntries>
+			</TableControl>
+		</View>
+		<View>
+			<Name>VenafiTppPS.Vaas.Project</Name>
+			<ViewSelectedBy>
+				<TypeName>VenafiTppPS.Vaas.Project</TypeName>
 			</ViewSelectedBy>
 			<TableControl>
 				<TableHeaders>

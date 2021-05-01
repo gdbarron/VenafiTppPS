@@ -45,7 +45,7 @@ function Get-VaasCertificate {
     param (
 
         [Parameter(Mandatory, ParameterSetName = 'Id', ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [guid] $Id,
+        [guid] $CertificateId,
 
         [Parameter(Mandatory, ParameterSetName = 'Zone')]
         [guid] $ZoneId,
@@ -68,7 +68,7 @@ function Get-VaasCertificate {
 
         switch ($PSCmdLet.ParameterSetName) {
             'Id' {
-                $params.CloudUriLeaf += "/$Id"
+                $params.CloudUriLeaf += "/$CertificateId"
             }
 
             'Zone' {
@@ -81,10 +81,21 @@ function Get-VaasCertificate {
 
         $response = Invoke-TppRestMethod @params
         if ( $response.PSObject.Properties.Name -contains 'certificaterequests' ) {
-            $response | Select-Object -ExpandProperty certificaterequests
+            $certs = $response | Select-Object -ExpandProperty certificaterequests
         } else {
-            $response
+            $certs = $response
         }
+
+        $certs = $certs | Select-Object *,
+        @{
+            'n' = 'certificateId'
+            'e' = {
+                $_.id
+            }
+        } -ExcludeProperty id
+
+        $certs | ForEach-Object { $_.PSObject.TypeNames.Insert(0, 'VenafiTppPS.Vaas.Certificate') }
+        $certs
 
     }
 }
