@@ -69,7 +69,7 @@ function Get-TppCodeSignProject {
     )
 
     begin {
-        $TppSession.Validate($true)
+        $TppSession.Validate('token')
 
         $params = @{
             TppSession = $TppSession

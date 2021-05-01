@@ -5,7 +5,7 @@ class TppSession {
     [PSCustomObject] $Key
     [PSCustomObject] $Token
     [PSCustomObject] $CustomField
-    [Version] $Version
+    [string] $Version
 
     TppSession () {
     }
@@ -15,37 +15,76 @@ class TppSession {
     }
 
     [void] Validate() {
-        $this.Validate($false)
+        $this.Validate('key')
     }
 
+    # AuthType can be key, token or vaas
+    # key is TPP and all functions
+    # token is TPP and some functions require it
+    # vaas is Venafi as a Service
+
     [void] Validate(
-        [bool] $TokenOnly
+        [string] $AuthType
     ) {
 
         if ( -not $this.Key -and -not $this.Token ) {
-            throw "You must first connect to the TPP server with New-TppSession"
+            switch ($AuthType) {
+                'vaas' {
+                    throw "You must first connect to Venafi as a Service with New-TppSession -VaasKey"
+                }
+
+                Default {
+                    throw "You must first connect to the TPP server with New-TppSession"
+                }
+            }
+
         }
 
         # newer api calls may only accept token based auth
-        if ( $TokenOnly -and -not $this.Token ) {
+        if ( $AuthType -eq 'token' -and -not $this.Token ) {
             throw "This function requires the use of token-based authentication"
+        }
+
+        # make sure the auth type and url we have match
+        # this keeps folks from calling a vaas function with a token and vice versa
+        if ( $AuthType -eq 'vaas' ) {
+            if ( $this.ServerUrl -ne $script:CloudUrl ) {
+                throw 'This function is only accessible for Venafi as a Service, not TPP'
+            }
+        } else {
+            if ( $this.ServerUrl -eq $script:CloudUrl ) {
+                throw 'This function is only accessible for TPP, not Venafi as a Service'
+            }
         }
 
         # if we know the session is still valid, don't bother checking with the server
         # add a couple of seconds so we don't get caught making the call as it expires
         Write-Verbose ("Expires: {0}, Current (+2s): {1}" -f $this.Expires, (Get-Date).ToUniversalTime().AddSeconds(2))
         if ( $this.Expires -lt (Get-Date).ToUniversalTime().AddSeconds(2) ) {
-            if ( $this.Key ) {
+            if ( $this.Key -and $this.ServerUrl -ne $script:CloudUrl ) {
+
+                $params = @{
+                    Method      = 'Get'
+                    ContentType = 'application/json'
+                }
+                $params.Uri = ("{0}/vedsdk/authorize/checkvalid" -f $this.ServerUrl)
+                $params.Headers = @{
+                    "X-Venafi-Api-Key" = $this.Key.ApiKey
+                }
+
+                # if ( $this.ServerUrl -eq $script:CloudUrl ) {
+                #     $params.Uri = '{0}/v1/preferences' -f $this.ServerUrl
+                #     $params.Headers = @{
+                #         "tppl-api-key" = $this.Key
+                #     }
+                # } else {
+                #     $params.Uri = ("{0}/vedsdk/authorize/checkvalid" -f $this.ServerUrl)
+                #     $params.Headers = @{
+                #         "X-Venafi-Api-Key" = $this.Key.ApiKey
+                #     }
+                # }
 
                 try {
-                    $params = @{
-                        Method      = 'Get'
-                        Uri         = ("{0}/vedsdk/authorize/checkvalid" -f $this.ServerUrl)
-                        Headers     = @{
-                            "X-Venafi-Api-Key" = $this.Key.ApiKey
-                        }
-                        ContentType = 'application/json'
-                    }
                     Invoke-RestMethod @params
                 } catch {
                     # tpp sessions timeout after 3 mins of inactivity
@@ -61,6 +100,7 @@ class TppSession {
                         throw ('"{0} {1}: {2}' -f $_.Exception.Response.StatusCode.value__, $_.Exception.Response.StatusDescription, $_ | Out-String )
                     }
                 }
+
             } else {
                 # token
                 # By default, access tokens are long-lived (90 day default). Refreshing the token should be handled outside of this class, so that the

@@ -37,7 +37,7 @@ function Write-VerboseWithSecret {
         [psobject] $InputObject,
 
         [Parameter()]
-        [string[]] $PropertyName = @('AccessToken', 'Password', 'RefreshToken', 'access_token', 'refresh_token', 'Authorization', 'KeystorePassword', 'PrivateKeyPassword')
+        [string[]] $PropertyName = @('AccessToken', 'Password', 'RefreshToken', 'access_token', 'refresh_token', 'Authorization', 'KeystorePassword')
     )
 
     begin {

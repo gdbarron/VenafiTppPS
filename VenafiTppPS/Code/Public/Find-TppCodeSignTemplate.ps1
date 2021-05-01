@@ -47,7 +47,7 @@ function Find-TppCodeSignTemplate {
     )
 
     begin {
-        $TppSession.Validate($true)
+        $TppSession.Validate('token')
 
         $params = @{
             TppSession = $TppSession

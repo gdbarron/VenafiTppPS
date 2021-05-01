@@ -18,18 +18,19 @@ foreach ( $folder in $folders) {
             if ( $folder -eq 'Public' ) {
                 Export-ModuleMember -Function $thisFile.Basename
             }
-        }
-        Catch {
+        } Catch {
             Write-Error ("Failed to import function {0}: {1}" -f $thisFile.fullname, $folder)
         }
     }
 }
 
+$script:CloudUrl = 'https://api.venafi.cloud'
+
 $Script:TppSupportedVersion = ConvertFrom-Json (Get-Content "$PSScriptRoot\Config\SupportedVersion.json" -Raw)
-Export-ModuleMember -variable TppSupportedVersion
+Export-ModuleMember -Variable TppSupportedVersion
 
 $Script:TppSession = New-Object 'TppSession'
-Export-ModuleMember -variable TppSession
+Export-ModuleMember -Variable TppSession
 
 $aliases = @{
     'ConvertTo-TppDN'        = 'ConvertTo-TppPath'
@@ -40,6 +41,7 @@ $aliases = @{
     'fto'                    = 'Find-TppObject'
     'ftc'                    = 'Find-TppCertificate'
     'itcr'                   = 'Invoke-TppCertificateRenewal'
+    'New-TppSession'         = 'New-VenafiSession'
 }
 $aliases.GetEnumerator() | ForEach-Object {
     Set-Alias -Name $_.Key -Value $_.Value

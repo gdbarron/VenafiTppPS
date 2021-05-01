@@ -1,4 +1,4 @@
-# VenafiTppPS - PowerShell module for Venafi Trust Protection Platform and CodeSign Protect
+# VenafiTppPS - PowerShell module for Venafi Trust Protection Platform and Venafi as a Service
 
 [![Build status](https://gd-barron.visualstudio.com/VenafiTppPS/_apis/build/status/VenafiTppPS)](https://dev.azure.com/gd-barron/VenafiTppPS/_build/latest?definitionId=1)
 [![Documentation Status](https://readthedocs.org/projects/venafitppps/badge/?version=latest)](https://venafitppps.readthedocs.io/en/latest/?badge=latest)
@@ -28,12 +28,13 @@ Start a new PowerShell prompt (even if you have one from the Install Module step
 
 ```powershell
 $cred = Get-Credential
-New-TppSession -Server 'venafi.mycompany.com' -Credential $cred
+New-VenafiSession -Server 'venafi.mycompany.com' -Credential $cred -ClientId 'MyApp' -Scope @{'certificate'='manage'}
 ```
 
 This will create a session which will be used by default in other functions.
-You can also use integrated authentication, simply exclude `-Credential $cred`.  As of v2.0, token-based authentication has been added as well.
-View the help on all the ways you can create a new TPP session with `help New-TppSession -full`.
+You can also use integrated authentication, simply exclude `-Credential $cred`.
+Beginning with v2.3, you can connect to Venafi as a Service as well with `-VaasKey $apikey`.
+View the help on all the ways you can create a new Venafi session with `help New-VenafiSession -full`.
 
 One of the easiest ways to get started is to use `Find-TppObject`:
 

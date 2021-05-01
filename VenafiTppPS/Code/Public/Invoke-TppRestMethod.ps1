@@ -45,16 +45,22 @@ function Invoke-TppRestMethod {
         [Parameter(ParameterSetName = 'URL')]
         [switch] $UseDefaultCredentials,
 
-        [Parameter(Mandatory)]
+        [Parameter()]
         [ValidateSet("Get", "Post", "Patch", "Put", "Delete")]
-        [String] $Method,
+        [String] $Method = 'Get',
 
         [Parameter()]
         [String] $UriRoot = 'vedsdk',
 
-        [Parameter(Mandatory)]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [String] $UriLeaf,
+
+        [Parameter(Mandatory, ParameterSetName = 'CloudKey')]
+        [guid] $CloudKey,
+
+        [Parameter()]
+        [string] $CloudUriLeaf,
 
         [Parameter()]
         [hashtable] $Header,
@@ -71,23 +77,46 @@ function Invoke-TppRestMethod {
     #     }
     # }
 
-    if ( $PsCmdlet.ParameterSetName -eq 'Session' ) {
+    switch ($PSCmdLet.ParameterSetName) {
+        'Session' {
+            $ServerUrl = $TppSession.ServerUrl
+            $uri = '{0}/{1}/{2}' -f $ServerUrl, $UriRoot, $UriLeaf
 
-        $ServerUrl = $TppSession.ServerUrl
+            if ( $TppSession.Key ) {
+                if ( $ServerUrl -eq $script:CloudUrl ) {
+                    $hdr = @{
+                        "tppl-api-key" = $TppSession.Key
+                    }
+                    $uri = '{0}/v1/{1}' -f $ServerUrl, $CloudUriLeaf
+                } else {
+                    $hdr = @{
+                        "X-Venafi-Api-Key" = $TppSession.Key.ApiKey
+                    }
+                }
+            } else {
+                # token
+                $hdr = @{
+                    'Authorization' = 'Bearer {0}' -f $TppSession.Token.AccessToken
+                }
+            }
 
-        if ( $TppSession.Key ) {
-            $hdr = @{
-                "X-Venafi-Api-Key" = $TppSession.Key.ApiKey
-            }
-        } else {
-            # token
-            $hdr = @{
-                'Authorization' = 'Bearer {0}' -f $TppSession.Token.AccessToken
-            }
         }
+
+        'URL' {
+            $uri = '{0}/{1}/{2}' -f $ServerUrl, $UriRoot, $UriLeaf
+        }
+
+        'CloudKey' {
+            $ServerUrl = $script:CloudUrl
+            $hdr = @{
+                "tppl-api-key" = $CloudKey
+            }
+            $uri = '{0}/v1/{2}' -f $ServerUrl, $CloudUriLeaf
+        }
+
+        Default {}
     }
 
-    $uri = '{0}/{1}/{2}' -f $ServerUrl, $UriRoot, $UriLeaf
 
     if ( $Header ) {
         $hdr += $Header
@@ -103,7 +132,7 @@ function Invoke-TppRestMethod {
     if ( $Body ) {
         $restBody = $Body
         if ( $Method -ne 'Get' ) {
-            $restBody = ConvertTo-Json $Body -depth 5
+            $restBody = ConvertTo-Json $Body -Depth 5
         }
         $params.Body = $restBody
     }

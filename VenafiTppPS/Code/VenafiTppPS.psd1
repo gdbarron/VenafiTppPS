@@ -63,32 +63,32 @@ PowerShellVersion = '5.0'
 # TypesToProcess = @()
 
 # Format files (.ps1xml) to be loaded when importing this module
-# FormatsToProcess = @()
+    FormatsToProcess = @('VenafiTppPS.format.ps1xml')
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Add-TppCertificateAssociation', 'ConvertTo-TppGuid', 
-               'ConvertTo-TppPath', 'Find-TppCertificate', 
-               'Find-TppCodeSignEnvironment', 'Find-TppCodeSignProject', 
-               'Find-TppCodeSignTemplate', 'Find-TppIdentity', 'Find-TppObject', 
-               'Get-TppAttribute', 'Get-TppCertificate', 'Get-TppCertificateDetail', 
-               'Get-TppCodeSignConfig', 'Get-TppCodeSignEnvironment', 
-               'Get-TppCodeSignProject', 'Get-TppCustomField', 'Get-TppIdentity', 
-               'Get-TppIdentityAttribute', 'Get-TppObject', 'Get-TppPermission', 
-               'Get-TppSystemStatus', 'Get-TppVersion', 'Get-TppWorkflowTicket', 
-               'Import-TppCertificate', 'Invoke-TppCertificatePush', 
-               'Invoke-TppCertificateRenewal', 'Invoke-TppRestMethod', 
-               'Move-TppObject', 'New-TppCapiApplication', 'New-TppCertificate', 
-               'New-TppCodeSignProject', 'New-TppDevice', 'New-TppObject', 
-               'New-TppPolicy', 'New-TppSession', 'New-TppToken', 'Read-TppLog', 
-               'Remove-TppCertificate', 'Remove-TppCertificateAssociation', 
-               'Remove-TppCodeSignEnvironment', 'Remove-TppCodeSignProject', 
-               'Remove-TppPermission', 'Rename-TppObject', 'Revoke-TppCertificate', 
-               'Revoke-TppToken', 'Set-TppAttribute', 'Set-TppCodeSignProjectStatus', 
-               'Set-TppPermission', 'Set-TppWorkflowTicketStatus', 
-               'Test-TppIdentity', 'Test-TppObject', 'Write-TppLog'
+FunctionsToExport = 'Add-TppCertificateAssociation', 'ConvertTo-TppGuid',
+               'ConvertTo-TppPath', 'Find-TppCertificate',
+               'Find-TppCodeSignEnvironment', 'Find-TppCodeSignProject',
+               'Find-TppCodeSignTemplate', 'Find-TppIdentity', 'Find-TppObject',
+               'Get-TppAttribute', 'Get-TppCertificate', 'Get-TppCertificateDetail',
+               'Get-TppCodeSignConfig', 'Get-TppCodeSignEnvironment',
+               'Get-TppCodeSignProject', 'Get-TppCustomField', 'Get-TppIdentity',
+               'Get-TppIdentityAttribute', 'Get-TppObject', 'Get-TppPermission',
+               'Get-TppSystemStatus', 'Get-TppVersion', 'Get-TppWorkflowTicket',
+               'Import-TppCertificate', 'Invoke-TppCertificatePush',
+               'Invoke-TppCertificateRenewal', 'Invoke-TppRestMethod',
+               'Move-TppObject', 'New-TppCapiApplication', 'New-TppCertificate',
+               'New-TppCodeSignProject', 'New-TppDevice', 'New-TppObject',
+               'New-TppPolicy', 'New-VenafiSession', 'New-TppToken', 'Read-TppLog',
+               'Remove-TppCertificate', 'Remove-TppCertificateAssociation',
+               'Remove-TppCodeSignEnvironment', 'Remove-TppCodeSignProject',
+               'Remove-TppPermission', 'Rename-TppObject', 'Revoke-TppCertificate',
+               'Revoke-TppToken', 'Set-TppAttribute', 'Set-TppCodeSignProjectStatus',
+               'Set-TppPermission', 'Set-TppWorkflowTicketStatus',
+               'Test-TppIdentity', 'Test-TppObject', 'Write-TppLog', 'Get-VaasCertificate', 'Export-VaasCertificate', 'Get-VaasZone', 'Get-VaasProject'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()

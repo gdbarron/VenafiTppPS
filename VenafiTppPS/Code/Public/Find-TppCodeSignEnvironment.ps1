@@ -46,7 +46,7 @@ function Find-TppCodeSignEnvironment {
     )
 
     begin {
-        $TppSession.Validate($true)
+        $TppSession.Validate('token')
         $projects = Find-TppCodeSignProject | Get-TppCodeSignProject
     }
 
