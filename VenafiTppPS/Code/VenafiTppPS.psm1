@@ -6,6 +6,8 @@ PowerShell module to access the features of Venafi Trust Protection Platform RES
 Author: Greg Brownstein
 #>
 
+Write-Warning 'This project has been deprecated and replaced with VenafiPS, https://github.com/gdbarron/VenafiPS'
+
 $folders = @('Enum', 'Classes', 'Public', 'Private')
 
 foreach ( $folder in $folders) {
