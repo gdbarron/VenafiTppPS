@@ -1,3 +1,9 @@
+# To better support TPP as well as Venafi as a Service, this project has been renamed to VenafiPS and moved to [a new project](https://github.com/gdbarron/VenafiPS)
+This project will stay live for a while, but please submit all issues and questions to the new project.  The [new VenafiPS module](https://www.powershellgallery.com/packages/VenafiPS) has already been published to PowerShellGallery.
+
+----------------------------
+----------------------------
+----------------------------
 # VenafiTppPS - PowerShell module for Venafi Trust Protection Platform and CodeSign Protect
 
 [![Build status](https://gd-barron.visualstudio.com/VenafiTppPS/_apis/build/status/VenafiTppPS)](https://dev.azure.com/gd-barron/VenafiTppPS/_build/latest?definitionId=1)
