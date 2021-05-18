@@ -1,4 +1,4 @@
-# This project has been replaced with [VenafiPS](https://venafips.readthedocs.io)
+# This project has been replaced by [VenafiPS](https://venafips.readthedocs.io)
 
 --------------------------
 
