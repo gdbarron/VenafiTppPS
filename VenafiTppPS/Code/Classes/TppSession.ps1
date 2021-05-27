@@ -22,6 +22,8 @@ class TppSession {
         [bool] $TokenOnly
     ) {
 
+        Write-Warning 'This project has been deprecated and replaced with VenafiPS.  Please download VenafiPS from the PS Gallery.'
+
         if ( -not $this.Key -and -not $this.Token ) {
             throw "You must first connect to the TPP server with New-TppSession"
         }
