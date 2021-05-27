@@ -30,7 +30,7 @@ CompanyName = 'Greg Brownstein'
 Copyright = '(c) 2018-2021 Greg Brownstein. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'PowerShell module to access the features of Venafi Trust Protection Platform REST API'
+Description = 'Deprecated.  Please use VenafiPS going forward.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '5.0'
