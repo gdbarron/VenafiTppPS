@@ -1,3 +1,9 @@
+## 2.2.7
+- Block access to New-TppSession so folks start using the new module, VenafiPS
+
+## 2.2.6
+- New project messaging.  Please use VenafiPS going forward.
+
 ## 2.2.4
 - Add `-KeystorePassword` option to `Get-TppCertificate`.  [#147](https://github.com/gdbarron/VenafiTppPS/issues/147).  Thanks @Curtmcgirt!
 
