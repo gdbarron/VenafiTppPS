@@ -1,3 +1,6 @@
+## 2.2.7
+- Block access to New-TppSession so folks start using the new module, VenafiPS
+
 ## 2.2.6
 - New project messaging.  Please use VenafiPS going forward.
 

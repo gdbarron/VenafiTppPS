@@ -162,6 +162,11 @@ function New-TppSession {
         [switch] $PassThru
     )
 
+    Write-Warning 'This project has been deprecated and replaced with VenafiPS, https://github.com/gdbarron/VenafiPS'
+    Write-Verbose 'This project has been deprecated and replaced with VenafiPS, https://github.com/gdbarron/VenafiPS'
+    Write-Debug 'This project has been deprecated and replaced with VenafiPS, https://github.com/gdbarron/VenafiPS'
+    return $false
+
     $isVerbose = if ($PSBoundParameters.Verbose -eq $true) { $true } else { $false }
 
     $ServerUrl = $Server
